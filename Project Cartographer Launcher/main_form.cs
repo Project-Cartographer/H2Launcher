@@ -28,6 +28,8 @@ namespace Cartographer_Launcher
         private bool register_check;
         private bool settings_check;
         private bool update_check;
+        private bool sPanel_check;
+
         FontFamily ff;
         Font font;
 
@@ -38,6 +40,7 @@ namespace Cartographer_Launcher
         Color mt = Color.FromArgb(94, 109, 139); //#5E6D8B
         Color mt_hover = Color.FromArgb(126, 147, 178); //#7E93B2
         Color mt_click = Color.FromArgb(178, 211, 246); //#B2D3F6
+        //Color pn = Color.FromArgb(0, 12, 45); //#000C2D
 
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -90,6 +93,9 @@ namespace Cartographer_Launcher
             register_check = false;
             settings_check = false;
             update_check = false;
+            sPanel_check = false;
+
+            this.settings_panel.Width = 0;
         }
 
         private void CursorPositionStyleSheet()
@@ -103,7 +109,7 @@ namespace Cartographer_Launcher
                 && rel_pos.Y >= login_label.Location.Y
                 && rel_pos.Y <= login_label.Location.Y + login_label.Size.Height)
             {
-                if(!login_check)
+                if (!login_check)
                     this.login_label.ForeColor = mt_hover;
                 else
                     this.login_label.ForeColor = mt_click;
@@ -220,6 +226,23 @@ namespace Cartographer_Launcher
 
             this.update_label.Font = new Font(ff, 18);
             this.update_label.ForeColor = mt;
+
+            #region Panel Settings
+            this.sPanel_title_label.Font = new Font(ff, 20);
+            this.sPanel_title_label.ForeColor = tt;
+            this.sPanel_close_label.Font = new Font(ff, 28);
+            this.sPanel_close_label.ForeColor = tt;
+            this.sPanel_setting1_label.Font = new Font(ff, 14);
+            this.sPanel_setting1_label.ForeColor = mt;
+            this.sPanel_setting2_label.Font = new Font(ff, 14);
+            this.sPanel_setting2_label.ForeColor = mt;
+            this.sPanel_setting3_label.Font = new Font(ff, 14);
+            this.sPanel_setting3_label.ForeColor = mt;
+            this.sPanel_setting4_label.Font = new Font(ff, 14);
+            this.sPanel_setting4_label.ForeColor = mt;
+            this.sPanel_setting5_label.Font = new Font(ff, 14);
+            this.sPanel_setting5_label.ForeColor = mt;
+            #endregion
         }
 
         #region Event Handlers
@@ -257,12 +280,51 @@ namespace Cartographer_Launcher
         private void settings_label_Click(object sender, EventArgs e)
         {
             settings_check = true;
+            panel_slide.Enabled = true;
+            panel_slide.Start();
         }
 
         private void update_label_Click(object sender, EventArgs e)
         {
             update_check = true;
         }
+
+        private void sPanel_close_label_Click(object sender, EventArgs e)
+        {
+            settings_check = true;
+            panel_slide.Enabled = true;
+            panel_slide.Start();
+        }
         #endregion
+
+        private void panel_slide_Tick(object sender, EventArgs e)
+        {
+            if (!sPanel_check)
+            {
+                if (settings_panel.Width >= 250)
+                {
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                    sPanel_check = true;
+                }
+                else
+                {
+                    settings_panel.Width += 70;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (settings_panel.Width == 0)
+                {
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                    sPanel_check = false;
+                }
+                else
+                    settings_panel.Width -= 60;
+            }
+        }
+
     }
 }
