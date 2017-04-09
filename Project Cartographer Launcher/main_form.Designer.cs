@@ -186,6 +186,7 @@
             this.settings_panel.Name = "settings_panel";
             this.settings_panel.Size = new System.Drawing.Size(250, 450);
             this.settings_panel.TabIndex = 10;
+            this.settings_panel.Click += new System.EventHandler(this.settings_panel_Click);
             // 
             // sPanel_close_label
             // 
@@ -291,6 +292,7 @@
             this.login_panel.Name = "login_panel";
             this.login_panel.Size = new System.Drawing.Size(300, 138);
             this.login_panel.TabIndex = 18;
+            this.login_panel.Click += new System.EventHandler(this.login_panel_Click);
             // 
             // aPanel_title_label
             // 
