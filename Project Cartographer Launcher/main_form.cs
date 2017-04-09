@@ -25,8 +25,8 @@ namespace Cartographer_Launcher
 
         FontFamily hgb, cil;
         Font handel_gothic_b, conduit_itc_l;
-        GlobalMouseHandler gmh = new GlobalMouseHandler();
         Point cur_pos = Cursor.Position;
+        GlobalMouseHandler gmh = new GlobalMouseHandler();
 
         Color tt = Color.FromArgb(193, 218, 248); //#C1DAF8
         Color tts = Color.FromArgb(140, 193, 218, 248); //#C1DAF8 (semi-transparent)
@@ -50,11 +50,11 @@ namespace Cartographer_Launcher
         {
             get
             {
-                CreateParams cp = base.CreateParams;
-                cp.Style |= WS_MINIMIZEBOX;
-                cp.ClassStyle |= CS_DBLCLKS;
-                cp.ExStyle = cp.ExStyle | 0x2000000; //Prevent flickering
-                return cp;
+                CreateParams pc = base.CreateParams;
+                pc.Style |= WS_MINIMIZEBOX;
+                pc.ClassStyle |= CS_DBLCLKS;
+                pc.ExStyle = pc.ExStyle | 0x2000000; //Prevent flickering
+                return pc;
             }
         }
 
@@ -78,9 +78,13 @@ namespace Cartographer_Launcher
         public launcher_form()
         {
             InitializeComponent();
-            StyleSheet();
-            gmh.MouseMovement += new MouseMovedEvent(StyleSheet);
+            gmh.MouseMovement += new MouseMovedEvent(CursorPositionStyleSheet);
             Application.AddMessageFilter(gmh);
+
+            HandelGothicMedium();
+            ConduitITC_light();
+            StyleSheet();
+            CursorPositionStyleSheet();
 
             login_check = false;
             register_check = false;
@@ -89,94 +93,11 @@ namespace Cartographer_Launcher
             sPanel_check = false;
         }
 
-        #region Panel Animation
-        private void sPanelSlide()
+        private void CursorPositionStyleSheet()
         {
-            login_check = false;
-            this.settings_panel.BringToFront();
-            if (!sPanel_check)
-            {
-                if (settings_panel.Width >= 260)
-                {
-                    sPanel_check = true;
-                    this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                }
-                else
-                {
-                    settings_panel.Width += 40;
-                    this.Refresh();
-                }
-            }
-            else
-            {
-                if (settings_panel.Width == 0)
-                {
-                    sPanel_check = false;
-                    this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                }
-                else
-                {
-                    settings_panel.Width -= 40;
-                    this.Refresh();
-                }
-            }
-        }
-
-        private void aPanelSlide()
-        {
-            settings_check = false;
-            this.login_panel.BringToFront();
-            if (!aPanel_check)
-            {
-                if (login_panel.Height >= 138)
-                {
-                    aPanel_check = true;
-                    this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                }
-                else
-                {
-                    login_panel.Height += 40;
-                    this.Refresh();
-                }
-            }
-            else
-            {
-                if (login_panel.Height == 0)
-                {
-                    aPanel_check = false;
-                    this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                }
-                else
-                {
-                    login_panel.Height -= 40;
-                    this.Refresh();
-                }
-            }
-        }
-        #endregion
-
-        public void StyleSheet()
-        {
-            //Transparency Fix
-            this.BackColor = Color.LimeGreen;
-            this.TransparencyKey = Color.LimeGreen;
-            //End Transparency Fix
-
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-
             var rel_pos = this.PointToClient(cur_pos);
 
-            #region Login Cursor Position
+            #region Login
             if (rel_pos.X >= login_label.Location.X
                 && rel_pos.X <= login_label.Location.X + login_label.Size.Width
                 && rel_pos.Y >= login_label.Location.Y
@@ -197,7 +118,7 @@ namespace Cartographer_Launcher
             }
             #endregion
 
-            #region Register Cursor Position
+            #region Register
             if (rel_pos.X >= register_label.Location.X
                 && rel_pos.X <= register_label.Location.X + register_label.Size.Width
                 && rel_pos.Y >= register_label.Location.Y
@@ -215,7 +136,7 @@ namespace Cartographer_Launcher
             }
             #endregion
 
-            #region Settings Cursor Position
+            #region Settings
             if (rel_pos.X >= settings_label.Location.X
                 && rel_pos.X <= settings_label.Location.X + settings_label.Size.Width
                 && rel_pos.Y >= settings_label.Location.Y
@@ -236,7 +157,7 @@ namespace Cartographer_Launcher
             }
             #endregion
 
-            #region Check Updates Cursor Position
+            #region Check Updates
             if (rel_pos.X >= update_label.Location.X
                 && rel_pos.X <= update_label.Location.X + update_label.Size.Width
                 && rel_pos.Y >= update_label.Location.Y
@@ -253,38 +174,64 @@ namespace Cartographer_Launcher
                 update_check = false;
             }
             #endregion
+        }
 
+        private void HandelGothicMedium()
+        {
+
+            byte[] fontArray = Cartographer_Launcher.Properties.Resources.handel_gothic_medium;
+            int dataLength = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
+
+            IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength);
+            Marshal.Copy(fontArray, 0, ptrData, dataLength);
+
+            uint cFonts = 0;
+            AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts);
+
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            pfc.AddMemoryFont(ptrData, dataLength);
+
+            Marshal.FreeCoTaskMem(ptrData);
+            hgb = pfc.Families[0];
+            handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
+        }
+
+        private void ConduitITC_light()
+        {
+
+            byte[] fontArray = Cartographer_Launcher.Properties.Resources.conduit_itc_light;
+            int dataLength = Cartographer_Launcher.Properties.Resources.conduit_itc_light.Length;
+
+            IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength);
+            Marshal.Copy(fontArray, 0, ptrData, dataLength);
+
+            uint cFonts = 0;
+            AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts);
+
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            pfc.AddMemoryFont(ptrData, dataLength);
+
+            Marshal.FreeCoTaskMem(ptrData);
+            cil = pfc.Families[0];
+            conduit_itc_l = new Font(cil, 15f, FontStyle.Bold);
+        }
+
+        public void StyleSheet()
+        {
+            //Transparency Fix
+            this.BackColor = Color.LimeGreen;
+            this.TransparencyKey = Color.LimeGreen;
+            //End Transparency Fix
+
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+
+            this.login_panel.BackColor = pn;
+            this.settings_panel.BackColor = pn;
             this.settings_panel.Width = 0;
             this.login_panel.Height = 0;
-
-            #region Fonts
-            byte[] cil_fontArray = Properties.Resources.conduit_itc_light;
-            byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
-            int cil_dataLength = Properties.Resources.conduit_itc_light.Length;
-            int hgm_dataLength = Properties.Resources.handel_gothic_medium.Length;
-
-            IntPtr cil_ptr = Marshal.AllocCoTaskMem(cil_dataLength);
-            IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLength);
-            Marshal.Copy(cil_fontArray, 0, cil_ptr, cil_dataLength);
-            Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLength);
-
-            uint cil_fonts = 0;
-            uint hgm_fonts = 0;
-            AddFontMemResourceEx(cil_ptr, (uint)cil_fontArray.Length, IntPtr.Zero, ref cil_fonts);
-            AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_fonts);
-
-            PrivateFontCollection cil_pfc = new PrivateFontCollection();
-            PrivateFontCollection hgm_pfc = new PrivateFontCollection();
-            cil_pfc.AddMemoryFont(cil_ptr, cil_dataLength);
-            hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLength);
-
-            Marshal.FreeCoTaskMem(cil_ptr);
-            Marshal.FreeCoTaskMem(hgm_ptr);
-            cil = cil_pfc.Families[0];
-            hgb = cil_pfc.Families[0];
-            conduit_itc_l = new Font(cil, 15f, FontStyle.Bold);
-            handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
-            #endregion
+            this.aPanel_username_textBox.BackColor = tt;
 
             #region Designer
             // 
@@ -382,6 +329,78 @@ namespace Cartographer_Launcher
             #endregion
 
             this.Refresh();
+        }
+
+        private void sPanelSlide()
+        {
+            login_check = false;
+            this.settings_panel.BringToFront();
+            if (!sPanel_check)
+            {
+                if (settings_panel.Width >= 260)
+                {
+                    sPanel_check = true;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    settings_panel.Width += 40;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (settings_panel.Width == 0)
+                {
+                    sPanel_check = false;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    settings_panel.Width -= 40;
+                    this.Refresh();
+                }
+            }
+        }
+
+        private void aPanelSlide()
+        {
+            settings_check = false;
+            this.login_panel.BringToFront();
+            if (!aPanel_check)
+            {
+                if (login_panel.Height >= 138)
+                {
+                    aPanel_check = true;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    login_panel.Height += 40;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (login_panel.Height == 0)
+                {
+                    aPanel_check = false;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    login_panel.Height -= 40;
+                    this.Refresh();
+                }
+            }
         }
 
         #region Event Handlers
