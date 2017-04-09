@@ -179,22 +179,27 @@ namespace Cartographer_Launcher
 
         private void HandelGothicMedium()
         {
+            try
+            {
+                PrivateFontCollection hgm_pfc = new PrivateFontCollection();
+                int hgm_dataLenght = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
+                byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
+                IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLenght);
+                Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLenght);
 
-            byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
-            int hgm_dataLenght = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
+                uint hgm_Fonts = 0;
+                AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_Fonts);
 
-            IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLenght);
-            Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLenght);
+                hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLenght);
+                Marshal.FreeCoTaskMem(hgm_ptr);
 
-            uint hgm_Fonts = 0;
-            AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_Fonts);
-
-            PrivateFontCollection hgm_pfc = new PrivateFontCollection();
-            hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLenght);
-
-            Marshal.FreeCoTaskMem(hgm_ptr);
-            hgb = hgm_pfc.Families[0];
-            handel_gothic_b = new Font(hgb, 15f, FontStyle.Regular);
+                hgb = hgm_pfc.Families[0];
+                handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
+            }
+            catch(Exception Ex)
+            {
+                MessageBox.Show(Ex.ToString());
+            }
         }
 
         private void ConduitITC_light()
@@ -249,67 +254,67 @@ namespace Cartographer_Launcher
             // 
             // title_label
             // 
-            this.title_label.Font = new Font(hgb, 20);
+            this.title_label.Font = new Font(hgb, 20, FontStyle.Bold);
             this.title_label.ForeColor = tt;
             // 
             // login_label
             // 
-            this.login_label.Font = new Font(hgb, 18);
+            this.login_label.Font = new Font(hgb, 18, FontStyle.Bold);
             this.login_label.ForeColor = mt;
             // 
             // register_label
             // 
-            this.register_label.Font = new Font(hgb, 18);
+            this.register_label.Font = new Font(hgb, 18, FontStyle.Bold);
             this.register_label.ForeColor = mt;
             // 
             // settings_label
             // 
-            this.settings_label.Font = new Font(hgb, 18);
+            this.settings_label.Font = new Font(hgb, 18, FontStyle.Bold);
             this.settings_label.ForeColor = mt;
             // 
             // update_label
             // 
-            this.update_label.Font = new Font(hgb, 18);
+            this.update_label.Font = new Font(hgb, 18, FontStyle.Bold);
             this.update_label.ForeColor = mt;
             // 
             // sPanel_title_label
             // 
-            this.sPanel_title_label.Font = new Font(hgb, 20);
+            this.sPanel_title_label.Font = new Font(hgb, 20, FontStyle.Bold);
             this.sPanel_title_label.ForeColor = tt;
             // 
             // sPanel_close_label
             // 
-            this.sPanel_close_label.Font = new Font(hgb, 28);
+            this.sPanel_close_label.Font = new Font(hgb, 28, FontStyle.Bold);
             this.sPanel_close_label.ForeColor = tt;
             // 
             // sPanel_settings1_label
             // 
-            this.sPanel_setting1_label.Font = new Font(cil, 14);
+            this.sPanel_setting1_label.Font = new Font(cil, 14, FontStyle.Bold);
             this.sPanel_setting1_label.ForeColor = mt;
             // 
             // sPanel_settings2_label
             // 
-            this.sPanel_setting2_label.Font = new Font(cil, 14);
+            this.sPanel_setting2_label.Font = new Font(cil, 14, FontStyle.Bold);
             this.sPanel_setting2_label.ForeColor = mt;
             // 
             // sPanel_settings3_label
             // 
-            this.sPanel_setting3_label.Font = new Font(cil, 14);
+            this.sPanel_setting3_label.Font = new Font(cil, 14, FontStyle.Bold);
             this.sPanel_setting3_label.ForeColor = mt;
             // 
             // sPanel_settings4_label
             // 
-            this.sPanel_setting4_label.Font = new Font(cil, 14);
+            this.sPanel_setting4_label.Font = new Font(cil, 14, FontStyle.Bold);
             this.sPanel_setting4_label.ForeColor = mt;
             // 
             // sPanel_settings5_label
             // 
-            this.sPanel_setting5_label.Font = new Font(cil, 14);
+            this.sPanel_setting5_label.Font = new Font(cil, 14, FontStyle.Bold);
             this.sPanel_setting5_label.ForeColor = mt;
             // 
             // aPanel_title_label
             // 
-            this.aPanel_title_label.Font = new Font(hgb, 14);
+            this.aPanel_title_label.Font = new Font(hgb, 14, FontStyle.Bold);
             this.aPanel_title_label.ForeColor = tt;
             // 
             // aPanel_username_label
