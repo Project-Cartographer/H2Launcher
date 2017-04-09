@@ -25,11 +25,8 @@ namespace Cartographer_Launcher
 
         FontFamily hgb, cil;
         Font handel_gothic_b, conduit_itc_l;
-        Point cur_pos = Cursor.Position;
-        GlobalMouseHandler gmh = new GlobalMouseHandler();
 
         Color tt = Color.FromArgb(193, 218, 248); //#C1DAF8
-        Color tts = Color.FromArgb(140, 193, 218, 248); //#C1DAF8 (semi-transparent)
         Color nt = Color.FromArgb(104, 164, 227); //#68A4E3
         Color bt = Color.FromArgb(184, 205, 224); //#B8CDE0
         Color bb_hover = Color.FromArgb(33, 63, 132); //#213F84
@@ -38,6 +35,7 @@ namespace Cartographer_Launcher
         Color mt_hover = Color.FromArgb(126, 147, 178); //#7E93B2
         Color mt_click = Color.FromArgb(178, 211, 246); //#B2D3F6
         Color pn = Color.FromArgb(140, 0, 12, 45); //#000C2D
+        Color tbt = Color.FromArgb(0, 12, 45); //#000C2D
 
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -77,9 +75,11 @@ namespace Cartographer_Launcher
 
         public launcher_form()
         {
-            InitializeComponent();
+            GlobalMouseHandler gmh = new GlobalMouseHandler();
             gmh.MouseMovement += new MouseMovedEvent(CursorPositionStyleSheet);
             Application.AddMessageFilter(gmh);
+
+            InitializeComponent();
 
             HandelGothicMedium();
             ConduitITC_light();
@@ -95,6 +95,7 @@ namespace Cartographer_Launcher
 
         private void CursorPositionStyleSheet()
         {
+            Point cur_pos = Cursor.Position;
             var rel_pos = this.PointToClient(cur_pos);
 
             #region Login
@@ -179,40 +180,40 @@ namespace Cartographer_Launcher
         private void HandelGothicMedium()
         {
 
-            byte[] fontArray = Cartographer_Launcher.Properties.Resources.handel_gothic_medium;
-            int dataLength = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
+            byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
+            int hgm_dataLenght = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
 
-            IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength);
-            Marshal.Copy(fontArray, 0, ptrData, dataLength);
+            IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLenght);
+            Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLenght);
 
-            uint cFonts = 0;
-            AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts);
+            uint hgm_Fonts = 0;
+            AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_Fonts);
 
-            PrivateFontCollection pfc = new PrivateFontCollection();
-            pfc.AddMemoryFont(ptrData, dataLength);
+            PrivateFontCollection hgm_pfc = new PrivateFontCollection();
+            hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLenght);
 
-            Marshal.FreeCoTaskMem(ptrData);
-            hgb = pfc.Families[0];
-            handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
+            Marshal.FreeCoTaskMem(hgm_ptr);
+            hgb = hgm_pfc.Families[0];
+            handel_gothic_b = new Font(hgb, 15f, FontStyle.Regular);
         }
 
         private void ConduitITC_light()
         {
 
-            byte[] fontArray = Cartographer_Launcher.Properties.Resources.conduit_itc_light;
-            int dataLength = Cartographer_Launcher.Properties.Resources.conduit_itc_light.Length;
+            byte[] cil_fontArray = Cartographer_Launcher.Properties.Resources.conduit_itc_light;
+            int cil_dataLength = Cartographer_Launcher.Properties.Resources.conduit_itc_light.Length;
 
-            IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength);
-            Marshal.Copy(fontArray, 0, ptrData, dataLength);
+            IntPtr cil_ptr = Marshal.AllocCoTaskMem(cil_dataLength);
+            Marshal.Copy(cil_fontArray, 0, cil_ptr, cil_dataLength);
 
-            uint cFonts = 0;
-            AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts);
+            uint cil_Fonts = 0;
+            AddFontMemResourceEx(cil_ptr, (uint)cil_fontArray.Length, IntPtr.Zero, ref cil_Fonts);
 
-            PrivateFontCollection pfc = new PrivateFontCollection();
-            pfc.AddMemoryFont(ptrData, dataLength);
+            PrivateFontCollection cil_pfc = new PrivateFontCollection();
+            cil_pfc.AddMemoryFont(cil_ptr, cil_dataLength);
 
-            Marshal.FreeCoTaskMem(ptrData);
-            cil = pfc.Families[0];
+            Marshal.FreeCoTaskMem(cil_ptr);
+            cil = cil_pfc.Families[0];
             conduit_itc_l = new Font(cil, 15f, FontStyle.Bold);
         }
 
@@ -231,7 +232,6 @@ namespace Cartographer_Launcher
             this.settings_panel.BackColor = pn;
             this.settings_panel.Width = 0;
             this.login_panel.Height = 0;
-            this.aPanel_username_textBox.BackColor = tt;
 
             #region Designer
             // 
@@ -326,6 +326,25 @@ namespace Cartographer_Launcher
             // 
             this.aPanel_remember_label.Font = new Font(cil, 12);
             this.aPanel_remember_label.ForeColor = nt;
+            //
+            //aPanel_username_textBox
+            //
+            this.aPanel_username_textBox.BackColor = tbt;
+            this.aPanel_username_textBox.ForeColor = tt;
+            this.aPanel_username_textBox.Font = new Font(cil, 12, FontStyle.Bold);
+            //
+            //aPanel_password_textBox
+            //
+            this.aPanel_password_textBox.BackColor = tbt;
+            this.aPanel_password_textBox.ForeColor = tt;
+            this.aPanel_password_textBox.Font = new Font(cil, 12, FontStyle.Bold);
+            //
+            //aPanel_remember_checkBox
+            //
+            this.aPanel_remember_checkBox.BackColor = tbt;
+            this.aPanel_remember_checkBox.ForeColor = tt;
+            this.aPanel_remember_checkBox.FlatAppearance.CheckedBackColor = tt;
+            this.aPanel_remember_checkBox.FlatAppearance.BorderColor = tbt;
             #endregion
 
             this.Refresh();

@@ -101,7 +101,7 @@
             this.title_label.BackColor = System.Drawing.Color.Transparent;
             this.title_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.title_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.title_label.Location = new System.Drawing.Point(209, 185);
+            this.title_label.Location = new System.Drawing.Point(212, 178);
             this.title_label.Name = "title_label";
             this.title_label.Size = new System.Drawing.Size(169, 13);
             this.title_label.TabIndex = 3;
@@ -113,7 +113,7 @@
             this.login_label.BackColor = System.Drawing.Color.Transparent;
             this.login_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.login_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.login_label.Location = new System.Drawing.Point(342, 262);
+            this.login_label.Location = new System.Drawing.Point(349, 255);
             this.login_label.Name = "login_label";
             this.login_label.Size = new System.Drawing.Size(45, 13);
             this.login_label.TabIndex = 4;
@@ -126,7 +126,7 @@
             this.update_label.BackColor = System.Drawing.Color.Transparent;
             this.update_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.update_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.update_label.Location = new System.Drawing.Point(277, 362);
+            this.update_label.Location = new System.Drawing.Point(284, 355);
             this.update_label.Name = "update_label";
             this.update_label.Size = new System.Drawing.Size(110, 13);
             this.update_label.TabIndex = 6;
@@ -139,7 +139,7 @@
             this.register_label.BackColor = System.Drawing.Color.Transparent;
             this.register_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.register_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.register_label.Location = new System.Drawing.Point(317, 295);
+            this.register_label.Location = new System.Drawing.Point(324, 288);
             this.register_label.Name = "register_label";
             this.register_label.Size = new System.Drawing.Size(70, 13);
             this.register_label.TabIndex = 7;
@@ -152,7 +152,7 @@
             this.settings_label.BackColor = System.Drawing.Color.Transparent;
             this.settings_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.settings_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.settings_label.Location = new System.Drawing.Point(318, 329);
+            this.settings_label.Location = new System.Drawing.Point(325, 322);
             this.settings_label.Name = "settings_label";
             this.settings_label.Size = new System.Drawing.Size(69, 13);
             this.settings_label.TabIndex = 8;
@@ -164,7 +164,7 @@
             this.logo_picturebox.BackColor = System.Drawing.Color.Transparent;
             this.logo_picturebox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("logo_picturebox.BackgroundImage")));
             this.logo_picturebox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.logo_picturebox.Location = new System.Drawing.Point(121, 103);
+            this.logo_picturebox.Location = new System.Drawing.Point(124, 96);
             this.logo_picturebox.Name = "logo_picturebox";
             this.logo_picturebox.Size = new System.Drawing.Size(510, 70);
             this.logo_picturebox.TabIndex = 9;
@@ -288,6 +288,7 @@
             this.login_panel.Controls.Add(this.aPanel_username_textBox);
             this.login_panel.Controls.Add(this.aPanel_password_label);
             this.login_panel.Controls.Add(this.aPanel_username_label);
+            this.login_panel.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.login_panel.Location = new System.Drawing.Point(225, 0);
             this.login_panel.Name = "login_panel";
             this.login_panel.Size = new System.Drawing.Size(300, 138);
@@ -320,15 +321,18 @@
             // 
             // aPanel_remember_checkBox
             // 
-            this.aPanel_remember_checkBox.AutoSize = true;
-            this.aPanel_remember_checkBox.Location = new System.Drawing.Point(183, 114);
+            this.aPanel_remember_checkBox.Appearance = System.Windows.Forms.Appearance.Button;
+            this.aPanel_remember_checkBox.FlatAppearance.BorderSize = 0;
+            this.aPanel_remember_checkBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.aPanel_remember_checkBox.Location = new System.Drawing.Point(178, 110);
             this.aPanel_remember_checkBox.Name = "aPanel_remember_checkBox";
-            this.aPanel_remember_checkBox.Size = new System.Drawing.Size(15, 14);
+            this.aPanel_remember_checkBox.Size = new System.Drawing.Size(16, 16);
             this.aPanel_remember_checkBox.TabIndex = 17;
             this.aPanel_remember_checkBox.UseVisualStyleBackColor = true;
             // 
             // aPanel_password_textBox
             // 
+            this.aPanel_password_textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.aPanel_password_textBox.Location = new System.Drawing.Point(137, 81);
             this.aPanel_password_textBox.Name = "aPanel_password_textBox";
             this.aPanel_password_textBox.Size = new System.Drawing.Size(112, 20);
@@ -336,6 +340,7 @@
             // 
             // aPanel_username_textBox
             // 
+            this.aPanel_username_textBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.aPanel_username_textBox.Location = new System.Drawing.Point(137, 48);
             this.aPanel_username_textBox.Name = "aPanel_username_textBox";
             this.aPanel_username_textBox.Size = new System.Drawing.Size(112, 20);
