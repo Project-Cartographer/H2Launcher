@@ -55,10 +55,10 @@
             this.aPanel_password_label = new System.Windows.Forms.Label();
             this.aPanel_username_label = new System.Windows.Forms.Label();
             this.update_panel = new System.Windows.Forms.Panel();
-            this.uPanel_richTextBox = new System.Windows.Forms.RichTextBox();
             this.uPanel_title_label = new System.Windows.Forms.Label();
             this.aPanel_timer = new System.Windows.Forms.Timer(this.components);
             this.uPanel_timer = new System.Windows.Forms.Timer(this.components);
+            this.uPanel_richTextBox = new Cartographer_Launcher.richTextBox_transparent();
             ((System.ComponentModel.ISupportInitialize)(this.logo_picturebox)).BeginInit();
             this.settings_panel.SuspendLayout();
             this.login_panel.SuspendLayout();
@@ -187,9 +187,9 @@
             this.settings_panel.Controls.Add(this.sPanel_setting1_label);
             this.settings_panel.Controls.Add(this.sPanel_title_label);
             this.settings_panel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.settings_panel.Location = new System.Drawing.Point(500, 0);
+            this.settings_panel.Location = new System.Drawing.Point(531, 0);
             this.settings_panel.Name = "settings_panel";
-            this.settings_panel.Size = new System.Drawing.Size(250, 450);
+            this.settings_panel.Size = new System.Drawing.Size(219, 450);
             this.settings_panel.TabIndex = 10;
             this.settings_panel.Click += new System.EventHandler(this.settings_panel_Click);
             // 
@@ -199,7 +199,7 @@
             this.sPanel_close_label.BackColor = System.Drawing.Color.Transparent;
             this.sPanel_close_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sPanel_close_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_close_label.Location = new System.Drawing.Point(221, 3);
+            this.sPanel_close_label.Location = new System.Drawing.Point(192, 3);
             this.sPanel_close_label.Name = "sPanel_close_label";
             this.sPanel_close_label.Size = new System.Drawing.Size(19, 13);
             this.sPanel_close_label.TabIndex = 17;
@@ -373,17 +373,7 @@
             this.update_panel.Name = "update_panel";
             this.update_panel.Size = new System.Drawing.Size(350, 247);
             this.update_panel.TabIndex = 19;
-            this.update_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.update_panel_Paint);
-            // 
-            // uPanel_richTextBox
-            // 
-            this.uPanel_richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.uPanel_richTextBox.Location = new System.Drawing.Point(0, 40);
-            this.uPanel_richTextBox.Name = "uPanel_richTextBox";
-            this.uPanel_richTextBox.ReadOnly = true;
-            this.uPanel_richTextBox.Size = new System.Drawing.Size(350, 207);
-            this.uPanel_richTextBox.TabIndex = 21;
-            this.uPanel_richTextBox.Text = "";
+            this.update_panel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.update_panel_MouseClick);
             // 
             // uPanel_title_label
             // 
@@ -406,6 +396,16 @@
             // 
             this.uPanel_timer.Interval = 80;
             this.uPanel_timer.Tick += new System.EventHandler(this.uPanel_timer_Tick);
+            // 
+            // uPanel_richTextBox
+            // 
+            this.uPanel_richTextBox.BackColor = System.Drawing.Color.Transparent;
+            this.uPanel_richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.uPanel_richTextBox.Location = new System.Drawing.Point(29, 52);
+            this.uPanel_richTextBox.Name = "uPanel_richTextBox";
+            this.uPanel_richTextBox.Size = new System.Drawing.Size(318, 192);
+            this.uPanel_richTextBox.TabIndex = 22;
+            this.uPanel_richTextBox.Text = "";
             // 
             // launcher_form
             // 
@@ -473,9 +473,9 @@
         private System.Windows.Forms.Label aPanel_title_label;
         private System.Windows.Forms.Panel update_panel;
         private System.Windows.Forms.Label uPanel_title_label;
-        private System.Windows.Forms.RichTextBox uPanel_richTextBox;
         private System.Windows.Forms.Timer aPanel_timer;
         private System.Windows.Forms.Timer uPanel_timer;
+        private richTextBox_transparent uPanel_richTextBox;
     }
 }
 
