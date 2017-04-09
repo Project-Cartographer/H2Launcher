@@ -39,16 +39,25 @@
             this.settings_label = new System.Windows.Forms.Label();
             this.logo_picturebox = new System.Windows.Forms.PictureBox();
             this.settings_panel = new System.Windows.Forms.Panel();
-            this.panel_slide = new System.Windows.Forms.Timer(this.components);
-            this.sPanel_title_label = new System.Windows.Forms.Label();
-            this.sPanel_setting1_label = new System.Windows.Forms.Label();
-            this.sPanel_setting2_label = new System.Windows.Forms.Label();
+            this.sPanel_close_label = new System.Windows.Forms.Label();
+            this.sPanel_setting5_label = new System.Windows.Forms.Label();
             this.sPanel_setting4_label = new System.Windows.Forms.Label();
             this.sPanel_setting3_label = new System.Windows.Forms.Label();
-            this.sPanel_setting5_label = new System.Windows.Forms.Label();
-            this.sPanel_close_label = new System.Windows.Forms.Label();
+            this.sPanel_setting2_label = new System.Windows.Forms.Label();
+            this.sPanel_setting1_label = new System.Windows.Forms.Label();
+            this.sPanel_title_label = new System.Windows.Forms.Label();
+            this.panel_slide = new System.Windows.Forms.Timer(this.components);
+            this.login_panel = new System.Windows.Forms.Panel();
+            this.aPanel_title_label = new System.Windows.Forms.Label();
+            this.aPanel_remember_label = new System.Windows.Forms.Label();
+            this.aPanel_remember_checkBox = new System.Windows.Forms.CheckBox();
+            this.aPanel_password_textBox = new System.Windows.Forms.TextBox();
+            this.aPanel_username_textBox = new System.Windows.Forms.TextBox();
+            this.aPanel_password_label = new System.Windows.Forms.Label();
+            this.aPanel_username_label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.logo_picturebox)).BeginInit();
             this.settings_panel.SuspendLayout();
+            this.login_panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // close_button
@@ -164,7 +173,7 @@
             // settings_panel
             // 
             this.settings_panel.BackColor = System.Drawing.Color.Transparent;
-            this.settings_panel.BackgroundImage = global::Cartographer_Launcher.Properties.Resources.panel_opacity;
+            this.settings_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.settings_panel.Controls.Add(this.sPanel_close_label);
             this.settings_panel.Controls.Add(this.sPanel_setting5_label);
             this.settings_panel.Controls.Add(this.sPanel_setting4_label);
@@ -177,83 +186,6 @@
             this.settings_panel.Name = "settings_panel";
             this.settings_panel.Size = new System.Drawing.Size(250, 450);
             this.settings_panel.TabIndex = 10;
-            // 
-            // panel_slide
-            // 
-            this.panel_slide.Interval = 10;
-            this.panel_slide.Tick += new System.EventHandler(this.panel_slide_Tick);
-            // 
-            // sPanel_title_label
-            // 
-            this.sPanel_title_label.AutoSize = true;
-            this.sPanel_title_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_title_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_title_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_title_label.Location = new System.Drawing.Point(15, 12);
-            this.sPanel_title_label.Name = "sPanel_title_label";
-            this.sPanel_title_label.Size = new System.Drawing.Size(69, 13);
-            this.sPanel_title_label.TabIndex = 11;
-            this.sPanel_title_label.Text = "SETTINGS";
-            // 
-            // sPanel_setting1_label
-            // 
-            this.sPanel_setting1_label.AutoSize = true;
-            this.sPanel_setting1_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_setting1_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_setting1_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_setting1_label.Location = new System.Drawing.Point(30, 63);
-            this.sPanel_setting1_label.Name = "sPanel_setting1_label";
-            this.sPanel_setting1_label.Size = new System.Drawing.Size(73, 13);
-            this.sPanel_setting1_label.TabIndex = 12;
-            this.sPanel_setting1_label.Text = "NO SOUND";
-            // 
-            // sPanel_setting2_label
-            // 
-            this.sPanel_setting2_label.AutoSize = true;
-            this.sPanel_setting2_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_setting2_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_setting2_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_setting2_label.Location = new System.Drawing.Point(30, 93);
-            this.sPanel_setting2_label.Name = "sPanel_setting2_label";
-            this.sPanel_setting2_label.Size = new System.Drawing.Size(104, 13);
-            this.sPanel_setting2_label.TabIndex = 13;
-            this.sPanel_setting2_label.Text = "VERTICAL SYNC";
-            // 
-            // sPanel_setting4_label
-            // 
-            this.sPanel_setting4_label.AutoSize = true;
-            this.sPanel_setting4_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_setting4_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_setting4_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_setting4_label.Location = new System.Drawing.Point(30, 157);
-            this.sPanel_setting4_label.Name = "sPanel_setting4_label";
-            this.sPanel_setting4_label.Size = new System.Drawing.Size(119, 13);
-            this.sPanel_setting4_label.TabIndex = 15;
-            this.sPanel_setting4_label.Text = "WINDOWED MODE";
-            // 
-            // sPanel_setting3_label
-            // 
-            this.sPanel_setting3_label.AutoSize = true;
-            this.sPanel_setting3_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_setting3_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_setting3_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_setting3_label.Location = new System.Drawing.Point(30, 125);
-            this.sPanel_setting3_label.Name = "sPanel_setting3_label";
-            this.sPanel_setting3_label.Size = new System.Drawing.Size(116, 13);
-            this.sPanel_setting3_label.TabIndex = 14;
-            this.sPanel_setting3_label.Text = "STARTUP MOVIES";
-            // 
-            // sPanel_setting5_label
-            // 
-            this.sPanel_setting5_label.AutoSize = true;
-            this.sPanel_setting5_label.BackColor = System.Drawing.Color.Transparent;
-            this.sPanel_setting5_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sPanel_setting5_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sPanel_setting5_label.Location = new System.Drawing.Point(30, 187);
-            this.sPanel_setting5_label.Name = "sPanel_setting5_label";
-            this.sPanel_setting5_label.Size = new System.Drawing.Size(119, 13);
-            this.sPanel_setting5_label.TabIndex = 16;
-            this.sPanel_setting5_label.Text = "DEFAULT DISPLAY";
             // 
             // sPanel_close_label
             // 
@@ -268,6 +200,169 @@
             this.sPanel_close_label.Text = "➔";
             this.sPanel_close_label.Click += new System.EventHandler(this.sPanel_close_label_Click);
             // 
+            // sPanel_setting5_label
+            // 
+            this.sPanel_setting5_label.AutoSize = true;
+            this.sPanel_setting5_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_setting5_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_setting5_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_setting5_label.Location = new System.Drawing.Point(30, 187);
+            this.sPanel_setting5_label.Name = "sPanel_setting5_label";
+            this.sPanel_setting5_label.Size = new System.Drawing.Size(93, 13);
+            this.sPanel_setting5_label.TabIndex = 16;
+            this.sPanel_setting5_label.Text = "Default Display";
+            // 
+            // sPanel_setting4_label
+            // 
+            this.sPanel_setting4_label.AutoSize = true;
+            this.sPanel_setting4_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_setting4_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_setting4_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_setting4_label.Location = new System.Drawing.Point(30, 157);
+            this.sPanel_setting4_label.Name = "sPanel_setting4_label";
+            this.sPanel_setting4_label.Size = new System.Drawing.Size(101, 13);
+            this.sPanel_setting4_label.TabIndex = 15;
+            this.sPanel_setting4_label.Text = "Windowed Mode";
+            // 
+            // sPanel_setting3_label
+            // 
+            this.sPanel_setting3_label.AutoSize = true;
+            this.sPanel_setting3_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_setting3_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_setting3_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_setting3_label.Location = new System.Drawing.Point(30, 125);
+            this.sPanel_setting3_label.Name = "sPanel_setting3_label";
+            this.sPanel_setting3_label.Size = new System.Drawing.Size(92, 13);
+            this.sPanel_setting3_label.TabIndex = 14;
+            this.sPanel_setting3_label.Text = "Startup Movies";
+            // 
+            // sPanel_setting2_label
+            // 
+            this.sPanel_setting2_label.AutoSize = true;
+            this.sPanel_setting2_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_setting2_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_setting2_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_setting2_label.Location = new System.Drawing.Point(30, 93);
+            this.sPanel_setting2_label.Name = "sPanel_setting2_label";
+            this.sPanel_setting2_label.Size = new System.Drawing.Size(82, 13);
+            this.sPanel_setting2_label.TabIndex = 13;
+            this.sPanel_setting2_label.Text = "Verticle Sync";
+            // 
+            // sPanel_setting1_label
+            // 
+            this.sPanel_setting1_label.AutoSize = true;
+            this.sPanel_setting1_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_setting1_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_setting1_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_setting1_label.Location = new System.Drawing.Point(30, 63);
+            this.sPanel_setting1_label.Name = "sPanel_setting1_label";
+            this.sPanel_setting1_label.Size = new System.Drawing.Size(63, 13);
+            this.sPanel_setting1_label.TabIndex = 12;
+            this.sPanel_setting1_label.Text = "No Sound";
+            // 
+            // sPanel_title_label
+            // 
+            this.sPanel_title_label.AutoSize = true;
+            this.sPanel_title_label.BackColor = System.Drawing.Color.Transparent;
+            this.sPanel_title_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sPanel_title_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sPanel_title_label.Location = new System.Drawing.Point(15, 12);
+            this.sPanel_title_label.Name = "sPanel_title_label";
+            this.sPanel_title_label.Size = new System.Drawing.Size(69, 13);
+            this.sPanel_title_label.TabIndex = 11;
+            this.sPanel_title_label.Text = "SETTINGS";
+            // 
+            // panel_slide
+            // 
+            this.panel_slide.Tick += new System.EventHandler(this.panel_slide_Tick);
+            // 
+            // login_panel
+            // 
+            this.login_panel.BackColor = System.Drawing.Color.Transparent;
+            this.login_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.login_panel.Controls.Add(this.aPanel_title_label);
+            this.login_panel.Controls.Add(this.aPanel_remember_label);
+            this.login_panel.Controls.Add(this.aPanel_remember_checkBox);
+            this.login_panel.Controls.Add(this.aPanel_password_textBox);
+            this.login_panel.Controls.Add(this.aPanel_username_textBox);
+            this.login_panel.Controls.Add(this.aPanel_password_label);
+            this.login_panel.Controls.Add(this.aPanel_username_label);
+            this.login_panel.Location = new System.Drawing.Point(225, 0);
+            this.login_panel.Name = "login_panel";
+            this.login_panel.Size = new System.Drawing.Size(300, 138);
+            this.login_panel.TabIndex = 18;
+            // 
+            // aPanel_title_label
+            // 
+            this.aPanel_title_label.AutoSize = true;
+            this.aPanel_title_label.BackColor = System.Drawing.Color.Transparent;
+            this.aPanel_title_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.aPanel_title_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aPanel_title_label.Location = new System.Drawing.Point(15, 12);
+            this.aPanel_title_label.Name = "aPanel_title_label";
+            this.aPanel_title_label.Size = new System.Drawing.Size(108, 13);
+            this.aPanel_title_label.TabIndex = 19;
+            this.aPanel_title_label.Text = "ACCOUNT LOGIN";
+            // 
+            // aPanel_remember_label
+            // 
+            this.aPanel_remember_label.AutoSize = true;
+            this.aPanel_remember_label.BackColor = System.Drawing.Color.Transparent;
+            this.aPanel_remember_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.aPanel_remember_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aPanel_remember_label.Location = new System.Drawing.Point(201, 110);
+            this.aPanel_remember_label.Name = "aPanel_remember_label";
+            this.aPanel_remember_label.Size = new System.Drawing.Size(87, 13);
+            this.aPanel_remember_label.TabIndex = 18;
+            this.aPanel_remember_label.Text = "Remember Me";
+            // 
+            // aPanel_remember_checkBox
+            // 
+            this.aPanel_remember_checkBox.AutoSize = true;
+            this.aPanel_remember_checkBox.Location = new System.Drawing.Point(183, 114);
+            this.aPanel_remember_checkBox.Name = "aPanel_remember_checkBox";
+            this.aPanel_remember_checkBox.Size = new System.Drawing.Size(15, 14);
+            this.aPanel_remember_checkBox.TabIndex = 17;
+            this.aPanel_remember_checkBox.UseVisualStyleBackColor = true;
+            // 
+            // aPanel_password_textBox
+            // 
+            this.aPanel_password_textBox.Location = new System.Drawing.Point(137, 81);
+            this.aPanel_password_textBox.Name = "aPanel_password_textBox";
+            this.aPanel_password_textBox.Size = new System.Drawing.Size(112, 20);
+            this.aPanel_password_textBox.TabIndex = 16;
+            // 
+            // aPanel_username_textBox
+            // 
+            this.aPanel_username_textBox.Location = new System.Drawing.Point(137, 48);
+            this.aPanel_username_textBox.Name = "aPanel_username_textBox";
+            this.aPanel_username_textBox.Size = new System.Drawing.Size(112, 20);
+            this.aPanel_username_textBox.TabIndex = 15;
+            // 
+            // aPanel_password_label
+            // 
+            this.aPanel_password_label.AutoSize = true;
+            this.aPanel_password_label.BackColor = System.Drawing.Color.Transparent;
+            this.aPanel_password_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.aPanel_password_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aPanel_password_label.Location = new System.Drawing.Point(48, 81);
+            this.aPanel_password_label.Name = "aPanel_password_label";
+            this.aPanel_password_label.Size = new System.Drawing.Size(61, 13);
+            this.aPanel_password_label.TabIndex = 14;
+            this.aPanel_password_label.Text = "Password";
+            // 
+            // aPanel_username_label
+            // 
+            this.aPanel_username_label.AutoSize = true;
+            this.aPanel_username_label.BackColor = System.Drawing.Color.Transparent;
+            this.aPanel_username_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.aPanel_username_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.aPanel_username_label.Location = new System.Drawing.Point(46, 48);
+            this.aPanel_username_label.Name = "aPanel_username_label";
+            this.aPanel_username_label.Size = new System.Drawing.Size(63, 13);
+            this.aPanel_username_label.TabIndex = 13;
+            this.aPanel_username_label.Text = "Username";
+            // 
             // launcher_form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -277,7 +372,6 @@
             this.ClientSize = new System.Drawing.Size(750, 450);
             this.ControlBox = false;
             this.Controls.Add(this.settings_panel);
-            this.Controls.Add(this.logo_picturebox);
             this.Controls.Add(this.settings_label);
             this.Controls.Add(this.register_label);
             this.Controls.Add(this.update_label);
@@ -285,6 +379,8 @@
             this.Controls.Add(this.title_label);
             this.Controls.Add(this.minimize_button);
             this.Controls.Add(this.close_button);
+            this.Controls.Add(this.login_panel);
+            this.Controls.Add(this.logo_picturebox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -295,6 +391,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.logo_picturebox)).EndInit();
             this.settings_panel.ResumeLayout(false);
             this.settings_panel.PerformLayout();
+            this.login_panel.ResumeLayout(false);
+            this.login_panel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -319,6 +417,14 @@
         private System.Windows.Forms.Label sPanel_setting2_label;
         private System.Windows.Forms.Label sPanel_setting1_label;
         private System.Windows.Forms.Label sPanel_close_label;
+        private System.Windows.Forms.Panel login_panel;
+        private System.Windows.Forms.CheckBox aPanel_remember_checkBox;
+        private System.Windows.Forms.TextBox aPanel_password_textBox;
+        private System.Windows.Forms.TextBox aPanel_username_textBox;
+        private System.Windows.Forms.Label aPanel_password_label;
+        private System.Windows.Forms.Label aPanel_username_label;
+        private System.Windows.Forms.Label aPanel_remember_label;
+        private System.Windows.Forms.Label aPanel_title_label;
     }
 }
 

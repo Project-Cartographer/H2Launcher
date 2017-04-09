@@ -18,29 +18,23 @@ namespace Cartographer_Launcher
     public partial class launcher_form : Form
     {
         #region Dependencies
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-        public const int WS_MINIMIZEBOX = 0x20000;
-        public const int CS_DBLCLKS = 0x8;
+        private bool login_check, register_check, settings_check, update_check, sPanel_check, aPanel_check;
+        public const int WM_NCLBUTTONDOWN = 0xA1, HT_CAPTION = 0x2, WS_MINIMIZEBOX = 0x20000, CS_DBLCLKS = 0x8;
 
         public delegate void MouseMovedEvent();
-        private bool login_check;
-        private bool register_check;
-        private bool settings_check;
-        private bool update_check;
-        private bool sPanel_check;
 
-        FontFamily ff;
-        Font font;
+        FontFamily hgb, cil;
+        Font handel_gothic_b, conduit_itc_l;
 
         Color tt = Color.FromArgb(193, 218, 248); //#C1DAF8
+        Color nt = Color.FromArgb(104, 164, 227); //#68A4E3
         Color bt = Color.FromArgb(184, 205, 224); //#B8CDE0
         Color bb_hover = Color.FromArgb(33, 63, 132); //#213F84
         Color bb_click = Color.FromArgb(46, 83, 166); //#2E53A6
         Color mt = Color.FromArgb(94, 109, 139); //#5E6D8B
         Color mt_hover = Color.FromArgb(126, 147, 178); //#7E93B2
         Color mt_click = Color.FromArgb(178, 211, 246); //#B2D3F6
-        //Color pn = Color.FromArgb(0, 12, 45); //#000C2D
+        Color pn = Color.FromArgb(140, 0, 12, 45); //#000C2D
 
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -85,7 +79,9 @@ namespace Cartographer_Launcher
             Application.AddMessageFilter(gmh);
 
             InitializeComponent();
+
             HandelGothicMedium();
+            ConduitITC_light();
             StyleSheet();
             CursorPositionStyleSheet();
 
@@ -94,8 +90,6 @@ namespace Cartographer_Launcher
             settings_check = false;
             update_check = false;
             sPanel_check = false;
-
-            this.settings_panel.Width = 0;
         }
 
         private void CursorPositionStyleSheet()
@@ -109,15 +103,18 @@ namespace Cartographer_Launcher
                 && rel_pos.Y >= login_label.Location.Y
                 && rel_pos.Y <= login_label.Location.Y + login_label.Size.Height)
             {
-                if (!login_check)
-                    this.login_label.ForeColor = mt_hover;
-                else
+                if (login_check)
                     this.login_label.ForeColor = mt_click;
+                else
+                    this.login_label.ForeColor = mt_hover;
             }
             else
             {
+                if (panel_slide.Enabled == true && !settings_check)
+                    login_check = true;
+                else
+                    login_check = false;
                 this.login_label.ForeColor = mt;
-                login_check = false;
             }
             #endregion
 
@@ -145,15 +142,18 @@ namespace Cartographer_Launcher
                 && rel_pos.Y >= settings_label.Location.Y
                 && rel_pos.Y <= settings_label.Location.Y + settings_label.Size.Height)
             {
-                if (!settings_check)
-                    this.settings_label.ForeColor = mt_hover;
-                else
+                if (settings_check)
                     this.settings_label.ForeColor = mt_click;
+                else
+                    this.settings_label.ForeColor = mt_hover;
             }
             else
             {
+                if (panel_slide.Enabled == true && !login_check)
+                    settings_check = true;
+                else
+                    settings_check = false;
                 this.settings_label.ForeColor = mt;
-                settings_check = false;
             }
             #endregion
 
@@ -192,10 +192,29 @@ namespace Cartographer_Launcher
             pfc.AddMemoryFont(ptrData, dataLength);
 
             Marshal.FreeCoTaskMem(ptrData);
-            ff = pfc.Families[0];
-            font = new Font(ff, 15f, FontStyle.Bold);
+            hgb = pfc.Families[0];
+            handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
         }
 
+        private void ConduitITC_light()
+        {
+
+            byte[] fontArray = Cartographer_Launcher.Properties.Resources.conduit_itc_light;
+            int dataLength = Cartographer_Launcher.Properties.Resources.conduit_itc_light.Length;
+
+            IntPtr ptrData = Marshal.AllocCoTaskMem(dataLength);
+            Marshal.Copy(fontArray, 0, ptrData, dataLength);
+
+            uint cFonts = 0;
+            AddFontMemResourceEx(ptrData, (uint)fontArray.Length, IntPtr.Zero, ref cFonts);
+
+            PrivateFontCollection pfc = new PrivateFontCollection();
+            pfc.AddMemoryFont(ptrData, dataLength);
+
+            Marshal.FreeCoTaskMem(ptrData);
+            cil = pfc.Families[0];
+            conduit_itc_l = new Font(cil, 15f, FontStyle.Bold);
+        }
 
         public void StyleSheet()
         {
@@ -204,6 +223,14 @@ namespace Cartographer_Launcher
             this.TransparencyKey = Color.LimeGreen;
             //End Transparency Fix
 
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.login_panel.BackColor = pn;
+            this.settings_panel.BackColor = pn;
+            this.settings_panel.Width = 0;
+            this.login_panel.Height = 0;
+
+            #region Fonts
             this.minimize_button.ForeColor = bt;
             this.minimize_button.FlatAppearance.MouseOverBackColor = bb_hover;
             this.minimize_button.FlatAppearance.MouseDownBackColor = bb_click;
@@ -212,37 +239,125 @@ namespace Cartographer_Launcher
             this.close_button.FlatAppearance.MouseOverBackColor = bb_hover;
             this.close_button.FlatAppearance.MouseDownBackColor = bb_click;
 
-            this.title_label.Font = new Font(ff, 20);
+            this.title_label.Font = new Font(hgb, 20);
             this.title_label.ForeColor = tt;
 
-            this.login_label.Font = new Font(ff, 18);
+            this.login_label.Font = new Font(hgb, 18);
             this.login_label.ForeColor = mt;
 
-            this.register_label.Font = new Font(ff, 18);
+            this.register_label.Font = new Font(hgb, 18);
             this.register_label.ForeColor = mt;
 
-            this.settings_label.Font = new Font(ff, 18);
+            this.settings_label.Font = new Font(hgb, 18);
             this.settings_label.ForeColor = mt;
 
-            this.update_label.Font = new Font(ff, 18);
+            this.update_label.Font = new Font(hgb, 18);
             this.update_label.ForeColor = mt;
 
-            #region Panel Settings
-            this.sPanel_title_label.Font = new Font(ff, 20);
+            this.sPanel_title_label.Font = new Font(hgb, 20);
             this.sPanel_title_label.ForeColor = tt;
-            this.sPanel_close_label.Font = new Font(ff, 28);
+
+            this.sPanel_close_label.Font = new Font(cil, 28);
             this.sPanel_close_label.ForeColor = tt;
-            this.sPanel_setting1_label.Font = new Font(ff, 14);
+
+            this.sPanel_setting1_label.Font = new Font(cil, 14);
             this.sPanel_setting1_label.ForeColor = mt;
-            this.sPanel_setting2_label.Font = new Font(ff, 14);
+
+            this.sPanel_setting2_label.Font = new Font(cil, 14);
             this.sPanel_setting2_label.ForeColor = mt;
-            this.sPanel_setting3_label.Font = new Font(ff, 14);
+
+            this.sPanel_setting3_label.Font = new Font(cil, 14);
             this.sPanel_setting3_label.ForeColor = mt;
-            this.sPanel_setting4_label.Font = new Font(ff, 14);
+
+            this.sPanel_setting4_label.Font = new Font(cil, 14);
             this.sPanel_setting4_label.ForeColor = mt;
-            this.sPanel_setting5_label.Font = new Font(ff, 14);
+
+            this.sPanel_setting5_label.Font = new Font(cil, 14);
             this.sPanel_setting5_label.ForeColor = mt;
+
+            this.aPanel_title_label.Font = new Font(hgb, 14);
+            this.aPanel_title_label.ForeColor = tt;
+
+            this.aPanel_username_label.Font = new Font(cil, 14);
+            this.aPanel_username_label.ForeColor = nt;
+
+            this.aPanel_password_label.Font = new Font(cil, 14);
+            this.aPanel_password_label.ForeColor = nt;
+
+            this.aPanel_remember_label.Font = new Font(cil, 12);
+            this.aPanel_remember_label.ForeColor = nt;
             #endregion
+            this.Refresh();
+        }
+
+        private void sPanelSlide()
+        {
+            login_check = false;
+            if (!sPanel_check)
+            {
+                if (settings_panel.Width >= 260)
+                {
+                    sPanel_check = true;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    settings_panel.Width += 40;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (settings_panel.Width == 0)
+                {
+                    sPanel_check = false;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    settings_panel.Width -= 40;
+                    this.Refresh();
+                }
+            }
+        }
+
+        private void aPanelSlide()
+        {
+            settings_check = false;
+            if (!aPanel_check)
+            {
+                if (login_panel.Height >= 138)
+                {
+                    aPanel_check = true;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    login_panel.Height += 40;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (login_panel.Height == 0)
+                {
+                    aPanel_check = false;
+                    this.Refresh();
+                    panel_slide.Stop();
+                    panel_slide.Enabled = false;
+                }
+                else
+                {
+                    login_panel.Height -= 40;
+                    this.Refresh();
+                }
+            }
         }
 
         #region Event Handlers
@@ -269,6 +384,8 @@ namespace Cartographer_Launcher
         private void login_label_Click(object sender, EventArgs e)
         {
             login_check = true;
+            panel_slide.Enabled = true;
+            panel_slide.Start();
         }
 
         private void register_label_Click(object sender, EventArgs e)
@@ -299,31 +416,10 @@ namespace Cartographer_Launcher
 
         private void panel_slide_Tick(object sender, EventArgs e)
         {
-            if (!sPanel_check)
-            {
-                if (settings_panel.Width >= 250)
-                {
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                    sPanel_check = true;
-                }
-                else
-                {
-                    settings_panel.Width += 70;
-                    this.Refresh();
-                }
-            }
-            else
-            {
-                if (settings_panel.Width == 0)
-                {
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
-                    sPanel_check = false;
-                }
-                else
-                    settings_panel.Width -= 60;
-            }
+            if (settings_check)
+                sPanelSlide();
+            if (login_check)
+                aPanelSlide();
         }
 
     }

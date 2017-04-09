@@ -71,6 +71,16 @@ namespace Cartographer_Launcher.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] conduit_itc_light {
+            get {
+                object obj = ResourceManager.GetObject("conduit_itc_light", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon h2_icon {
