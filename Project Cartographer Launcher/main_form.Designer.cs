@@ -46,18 +46,23 @@
             this.sPanel_setting2_label = new System.Windows.Forms.Label();
             this.sPanel_setting1_label = new System.Windows.Forms.Label();
             this.sPanel_title_label = new System.Windows.Forms.Label();
-            this.panel_slide = new System.Windows.Forms.Timer(this.components);
+            this.sPanel_timer = new System.Windows.Forms.Timer(this.components);
             this.login_panel = new System.Windows.Forms.Panel();
             this.aPanel_title_label = new System.Windows.Forms.Label();
             this.aPanel_remember_label = new System.Windows.Forms.Label();
-            this.aPanel_remember_checkBox = new System.Windows.Forms.CheckBox();
             this.aPanel_password_textBox = new System.Windows.Forms.TextBox();
             this.aPanel_username_textBox = new System.Windows.Forms.TextBox();
             this.aPanel_password_label = new System.Windows.Forms.Label();
             this.aPanel_username_label = new System.Windows.Forms.Label();
+            this.update_panel = new System.Windows.Forms.Panel();
+            this.uPanel_richTextBox = new System.Windows.Forms.RichTextBox();
+            this.uPanel_title_label = new System.Windows.Forms.Label();
+            this.aPanel_timer = new System.Windows.Forms.Timer(this.components);
+            this.uPanel_timer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.logo_picturebox)).BeginInit();
             this.settings_panel.SuspendLayout();
             this.login_panel.SuspendLayout();
+            this.update_panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // close_button
@@ -173,7 +178,7 @@
             // settings_panel
             // 
             this.settings_panel.BackColor = System.Drawing.Color.Transparent;
-            this.settings_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.settings_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.settings_panel.Controls.Add(this.sPanel_close_label);
             this.settings_panel.Controls.Add(this.sPanel_setting5_label);
             this.settings_panel.Controls.Add(this.sPanel_setting4_label);
@@ -273,17 +278,17 @@
             this.sPanel_title_label.TabIndex = 11;
             this.sPanel_title_label.Text = "SETTINGS";
             // 
-            // panel_slide
+            // sPanel_timer
             // 
-            this.panel_slide.Tick += new System.EventHandler(this.panel_slide_Tick);
+            this.sPanel_timer.Interval = 80;
+            this.sPanel_timer.Tick += new System.EventHandler(this.sPanel_timer_Tick);
             // 
             // login_panel
             // 
             this.login_panel.BackColor = System.Drawing.Color.Transparent;
-            this.login_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.login_panel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.login_panel.Controls.Add(this.aPanel_title_label);
             this.login_panel.Controls.Add(this.aPanel_remember_label);
-            this.login_panel.Controls.Add(this.aPanel_remember_checkBox);
             this.login_panel.Controls.Add(this.aPanel_password_textBox);
             this.login_panel.Controls.Add(this.aPanel_username_textBox);
             this.login_panel.Controls.Add(this.aPanel_password_label);
@@ -318,17 +323,6 @@
             this.aPanel_remember_label.Size = new System.Drawing.Size(87, 13);
             this.aPanel_remember_label.TabIndex = 18;
             this.aPanel_remember_label.Text = "Remember Me";
-            // 
-            // aPanel_remember_checkBox
-            // 
-            this.aPanel_remember_checkBox.Appearance = System.Windows.Forms.Appearance.Button;
-            this.aPanel_remember_checkBox.FlatAppearance.BorderSize = 0;
-            this.aPanel_remember_checkBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.aPanel_remember_checkBox.Location = new System.Drawing.Point(178, 110);
-            this.aPanel_remember_checkBox.Name = "aPanel_remember_checkBox";
-            this.aPanel_remember_checkBox.Size = new System.Drawing.Size(16, 16);
-            this.aPanel_remember_checkBox.TabIndex = 17;
-            this.aPanel_remember_checkBox.UseVisualStyleBackColor = true;
             // 
             // aPanel_password_textBox
             // 
@@ -370,6 +364,49 @@
             this.aPanel_username_label.TabIndex = 13;
             this.aPanel_username_label.Text = "Username";
             // 
+            // update_panel
+            // 
+            this.update_panel.BackColor = System.Drawing.Color.Transparent;
+            this.update_panel.Controls.Add(this.uPanel_richTextBox);
+            this.update_panel.Controls.Add(this.uPanel_title_label);
+            this.update_panel.Location = new System.Drawing.Point(400, 203);
+            this.update_panel.Name = "update_panel";
+            this.update_panel.Size = new System.Drawing.Size(350, 247);
+            this.update_panel.TabIndex = 19;
+            this.update_panel.Paint += new System.Windows.Forms.PaintEventHandler(this.update_panel_Paint);
+            // 
+            // uPanel_richTextBox
+            // 
+            this.uPanel_richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.uPanel_richTextBox.Location = new System.Drawing.Point(0, 40);
+            this.uPanel_richTextBox.Name = "uPanel_richTextBox";
+            this.uPanel_richTextBox.ReadOnly = true;
+            this.uPanel_richTextBox.Size = new System.Drawing.Size(350, 207);
+            this.uPanel_richTextBox.TabIndex = 21;
+            this.uPanel_richTextBox.Text = "";
+            // 
+            // uPanel_title_label
+            // 
+            this.uPanel_title_label.AutoSize = true;
+            this.uPanel_title_label.BackColor = System.Drawing.Color.Transparent;
+            this.uPanel_title_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uPanel_title_label.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.uPanel_title_label.Location = new System.Drawing.Point(10, 7);
+            this.uPanel_title_label.Name = "uPanel_title_label";
+            this.uPanel_title_label.Size = new System.Drawing.Size(65, 13);
+            this.uPanel_title_label.TabIndex = 20;
+            this.uPanel_title_label.Text = "UPDATES";
+            // 
+            // aPanel_timer
+            // 
+            this.aPanel_timer.Interval = 80;
+            this.aPanel_timer.Tick += new System.EventHandler(this.aPanel_timer_Tick);
+            // 
+            // uPanel_timer
+            // 
+            this.uPanel_timer.Interval = 80;
+            this.uPanel_timer.Tick += new System.EventHandler(this.uPanel_timer_Tick);
+            // 
             // launcher_form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -378,6 +415,7 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(750, 450);
             this.ControlBox = false;
+            this.Controls.Add(this.update_panel);
             this.Controls.Add(this.settings_panel);
             this.Controls.Add(this.settings_label);
             this.Controls.Add(this.register_label);
@@ -400,6 +438,8 @@
             this.settings_panel.PerformLayout();
             this.login_panel.ResumeLayout(false);
             this.login_panel.PerformLayout();
+            this.update_panel.ResumeLayout(false);
+            this.update_panel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -416,7 +456,7 @@
         private System.Windows.Forms.Label settings_label;
         private System.Windows.Forms.PictureBox logo_picturebox;
         private System.Windows.Forms.Panel settings_panel;
-        private System.Windows.Forms.Timer panel_slide;
+        private System.Windows.Forms.Timer sPanel_timer;
         private System.Windows.Forms.Label sPanel_title_label;
         private System.Windows.Forms.Label sPanel_setting5_label;
         private System.Windows.Forms.Label sPanel_setting4_label;
@@ -425,13 +465,17 @@
         private System.Windows.Forms.Label sPanel_setting1_label;
         private System.Windows.Forms.Label sPanel_close_label;
         private System.Windows.Forms.Panel login_panel;
-        private System.Windows.Forms.CheckBox aPanel_remember_checkBox;
         private System.Windows.Forms.TextBox aPanel_password_textBox;
         private System.Windows.Forms.TextBox aPanel_username_textBox;
         private System.Windows.Forms.Label aPanel_password_label;
         private System.Windows.Forms.Label aPanel_username_label;
         private System.Windows.Forms.Label aPanel_remember_label;
         private System.Windows.Forms.Label aPanel_title_label;
+        private System.Windows.Forms.Panel update_panel;
+        private System.Windows.Forms.Label uPanel_title_label;
+        private System.Windows.Forms.RichTextBox uPanel_richTextBox;
+        private System.Windows.Forms.Timer aPanel_timer;
+        private System.Windows.Forms.Timer uPanel_timer;
     }
 }
 

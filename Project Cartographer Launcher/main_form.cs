@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing.Text;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace Cartographer_Launcher
 {
@@ -19,7 +20,8 @@ namespace Cartographer_Launcher
     {
         #region Dependencies
         private string register = "http://www.cartographer.h2pc.org/";
-        private bool login_check, register_check, settings_check, update_check, sPanel_check, aPanel_check;
+        private int uPanel_pointX, uPanel_pointY;
+        private bool login_check, register_check, settings_check, update_check, sPanel_check, aPanel_check, uPanel_check;
         public const int WM_NCLBUTTONDOWN = 0xA1, HT_CAPTION = 0x2, WS_MINIMIZEBOX = 0x20000, CS_DBLCLKS = 0x8;
 
         public delegate void MouseMovedEvent();
@@ -77,15 +79,15 @@ namespace Cartographer_Launcher
         public launcher_form()
         {
             GlobalMouseHandler gmh = new GlobalMouseHandler();
-            gmh.MouseMovement += new MouseMovedEvent(CursorPositionStyleSheet);
+            gmh.MouseMovement += new MouseMovedEvent(CursorPosition);
             Application.AddMessageFilter(gmh);
 
             InitializeComponent();
 
             HandelGothicMedium();
             ConduitITC_light();
+            CursorPosition();
             StyleSheet();
-            CursorPositionStyleSheet();
 
             login_check = false;
             register_check = false;
@@ -94,7 +96,7 @@ namespace Cartographer_Launcher
             sPanel_check = false;
         }
 
-        private void CursorPositionStyleSheet()
+        private void CursorPosition()
         {
             Point cur_pos = Cursor.Position;
             var rel_pos = this.PointToClient(cur_pos);
@@ -112,7 +114,7 @@ namespace Cartographer_Launcher
             }
             else
             {
-                if (panel_slide.Enabled == true && !settings_check)
+                if (aPanel_timer.Enabled == true && !settings_check && !update_check)
                     login_check = true;
                 else
                     login_check = false;
@@ -151,7 +153,7 @@ namespace Cartographer_Launcher
             }
             else
             {
-                if (panel_slide.Enabled == true && !login_check)
+                if (sPanel_timer.Enabled == true && !login_check && !update_check)
                     settings_check = true;
                 else
                     settings_check = false;
@@ -165,15 +167,18 @@ namespace Cartographer_Launcher
                 && rel_pos.Y >= update_label.Location.Y
                 && rel_pos.Y <= update_label.Location.Y + update_label.Size.Height)
             {
-                if (!update_check)
-                    this.update_label.ForeColor = menu_list_hover_text;
-                else
+                if (update_check)
                     this.update_label.ForeColor = menu_list_click_text;
+                else
+                    this.update_label.ForeColor = menu_list_hover_text;
             }
             else
             {
+                if (uPanel_timer.Enabled == true && !login_check && !settings_check)
+                    update_check = true;
+                else
+                    update_check = false;
                 this.update_label.ForeColor = menu_list_text;
-                update_check = false;
             }
             #endregion
         }
@@ -234,8 +239,10 @@ namespace Cartographer_Launcher
 
             this.login_panel.BackColor = panel_background;
             this.settings_panel.BackColor = panel_background;
+            this.update_panel.BackColor = panel_background;
             this.settings_panel.Width = 0;
             this.login_panel.Height = 0;
+            this.update_panel.Location = new Point(350, 450);
 
             #region Designer
             // 
@@ -313,7 +320,7 @@ namespace Cartographer_Launcher
             // 
             // aPanel_title_label
             // 
-            this.aPanel_title_label.Font = conduit_14;
+            this.aPanel_title_label.Font = handel_18b;
             this.aPanel_title_label.ForeColor = title_text;
             // 
             // aPanel_username_label
@@ -329,7 +336,7 @@ namespace Cartographer_Launcher
             // aPanel_remember_label
             // 
             this.aPanel_remember_label.Font = conduit_12;
-            this.aPanel_remember_label.ForeColor = normal_text;
+            this.aPanel_remember_label.ForeColor = menu_list_text;
             //
             //aPanel_username_textBox
             //
@@ -343,12 +350,16 @@ namespace Cartographer_Launcher
             this.aPanel_password_textBox.ForeColor = title_text;
             this.aPanel_password_textBox.Font = conduit_12b;
             //
-            //aPanel_remember_checkBox
+            //uPanel_title_label
             //
-            this.aPanel_remember_checkBox.BackColor = text_box_background;
-            this.aPanel_remember_checkBox.ForeColor = title_text;
-            this.aPanel_remember_checkBox.FlatAppearance.CheckedBackColor = title_text;
-            this.aPanel_remember_checkBox.FlatAppearance.BorderColor = text_box_background;
+            this.uPanel_title_label.Font = handel_18b;
+            this.uPanel_title_label.ForeColor = title_text;
+            //
+            //uPanel_richTextBox
+            //
+            this.uPanel_richTextBox.Font = conduit_12b;
+            this.uPanel_richTextBox.BackColor = text_box_background;
+            this.uPanel_richTextBox.ForeColor = normal_text;
             #endregion
 
             this.Refresh();
@@ -357,6 +368,7 @@ namespace Cartographer_Launcher
         private void sPanelSlide()
         {
             login_check = false;
+            update_check = false;
             this.settings_panel.BringToFront();
             if (!sPanel_check)
             {
@@ -364,12 +376,12 @@ namespace Cartographer_Launcher
                 {
                     sPanel_check = true;
                     this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
+                    sPanel_timer.Stop();
+                    sPanel_timer.Enabled = false;
                 }
                 else
                 {
-                    settings_panel.Width += 40;
+                    settings_panel.Width += 60;
                     this.Refresh();
                 }
             }
@@ -379,12 +391,12 @@ namespace Cartographer_Launcher
                 {
                     sPanel_check = false;
                     this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
+                    sPanel_timer.Stop();
+                    sPanel_timer.Enabled = false;
                 }
                 else
                 {
-                    settings_panel.Width -= 40;
+                    settings_panel.Width -= 60;
                     this.Refresh();
                 }
             }
@@ -393,19 +405,20 @@ namespace Cartographer_Launcher
         private void aPanelSlide()
         {
             settings_check = false;
+            update_check = false;
             this.login_panel.BringToFront();
             if (!aPanel_check)
             {
-                if (login_panel.Height >= 138)
+                if (login_panel.Height >= 122)
                 {
                     aPanel_check = true;
                     this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
+                    aPanel_timer.Stop();
+                    aPanel_timer.Enabled = false;
                 }
                 else
                 {
-                    login_panel.Height += 40;
+                    login_panel.Height += 30;
                     this.Refresh();
                 }
             }
@@ -415,12 +428,51 @@ namespace Cartographer_Launcher
                 {
                     aPanel_check = false;
                     this.Refresh();
-                    panel_slide.Stop();
-                    panel_slide.Enabled = false;
+                    aPanel_timer.Stop();
+                    aPanel_timer.Enabled = false;
                 }
                 else
                 {
                     login_panel.Height -= 40;
+                    this.Refresh();
+                }
+            }
+        }
+
+        private void uPanelSlide()
+        {
+            login_check = false;
+            settings_check = false;
+            this.update_panel.BringToFront();
+            if (!uPanel_check)
+            {
+                if (update_panel.Location.Y <= 230)
+                {
+                    uPanel_check = true;
+                    this.Refresh();
+                    uPanel_timer.Stop();
+                    uPanel_timer.Enabled = false;
+                }
+                else
+                {
+                    this.update_panel.Top -= 35;
+                    this.update_panel.Left = 400;
+                    this.Refresh();
+                }
+            }
+            else
+            {
+                if (update_panel.Location.Y == 450)
+                {
+                    uPanel_check = false;
+                    this.Refresh();
+                    uPanel_timer.Stop();
+                    uPanel_timer.Enabled = false;
+                }
+                else
+                {
+                    this.update_panel.Top += 35;
+                    this.update_panel.Left = 400;
                     this.Refresh();
                 }
             }
@@ -450,8 +502,8 @@ namespace Cartographer_Launcher
         private void login_label_Click(object sender, EventArgs e)
         {
             login_check = true;
-            panel_slide.Enabled = true;
-            panel_slide.Start();
+            aPanel_timer.Enabled = true;
+            aPanel_timer.Start();
         }
 
         private void register_label_Click(object sender, EventArgs e)
@@ -463,28 +515,40 @@ namespace Cartographer_Launcher
         private void settings_label_Click(object sender, EventArgs e)
         {
             settings_check = true;
-            panel_slide.Enabled = true;
-            panel_slide.Start();
+            sPanel_timer.Enabled = true;
+            sPanel_timer.Start();
         }
 
         private void update_label_Click(object sender, EventArgs e)
         {
             update_check = true;
+            uPanel_timer.Enabled = true;
+            uPanel_timer.Start();
         }
 
         private void sPanel_close_label_Click(object sender, EventArgs e)
         {
             settings_check = true;
-            panel_slide.Enabled = true;
-            panel_slide.Start();
+            sPanel_timer.Enabled = true;
+            sPanel_timer.Start();
         }
 
-        private void panel_slide_Tick(object sender, EventArgs e)
+        private void sPanel_timer_Tick(object sender, EventArgs e)
         {
             if (settings_check)
                 sPanelSlide();
+        }
+
+        private void aPanel_timer_Tick(object sender, EventArgs e)
+        {
             if (login_check)
                 aPanelSlide();
+        }
+
+        private void uPanel_timer_Tick(object sender, EventArgs e)
+        {
+            if (update_check)
+                uPanelSlide();
         }
 
         private void login_panel_Click(object sender, EventArgs e)
@@ -495,6 +559,11 @@ namespace Cartographer_Launcher
         private void settings_panel_Click(object sender, EventArgs e)
         {
             this.settings_panel.BringToFront();
+        }
+
+        private void update_panel_Paint(object sender, PaintEventArgs e)
+        {
+            this.update_panel.BringToFront();
         }
         #endregion
     }
