@@ -24,7 +24,7 @@ namespace Cartographer_Launcher
         public delegate void MouseMovedEvent();
 
         FontFamily hgb, cil;
-        Font handel_gothic_b, conduit_itc_l;
+        Font handel_20b, handel_18b, handel_28b, conduit_14, conduit_12, conduit_12b;
 
         Color tt = Color.FromArgb(193, 218, 248); //#C1DAF8
         Color nt = Color.FromArgb(104, 164, 227); //#68A4E3
@@ -179,27 +179,23 @@ namespace Cartographer_Launcher
 
         private void HandelGothicMedium()
         {
-            try
-            {
-                PrivateFontCollection hgm_pfc = new PrivateFontCollection();
-                int hgm_dataLenght = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
-                byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
-                IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLenght);
-                Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLenght);
+            byte[] hgm_fontArray = Properties.Resources.handel_gothic_medium;
+            int hgm_dataLenght = Cartographer_Launcher.Properties.Resources.handel_gothic_medium.Length;
 
-                uint hgm_Fonts = 0;
-                AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_Fonts);
+            IntPtr hgm_ptr = Marshal.AllocCoTaskMem(hgm_dataLenght);
+            Marshal.Copy(hgm_fontArray, 0, hgm_ptr, hgm_dataLenght);
 
-                hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLenght);
-                Marshal.FreeCoTaskMem(hgm_ptr);
+            uint hgm_Fonts = 0;
+            AddFontMemResourceEx(hgm_ptr, (uint)hgm_fontArray.Length, IntPtr.Zero, ref hgm_Fonts);
 
-                hgb = hgm_pfc.Families[0];
-                handel_gothic_b = new Font(hgb, 15f, FontStyle.Bold);
-            }
-            catch(Exception Ex)
-            {
-                MessageBox.Show(Ex.ToString());
-            }
+            PrivateFontCollection hgm_pfc = new PrivateFontCollection();
+            hgm_pfc.AddMemoryFont(hgm_ptr, hgm_dataLenght);
+
+            Marshal.FreeCoTaskMem(hgm_ptr);
+            hgb = hgm_pfc.Families[0];
+            handel_20b = new Font(hgb, 20, FontStyle.Bold);
+            handel_18b = new Font(hgb, 18, FontStyle.Bold);
+            handel_28b = new Font(hgb, 28, FontStyle.Bold);
         }
 
         private void ConduitITC_light()
@@ -219,7 +215,9 @@ namespace Cartographer_Launcher
 
             Marshal.FreeCoTaskMem(cil_ptr);
             cil = cil_pfc.Families[0];
-            conduit_itc_l = new Font(cil, 15f, FontStyle.Bold);
+            conduit_14 = new Font(cil, 14, FontStyle.Regular);
+            conduit_12 = new Font(cil, 12, FontStyle.Regular);
+            conduit_12b = new Font(cil, 12, FontStyle.Bold);
         }
 
         public void StyleSheet()
@@ -254,95 +252,95 @@ namespace Cartographer_Launcher
             // 
             // title_label
             // 
-            this.title_label.Font = new Font(hgb, 20, FontStyle.Bold);
+            this.title_label.Font = handel_20b;
             this.title_label.ForeColor = tt;
             // 
             // login_label
             // 
-            this.login_label.Font = new Font(hgb, 18, FontStyle.Bold);
+            this.login_label.Font = handel_18b;
             this.login_label.ForeColor = mt;
             // 
             // register_label
             // 
-            this.register_label.Font = new Font(hgb, 18, FontStyle.Bold);
+            this.register_label.Font = handel_18b;
             this.register_label.ForeColor = mt;
             // 
             // settings_label
             // 
-            this.settings_label.Font = new Font(hgb, 18, FontStyle.Bold);
+            this.settings_label.Font = handel_18b;
             this.settings_label.ForeColor = mt;
             // 
             // update_label
             // 
-            this.update_label.Font = new Font(hgb, 18, FontStyle.Bold);
+            this.update_label.Font = handel_18b;
             this.update_label.ForeColor = mt;
             // 
             // sPanel_title_label
             // 
-            this.sPanel_title_label.Font = new Font(hgb, 20, FontStyle.Bold);
+            this.sPanel_title_label.Font = handel_20b;
             this.sPanel_title_label.ForeColor = tt;
             // 
             // sPanel_close_label
             // 
-            this.sPanel_close_label.Font = new Font(hgb, 28, FontStyle.Bold);
+            this.sPanel_close_label.Font = handel_28b;
             this.sPanel_close_label.ForeColor = tt;
             // 
             // sPanel_settings1_label
             // 
-            this.sPanel_setting1_label.Font = new Font(cil, 14, FontStyle.Bold);
+            this.sPanel_setting1_label.Font = conduit_14;
             this.sPanel_setting1_label.ForeColor = mt;
             // 
             // sPanel_settings2_label
             // 
-            this.sPanel_setting2_label.Font = new Font(cil, 14, FontStyle.Bold);
+            this.sPanel_setting2_label.Font = conduit_14;
             this.sPanel_setting2_label.ForeColor = mt;
             // 
             // sPanel_settings3_label
             // 
-            this.sPanel_setting3_label.Font = new Font(cil, 14, FontStyle.Bold);
+            this.sPanel_setting3_label.Font = conduit_14;
             this.sPanel_setting3_label.ForeColor = mt;
             // 
             // sPanel_settings4_label
             // 
-            this.sPanel_setting4_label.Font = new Font(cil, 14, FontStyle.Bold);
+            this.sPanel_setting4_label.Font = conduit_14;
             this.sPanel_setting4_label.ForeColor = mt;
             // 
             // sPanel_settings5_label
             // 
-            this.sPanel_setting5_label.Font = new Font(cil, 14, FontStyle.Bold);
+            this.sPanel_setting5_label.Font = conduit_14;
             this.sPanel_setting5_label.ForeColor = mt;
             // 
             // aPanel_title_label
             // 
-            this.aPanel_title_label.Font = new Font(hgb, 14, FontStyle.Bold);
+            this.aPanel_title_label.Font = conduit_14;
             this.aPanel_title_label.ForeColor = tt;
             // 
             // aPanel_username_label
             // 
-            this.aPanel_username_label.Font = new Font(cil, 14);
+            this.aPanel_username_label.Font = conduit_14;
             this.aPanel_username_label.ForeColor = nt;
             // 
             // aPanel_password_label
             // 
-            this.aPanel_password_label.Font = new Font(cil, 14);
+            this.aPanel_password_label.Font = conduit_14;
             this.aPanel_password_label.ForeColor = nt;
             // 
             // aPanel_remember_label
             // 
-            this.aPanel_remember_label.Font = new Font(cil, 12);
+            this.aPanel_remember_label.Font = conduit_12;
             this.aPanel_remember_label.ForeColor = nt;
             //
             //aPanel_username_textBox
             //
             this.aPanel_username_textBox.BackColor = tbt;
             this.aPanel_username_textBox.ForeColor = tt;
-            this.aPanel_username_textBox.Font = new Font(cil, 12, FontStyle.Bold);
+            this.aPanel_username_textBox.Font = conduit_12b;
             //
             //aPanel_password_textBox
             //
             this.aPanel_password_textBox.BackColor = tbt;
             this.aPanel_password_textBox.ForeColor = tt;
-            this.aPanel_password_textBox.Font = new Font(cil, 12, FontStyle.Bold);
+            this.aPanel_password_textBox.Font = conduit_12b;
             //
             //aPanel_remember_checkBox
             //
