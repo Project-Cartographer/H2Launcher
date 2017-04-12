@@ -55,10 +55,10 @@
             this.aPanel_password_label = new System.Windows.Forms.Label();
             this.aPanel_username_label = new System.Windows.Forms.Label();
             this.update_panel = new System.Windows.Forms.Panel();
+            this.uPanel_richTextBox = new Cartographer_Launcher.richTextBox_transparent();
             this.uPanel_title_label = new System.Windows.Forms.Label();
             this.aPanel_timer = new System.Windows.Forms.Timer(this.components);
             this.uPanel_timer = new System.Windows.Forms.Timer(this.components);
-            this.uPanel_richTextBox = new Cartographer_Launcher.richTextBox_transparent();
             ((System.ComponentModel.ISupportInitialize)(this.logo_picturebox)).BeginInit();
             this.settings_panel.SuspendLayout();
             this.login_panel.SuspendLayout();
@@ -375,6 +375,15 @@
             this.update_panel.TabIndex = 19;
             this.update_panel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.update_panel_MouseClick);
             // 
+            // uPanel_richTextBox
+            // 
+            this.uPanel_richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.uPanel_richTextBox.Location = new System.Drawing.Point(29, 52);
+            this.uPanel_richTextBox.Name = "uPanel_richTextBox";
+            this.uPanel_richTextBox.Size = new System.Drawing.Size(318, 192);
+            this.uPanel_richTextBox.TabIndex = 22;
+            this.uPanel_richTextBox.Text = "";
+            // 
             // uPanel_title_label
             // 
             this.uPanel_title_label.AutoSize = true;
@@ -397,16 +406,6 @@
             this.uPanel_timer.Interval = 80;
             this.uPanel_timer.Tick += new System.EventHandler(this.uPanel_timer_Tick);
             // 
-            // uPanel_richTextBox
-            // 
-            this.uPanel_richTextBox.BackColor = System.Drawing.Color.Transparent;
-            this.uPanel_richTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.uPanel_richTextBox.Location = new System.Drawing.Point(29, 52);
-            this.uPanel_richTextBox.Name = "uPanel_richTextBox";
-            this.uPanel_richTextBox.Size = new System.Drawing.Size(318, 192);
-            this.uPanel_richTextBox.TabIndex = 22;
-            this.uPanel_richTextBox.Text = "";
-            // 
             // launcher_form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -416,7 +415,6 @@
             this.ClientSize = new System.Drawing.Size(750, 450);
             this.ControlBox = false;
             this.Controls.Add(this.update_panel);
-            this.Controls.Add(this.settings_panel);
             this.Controls.Add(this.settings_label);
             this.Controls.Add(this.register_label);
             this.Controls.Add(this.update_label);
@@ -426,6 +424,7 @@
             this.Controls.Add(this.close_button);
             this.Controls.Add(this.login_panel);
             this.Controls.Add(this.logo_picturebox);
+            this.Controls.Add(this.settings_panel);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;

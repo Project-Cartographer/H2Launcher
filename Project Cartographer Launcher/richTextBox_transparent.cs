@@ -14,25 +14,36 @@ namespace Cartographer_Launcher
     {
         public richTextBox_transparent()
         {
-            SetStyle(ControlStyles.SupportsTransparentBackColor |
-                             //ControlStyles.OptimizedDoubleBuffer |
-                             ControlStyles.AllPaintingInWmPaint |
-                             ControlStyles.ResizeRedraw |
-                             ControlStyles.UserPaint, true);
-            BackColor = Color.Transparent;
+            InitializeComponent();
+            //SetStyle(ControlStyles.SupportsTransparentBackColor |
+            //                 //ControlStyles.OptimizedDoubleBuffer |
+            //                 ControlStyles.AllPaintingInWmPaint |
+            //                 ControlStyles.ResizeRedraw |
+            //                 ControlStyles.UserPaint, true);
+            //BackColor = Color.Transparent;
         }
 
-        private void redrawText()
+        protected override CreateParams CreateParams
         {
-            using (Graphics graphics = this.CreateGraphics())
-            using (SolidBrush brush = new SolidBrush(this.ForeColor))
-                graphics.DrawString(this.Text, this.Font, brush, 1, 1); //play around with how you draw string more to suit your original
+            get
+            {
+                //This makes the control's background transparent
+                CreateParams CP = base.CreateParams;
+                CP.ExStyle |= 0x20;
+                return CP;
+            }
         }
+        //private void redrawText()
+        //{
+        //    using (Graphics graphics = this.CreateGraphics())
+        //    using (SolidBrush brush = new SolidBrush(this.ForeColor))
+        //        graphics.DrawString(this.Text, this.Font, brush, 0, 0); //play around with how you draw string more to suit your original
+        //}
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            redrawText();
-        }
+        //protected override void OnPaint(PaintEventArgs e)
+        //{
+        //    base.OnPaint(e);
+        //    redrawText();
+        //}
     }
 }

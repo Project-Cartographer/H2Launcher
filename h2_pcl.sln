@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project Cartographer Launcher", "Project Cartographer Launcher\Project Cartographer Launcher.csproj", "{165FFBE8-43F6-4024-B4A2-B67A02F0D1C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Launcher", "Project Cartographer Launcher\Launcher.csproj", "{165FFBE8-43F6-4024-B4A2-B67A02F0D1C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LauncherWPF", "LauncherWPF\LauncherWPF.csproj", "{06C3D765-E167-40B7-AC41-A3508CCD290E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{165FFBE8-43F6-4024-B4A2-B67A02F0D1C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{165FFBE8-43F6-4024-B4A2-B67A02F0D1C4}.Release|x86.ActiveCfg = Release|x86
 		{165FFBE8-43F6-4024-B4A2-B67A02F0D1C4}.Release|x86.Build.0 = Release|x86
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Debug|x86.Build.0 = Debug|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Release|x86.ActiveCfg = Release|Any CPU
+		{06C3D765-E167-40B7-AC41-A3508CCD290E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
