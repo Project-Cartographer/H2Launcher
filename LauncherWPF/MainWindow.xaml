@@ -23,40 +23,67 @@
             <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-220,0" AccelerationRatio=".9" Duration="0:0:1"/>
         </Storyboard>
         <Storyboard x:Key="sbShowUpdateMenu" >
-            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="750,0,-350,-250" To="450,0,0,0" DecelerationRatio=".9" Duration="0:0:1"/>
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="750,0,-350,-250" To="400,0,0,0" DecelerationRatio=".9" Duration="0:0:1"/>
         </Storyboard>
         <Storyboard x:Key="sbHideUpdateMenu">
-            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="450,0,0,0" To="750,0,-350,-250" AccelerationRatio=".9" Duration="0:0:1"/>
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="400,0,0,0" To="750,0,-350,-250" AccelerationRatio=".9" Duration="0:0:1"/>
         </Storyboard>
     </Window.Resources>
-    <Grid x:Name="main_grid" Margin=" 0,0,0,0">
+    <Grid x:Name="main_grid" Margin=" 0,0,0,0" Focusable="True">
         <StackPanel Panel.ZIndex="2" Name="LoginPanel" Orientation="Vertical" Height="140" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-140,0,0" Background="{StaticResource PanelBackground}">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="140" Width="300">
                 <Label x:Name="pLogin" Content="LOGIN" Style ="{StaticResource PanelTitleStyle}" Width="80" Height="36"/>
+                <Button x:Name="lsUsername" Content="Username :" Style="{StaticResource sPanelButtonStyle}" Margin="20,55,0,0"/>
+                <TextBox x:Name="lsUser" Style="{StaticResource TextBoxStyle}" Text="Player 1" Margin="128,57,0,0" Width="162"/>
+                <Button x:Name="lsPassword" Content="Password :" Style="{StaticResource sPanelButtonStyle}" Margin="20,84,0,0"/>
+                <TextBox x:Name="lsPass" Style="{StaticResource TextBoxStyle}" Text="########" Margin="128,86,0,0" Width="162"/>
+                <Button x:Name="lsRememberMe" Content="Remember Me" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="204,113,0,0"/>
             </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="SettingPanel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-220,0" Background="{StaticResource PanelBackground}" Width="220">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="450" Width="220">
                 <Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123"/>
                 <Button x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="35,58,84,365"/>
-                <TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" Text="1920" Margin="51,87,0,0"/>
-                <TextBox x:Name="psRexY" Style="{StaticResource TextBoxStyle}" Text="1080" Margin="102,87,0,0"/>
-                <Label x:Name="psResDivider" Content="x" Style="{StaticResource ElementStyle}" FontSize="12 " Margin="90,87,0,0"/>
-                <Button x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="35,111,0,0"/>
-                <Button x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="35,140,0,0"/>
-                <Button x:Name="psIntroMovies" Content="Startup Credits" Style="{StaticResource sPanelButtonStyle}" Margin="35,198,0,0"/>
-                <Button x:Name="psMonitor" Content="Default Display : 2" Style ="{StaticResource sPanelButtonStyle}" Margin="35,169,0,0"/>
-                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="15,234,15,212"/>
+                <Button x:Name="psResolution" Content="Resolution" Style="{StaticResource sPanelButtonStyle}" Margin="35,87,0,0"/>
+                <TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" Text="1920" FontSize="18" Margin="65,110,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+                <TextBox x:Name="psResY" Style="{StaticResource TextBoxStyle}" Text="1080" FontSize="18" Margin="135,110,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+                <Button x:Name="psResx" Content="X :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="45,110,0,0" HorizontalAlignment="Left"/>
+                <Button x:Name="psResy" Content="Y :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="115,110,0,0" HorizontalAlignment="Left"/>
+                <Button x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="35,135,0,0"/>
+                <Button x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="35,164,0,0"/>
+                <Button x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="35,193,0,233"/>
+                <TextBox x:Name="psMonitorNumber" Style="{StaticResource TextBoxStyle}" Text="2" FontSize="22" Margin="173,193,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+                <Button x:Name="psIntroMovies" Content="Startup Credits" Style="{StaticResource sPanelButtonStyle}" Margin="35,222,0,0"/>
+                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,251,20,195"/>
                 <Button x:Name="psDebug" Content="Debug Mode" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,423,0,0"/>
-                <Button x:Name="psFPS" Content="Frame Limiter : 60" Style="{StaticResource sPanelButtonStyle}" Margin="35,246,0,0"/>
-                <Button x:Name="psPorts" Content="Base Port : 1000" Style="{StaticResource sPanelButtonStyle}" Margin="35,275,0,0"/>
-                <Button x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="35,304,0,0"/>
-                <Button x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="35,333,0,0"/>
+                <Button x:Name="psFPS" Content="Frame Limiter :" Style="{StaticResource sPanelButtonStyle}" Margin="35,260,0,0"/>
+                <TextBox x:Name="psFPSLimit" Style="{StaticResource TextBoxStyle}" Text="60" FontSize="22" Margin="163,260,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+                <Button x:Name="psPorts" Content="Base Port :" Style="{StaticResource sPanelButtonStyle}" Margin="35,289,0,0"/>
+                <TextBox x:Name="psPortNumber" Style="{StaticResource TextBoxStyle}" Text="1000" FontSize="22" Margin="127,289,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+                <Button x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="35,318,0,0"/>
+                <Button x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="35,347,0,0"/>
             </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
-            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="250" Width="350">
+            <Grid Name="UpdateGrid" HorizontalAlignment="Left" VerticalAlignment="Top" Height="250" Width="350">
                 <Label x:Name="pUpdate" Content="UPDATES" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="118"/>
+                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,49,163,197"/>
+                <RichTextBox x:Name="richTextBox" Style="{StaticResource RichTextBoxStyle}" Height="182" Margin="30,58,0,0" VerticalAlignment="Top" Width="310">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run Text="Checking for updates.... Updates found"/>
+                        </Paragraph>
+                        <Paragraph>
+                            <Run Text="Downloading updates..... Download complete"/>
+                        </Paragraph>
+                        <Paragraph>
+                            <Run Text="Verifying file integrity... Verification complete"/>
+                        </Paragraph>
+                        <Paragraph>
+                            <Run Text="Game updated complete"/>
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
             </Grid>
         </StackPanel>
         <Grid x:Name="title_grid" Margin="125,84,125,227" HorizontalAlignment="Center">

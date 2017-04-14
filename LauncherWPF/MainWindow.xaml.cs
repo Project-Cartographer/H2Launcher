@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LauncherWPF
 {
@@ -47,10 +39,16 @@ namespace LauncherWPF
             UpdatePanelCheck = false;
         }
 
-        private void PanelAnimation(string Storyboard, StackPanel pnl)
+        private void PanelAnimation(string Storyboard, StackPanel sp)
         {
             Storyboard sb = Resources[Storyboard] as Storyboard;
-            sb.Begin(pnl);
+            sb.Begin(sp);
+        }
+
+        private static bool IsTextAllowed(string numeric_text)
+        {
+            Regex regex = new Regex("[^0-9.-]+");
+            return !regex.IsMatch(numeric_text);
         }
 
         private void Image_Loaded(object sender, RoutedEventArgs e)
@@ -64,13 +62,30 @@ namespace LauncherWPF
             image.Source = b;
         }
 
+        private void Numeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsTextAllowed(e.Text);
+        }
+
+        private void NumericPasteCheck(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(String)))
+            {
+                String numeric_text = (String)e.DataObject.GetData(typeof(String));
+                if (!IsTextAllowed(numeric_text))
+                    e.CancelCommand();
+            }
+            else
+                e.CancelCommand();
+        }
+
         private void main_form_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
-            {
                 DragMove();
-            }
+            main_grid.Focus();
         }
+
         private void control_close_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -96,11 +111,6 @@ namespace LauncherWPF
                     LoginPanelCheck = false;
                 }
             }
-        }
-
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
-        {
-            Process.Start(register_url);
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -135,6 +145,11 @@ namespace LauncherWPF
                     UpdatePanelCheck = false;
                 }
             }
+        }
+
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(register_url);
         }
     }
 }
