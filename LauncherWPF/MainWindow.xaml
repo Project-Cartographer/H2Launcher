@@ -31,13 +31,33 @@
     </Window.Resources>
     <Grid x:Name="main_grid" Margin=" 0,0,0,0">
         <StackPanel Panel.ZIndex="2" Name="LoginPanel" Orientation="Vertical" Height="140" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-140,0,0" Background="{StaticResource PanelBackground}">
-            <Label x:Name="pLogin" Content="LOGIN" Style ="{StaticResource HandelGothic}" FontSize="24" Foreground="{StaticResource TitleColor}" Width="80" Height="36" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="140" Width="300">
+                <Label x:Name="pLogin" Content="LOGIN" Style ="{StaticResource PanelTitleStyle}" Width="80" Height="36"/>
+            </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="SettingPanel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-220,0" Background="{StaticResource PanelBackground}" Width="220">
-            <Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource HandelGothic}" FontSize="24" Foreground="{StaticResource TitleColor}" Margin="10,10,0,0" FontWeight="Regular" HorizontalAlignment="Left" VerticalAlignment="Top" Height="34" Width="123"/>
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="450" Width="220">
+                <Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123"/>
+                <Button x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="35,58,84,365"/>
+                <TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" Text="1920" Margin="51,87,0,0"/>
+                <TextBox x:Name="psRexY" Style="{StaticResource TextBoxStyle}" Text="1080" Margin="102,87,0,0"/>
+                <Label x:Name="psResDivider" Content="x" Style="{StaticResource ElementStyle}" FontSize="12 " Margin="90,87,0,0"/>
+                <Button x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="35,111,0,0"/>
+                <Button x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="35,140,0,0"/>
+                <Button x:Name="psIntroMovies" Content="Startup Credits" Style="{StaticResource sPanelButtonStyle}" Margin="35,198,0,0"/>
+                <Button x:Name="psMonitor" Content="Default Display : 2" Style ="{StaticResource sPanelButtonStyle}" Margin="35,169,0,0"/>
+                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="15,234,15,212"/>
+                <Button x:Name="psDebug" Content="Debug Mode" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,423,0,0"/>
+                <Button x:Name="psFPS" Content="Frame Limiter : 60" Style="{StaticResource sPanelButtonStyle}" Margin="35,246,0,0"/>
+                <Button x:Name="psPorts" Content="Base Port : 1000" Style="{StaticResource sPanelButtonStyle}" Margin="35,275,0,0"/>
+                <Button x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="35,304,0,0"/>
+                <Button x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="35,333,0,0"/>
+            </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
-            <Label x:Name="pUpdate" Content="UPDATES" Style ="{StaticResource HandelGothic}" FontSize="24" Foreground="{StaticResource TitleColor}" Height="34" Width="118" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="250" Width="350">
+                <Label x:Name="pUpdate" Content="UPDATES" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="118"/>
+            </Grid>
         </StackPanel>
         <Grid x:Name="title_grid" Margin="125,84,125,227" HorizontalAlignment="Center">
             <Image x:Name="h2_logo" Height="60" VerticalAlignment="Top" Loaded ="Image_Loaded" RenderTransformOrigin="0,0" Margin="10,10,10,0">
@@ -45,17 +65,17 @@
                     <ImageBrush ImageSource="Resources/Images/h2logo.png"/>
                 </Image.OpacityMask>
             </Image>
-            <Label x:Name="title" Content="PROJECT CARTOGRAPHER" Style ="{StaticResource HandelGothic}" FontSize="26" Foreground="{StaticResource TitleColor}" Margin="80,75,80,25" FontWeight="Regular" HorizontalAlignment="Center"/>
+            <Label x:Name="title" Content="PROJECT CARTOGRAPHER" Style ="{StaticResource PanelTitleStyle}" FontSize="26" Margin="80,75,80,25" HorizontalAlignment="Center"/>
         </Grid>
         <Grid x:Name="menu_grid" Margin="125,223,125,74" HorizontalAlignment="Center">
-            <Button x:Name="menu_item_1" Content="LOGIN" Style ="{StaticResource MenuButtonStyle}" FontSize="24" Margin="212,10,212,0" VerticalAlignment="Top" Height="34" Background="{x:Null}" BorderBrush="{x:Null}" Click="LoginButton_Click" HorizontalAlignment="Center" />
-            <Button x:Name="menu_item_2" Content="REGISTER" Style ="{StaticResource MenuButtonStyle}" FontSize="24" Margin="189,44,189,0" VerticalAlignment="Top" Height="34" Background="{x:Null}" BorderBrush="{x:Null}" Click="RegisterButton_Click" HorizontalAlignment="Center"/>
-            <Button x:Name="menu_item_3" Content="SETTINGS" Style ="{StaticResource MenuButtonStyle}" FontSize="24" Margin="189,78,189,0" VerticalAlignment="Top" Height="34" Background="{x:Null}" BorderBrush="{x:Null}" Click="SettingsButton_Click" HorizontalAlignment="Center"/>
-            <Button x:Name="menu_item_4" Content="CHECK UPDATES" Style ="{StaticResource MenuButtonStyle}" FontSize="24" Margin="152,112,152,0" VerticalAlignment="Top" Height="34" Background="{x:Null}" BorderBrush="{x:Null}" Click="UpdateButton_Click" HorizontalAlignment="Center"/>
+            <Button x:Name="LoginButton" Content="LOGIN" Style ="{StaticResource MenuButtonStyle}" Margin="212,10,212,0" Click="LoginButton_Click"/>
+            <Button x:Name="RegisterButton" Content="REGISTER" Style ="{StaticResource MenuButtonStyle}" Margin="189,44,189,0" Click="RegisterButton_Click"/>
+            <Button x:Name="SettingsButton" Content="SETTINGS" Style ="{StaticResource MenuButtonStyle}" Margin="189,78,189,0" Click="SettingsButton_Click"/>
+            <Button x:Name="UpdateButton" Content="CHECK UPDATES" Style ="{StaticResource MenuButtonStyle}" Margin="152,112,152,0" Click="UpdateButton_Click"/>
         </Grid>
         <Grid Height="34" Margin="672,10,10,0" VerticalAlignment="Top" Width="68">
-            <Button x:Name="control_close" Content="X" Style ="{StaticResource ControlButtonStyle}" FontSize="28" BorderBrush="{x:Null}" Height="34" VerticalAlignment="Top" Margin="34,0,0,0" Width="34" Click="control_close_Click"/>
-            <Button x:Name="control_minimize" Content="—" Style ="{StaticResource ControlButtonStyle}" FontSize="28" Margin="0,0,34,0" BorderBrush="{x:Null}" Height="34" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="34" Click="control_minimize_Click"/>
+            <Button x:Name="control_close" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="control_close_Click"/>
+            <Button x:Name="control_minimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="control_minimize_Click"/>
         </Grid>
     </Grid>
 </Window>
