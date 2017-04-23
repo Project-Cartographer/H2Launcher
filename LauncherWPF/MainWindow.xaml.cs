@@ -26,8 +26,6 @@ namespace LauncherWPF
         Cartographer_Launcher.Includes.Settings.Launcher Launcher = new Cartographer_Launcher.Includes.Settings.Launcher();
         Cartographer_Launcher.Includes.Settings.ProjectCartographer Project = new Cartographer_Launcher.Includes.Settings.ProjectCartographer();
 
-        private int VerticalSync;
-
         //Disable ALT+Space shortcut for startmenu
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -228,6 +226,11 @@ namespace LauncherWPF
             Process.Start(register_url);
         }
 
+        private void main_form_Closed(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
         private void psFullScreen_Checked(object sender, RoutedEventArgs e)
         {
             if (psWindowed.IsChecked == true || psBorderless.IsChecked == true)
@@ -244,16 +247,6 @@ namespace LauncherWPF
                 psFullScreen.IsChecked = true;
         }
 
-        private void Setting_Checked(object sender, RoutedEventArgs e)
-        {
-            VerticalSync = 1;
-        }
-
-        private void Setting_Unchecked(object sender, RoutedEventArgs e)
-        {
-            VerticalSync = 0;
-        }
-
         private void psBorderless_Checked(object sender, RoutedEventArgs e)
         {
             if (psFullScreen.IsChecked == true)
@@ -263,16 +256,6 @@ namespace LauncherWPF
                 psBorderless.IsChecked = true;
             }
             LogFile("Display Mode: Borderless window enabled.");
-        }
-
-        private void psVsync_Checked(object sender, RoutedEventArgs e)
-        {
-            VerticalSync = true;
-        }
-
-        private void main_form_Closed(object sender, EventArgs e)
-        {
-            SaveSettings();
         }
 
         private void psWindowed_Checked(object sender, RoutedEventArgs e)
