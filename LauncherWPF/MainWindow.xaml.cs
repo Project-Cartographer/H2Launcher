@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Cartographer_Launcher.Includes;
 
 namespace LauncherWPF
 {
@@ -15,10 +17,16 @@ namespace LauncherWPF
 
     public partial class MainWindow : Window
     {
-        #region Dependencies
+        #region Global Declares
         private string register_url = "http://www.cartographer.h2pc.org/";
         private bool LoginPanelCheck, SettingsPanelCheck, UpdatePanelCheck;
         BitmapImage TitleLogo = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/h2logo.png"));
+        string TimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
+        private string LogFilePath = Globals.LogFile;
+        Cartographer_Launcher.Includes.Settings.Launcher Launcher = new Cartographer_Launcher.Includes.Settings.Launcher();
+        Cartographer_Launcher.Includes.Settings.ProjectCartographer Project = new Cartographer_Launcher.Includes.Settings.ProjectCartographer();
+
+        private int VerticalSync;
 
         //Disable ALT+Space shortcut for startmenu
         protected override void OnKeyDown(KeyEventArgs e)
@@ -34,9 +42,65 @@ namespace LauncherWPF
         public MainWindow()
         {
             InitializeComponent();
-            LoginPanelCheck = false;
-            SettingsPanelCheck = false;
-            UpdatePanelCheck = false;
+            
+            LogFile("Log file initialized.");
+            LogFile("Game install directory: " + Globals.GameDirectory);
+            LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
+
+            this.LoginPanelCheck = false;
+            this.SettingsPanelCheck = false;
+            this.UpdatePanelCheck = false;
+
+
+            //switch(Launcher.DisplayMode)
+            //{
+            //    case Cartographer_Launcher.Includes.Dependencies.SettingsDisplayMode.Fullscreen:
+            //        {
+            //            psFullScreen.IsChecked = true;
+            //            psWindowed.IsChecked = false;
+            //            psBorderless.IsChecked = false;
+            //            break;
+            //        }
+            //    case Cartographer_Launcher.Includes.Dependencies.SettingsDisplayMode.Windowed:
+            //        {
+            //            psFullScreen.IsChecked = false;
+            //            psWindowed.IsChecked = true;
+            //            psBorderless.IsChecked = false;
+            //            break;
+            //        }
+            //    case Cartographer_Launcher.Includes.Dependencies.SettingsDisplayMode.Borderless:
+            //        {
+            //            psFullScreen.IsChecked = false;
+            //            psWindowed.IsChecked = true;
+            //            psBorderless.IsChecked = true;
+            //            break;
+            //        }
+            //}
+
+            for (int s = 0; s < System.Windows.Forms.Screen.AllScreens.Length; s++)
+            {
+                psMonitorSelect.Items.Add((s + 1).ToString() + ((System.Windows.Forms.Screen.AllScreens[s].Primary) ? "*" : ""));
+                if (s == Launcher.DefaultDisplay) psMonitorSelect.SelectedIndex = s;
+            }
+        }
+
+        private void main_form_Initialized(object sender, EventArgs e)
+        {
+            if (File.Exists(LogFilePath))
+                File.Delete(LogFilePath);
+        }
+
+        public void LogFile(string Message)
+        {
+            StreamWriter log;
+            if (!File.Exists(LogFilePath))
+                log = new StreamWriter(LogFilePath);
+            else
+                log = File.AppendText(LogFilePath);
+            log.WriteLine("Date: " + TimeStamp + " - " + Message);
+            log.Flush();
+            log.Dispose();
+            log.Close();
         }
 
         private void PanelAnimation(string Storyboard, StackPanel sp)
@@ -49,6 +113,18 @@ namespace LauncherWPF
         {
             Regex regex = new Regex("[^0-9.-]+");
             return !regex.IsMatch(numeric_text);
+        }
+
+        private void SaveSettings()
+        {
+            Launcher.ResolutionHeight = int.Parse(this.psResY.Text);
+            Launcher.ResolutionWidth = int.Parse(this.psResX.Text);
+            //Launcher.DisplayMode = (Cartographer_Launcher.Includes.Dependencies.SettingsDisplayMode)Enum.Parse(typeof(Cartographer_Launcher.Includes.Dependencies.SettingsDisplayMode));
+            Launcher.DefaultDisplay = this.psMonitorSelect.SelectedIndex;
+            Launcher.VerticalSync = this.psVsync.IsChecked ? 1 : 0; //HAVING TROUBLE HERE
+
+            Launcher.SaveSettings();
+            Project.SaveSettings();
         }
 
         private void Image_Loaded(object sender, RoutedEventArgs e)
@@ -96,7 +172,7 @@ namespace LauncherWPF
             main_form.WindowState = WindowState.Minimized;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             if (!SettingsPanelCheck && !UpdatePanelCheck)
             {
@@ -150,6 +226,68 @@ namespace LauncherWPF
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(register_url);
+        }
+
+        private void psFullScreen_Checked(object sender, RoutedEventArgs e)
+        {
+            if (psWindowed.IsChecked == true || psBorderless.IsChecked == true)
+            {
+                psWindowed.IsChecked = false;
+                psBorderless.IsChecked = false;
+            }
+            LogFile("Display Mode: Full Screen enabled.");
+        }
+
+        private void psFullScreen_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (psWindowed.IsChecked == false)
+                psFullScreen.IsChecked = true;
+        }
+
+        private void Setting_Checked(object sender, RoutedEventArgs e)
+        {
+            VerticalSync = 1;
+        }
+
+        private void Setting_Unchecked(object sender, RoutedEventArgs e)
+        {
+            VerticalSync = 0;
+        }
+
+        private void psBorderless_Checked(object sender, RoutedEventArgs e)
+        {
+            if (psFullScreen.IsChecked == true)
+            {
+                psFullScreen.IsChecked = false;
+                psWindowed.IsChecked = true;
+                psBorderless.IsChecked = true;
+            }
+            LogFile("Display Mode: Borderless window enabled.");
+        }
+
+        private void psVsync_Checked(object sender, RoutedEventArgs e)
+        {
+            VerticalSync = true;
+        }
+
+        private void main_form_Closed(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
+        private void psWindowed_Checked(object sender, RoutedEventArgs e)
+        {
+            if (psFullScreen.IsChecked == true)
+                psFullScreen.IsChecked = false;
+            LogFile("Display Mode: Windowed enabled.");
+        }
+
+        private void psWindowed_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (psBorderless.IsChecked == true)
+                psBorderless.IsChecked = false;
+            if (psBorderless.IsChecked == false && psFullScreen.IsChecked == false)
+                psWindowed.IsChecked = true;
         }
     }
 }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LauncherWPF"
         mc:Ignorable="d"       
-        Title="" Height="450" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" AllowsTransparency="True" MouseDown="main_form_MouseDown">
+        Title="" Height="450" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" AllowsTransparency="True" MouseDown="main_form_MouseDown" Initialized="main_form_Initialized" Closed="main_form_Closed">
     <Window.Background>
         <ImageBrush ImageSource="Resources/Images/launcher background.png"/>
     </Window.Background>
@@ -33,35 +33,40 @@
         <StackPanel Panel.ZIndex="2" Name="LoginPanel" Orientation="Vertical" Height="140" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-140,0,0" Background="{StaticResource PanelBackground}">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="140" Width="300">
                 <Label x:Name="pLogin" Content="LOGIN" Style ="{StaticResource PanelTitleStyle}" Width="80" Height="36"/>
-                <Button x:Name="lsUsername" Content="Username :" Style="{StaticResource sPanelButtonStyle}" Margin="20,55,0,0"/>
+                <ToggleButton x:Name="lsUsername" Content="Username :" Style="{StaticResource sPanelButtonStyle}" Margin="20,55,0,0"/>
                 <TextBox x:Name="lsUser" Style="{StaticResource TextBoxStyle}" Text="Player 1" Margin="128,57,0,0" Width="162"/>
-                <Button x:Name="lsPassword" Content="Password :" Style="{StaticResource sPanelButtonStyle}" Margin="20,84,0,0"/>
+                <ToggleButton x:Name="lsPassword" Content="Password :" Style="{StaticResource sPanelButtonStyle}" Margin="20,84,0,0"/>
                 <TextBox x:Name="lsPass" Style="{StaticResource TextBoxStyle}" Text="########" Margin="128,86,0,0" Width="162"/>
-                <Button x:Name="lsRememberMe" Content="Remember Me" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="204,113,0,0"/>
+                <ToggleButton x:Name="lsRememberMe" Content="Remember Me" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="204,113,0,0"/>
             </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="SettingPanel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-220,0" Background="{StaticResource PanelBackground}" Width="220">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="450" Width="220">
-                <Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123"/>
-                <Button x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="35,58,84,365"/>
-                <Button x:Name="psResolution" Content="Resolution" Style="{StaticResource sPanelButtonStyle}" Margin="35,87,0,0"/>
-                <TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" Text="1920" FontSize="18" Margin="65,110,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-                <TextBox x:Name="psResY" Style="{StaticResource TextBoxStyle}" Text="1080" FontSize="18" Margin="135,110,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-                <Button x:Name="psResx" Content="X :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="45,110,0,0" HorizontalAlignment="Left"/>
-                <Button x:Name="psResy" Content="Y :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="115,110,0,0" HorizontalAlignment="Left"/>
-                <Button x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="35,135,0,0"/>
-                <Button x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="35,164,0,0"/>
-                <Button x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="35,193,0,233"/>
-                <TextBox x:Name="psMonitorNumber" Style="{StaticResource TextBoxStyle}" Text="2" FontSize="22" Margin="173,193,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-                <Button x:Name="psIntroMovies" Content="Startup Credits" Style="{StaticResource sPanelButtonStyle}" Margin="35,222,0,0"/>
-                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,251,20,195"/>
-                <Button x:Name="psDebug" Content="Debug Mode" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,423,0,0"/>
-                <Button x:Name="psFPS" Content="Frame Limiter :" Style="{StaticResource sPanelButtonStyle}" Margin="35,260,0,0"/>
-                <TextBox x:Name="psFPSLimit" Style="{StaticResource TextBoxStyle}" Text="60" FontSize="22" Margin="163,260,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-                <Button x:Name="psPorts" Content="Base Port :" Style="{StaticResource sPanelButtonStyle}" Margin="35,289,0,0"/>
-                <TextBox x:Name="psPortNumber" Style="{StaticResource TextBoxStyle}" Text="1000" FontSize="22" Margin="127,289,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-                <Button x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="35,318,0,0"/>
-                <Button x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="35,347,0,0"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="7*"/>
+                    <RowDefinition Height="68*"/>
+                </Grid.RowDefinitions>
+                <Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123" Grid.RowSpan="2"/>
+                <ToggleButton x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="30,16,0,0" Checked="psFullScreen_Checked" Unchecked="psFullScreen_Unchecked" Grid.Row="1"/>
+                <ToggleButton x:Name="psWindowed" Content="Windowed" Style="{StaticResource sPanelButtonStyle}" Margin="30,45,0,0" Checked="psWindowed_Checked" Unchecked="psWindowed_Unchecked" Grid.Row="1"/>
+                <ToggleButton x:Name="psBorderless" Content="Borderless" Style="{StaticResource sPanelButtonStyle}" Margin="120,45,0,0" Checked="psBorderless_Checked" Grid.Row="1"/>
+                <TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" Text="1920" FontSize="18" Margin="60,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
+                <TextBox x:Name="psResY" Style="{StaticResource TextBoxStyle}" Text="1080" FontSize="18" Margin="130,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
+                <ToggleButton x:Name="psResx" Content="X :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="40,68,0,0" HorizontalAlignment="Left" Grid.Row="1"/>
+                <ToggleButton x:Name="psResy" Content="Y :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="110,68,0,0" HorizontalAlignment="Left" Grid.Row="1"/>
+                <ToggleButton x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="30,93,0,0" Checked="psVsync_Checked" Grid.Row="1"/>
+                <ToggleButton x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="30,122,0,0" Grid.Row="1"/>
+                <ToggleButton x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="30,151,0,0" Grid.Row="1"/>
+                <ComboBox x:Name="psMonitorSelect" Style="{StaticResource ComboBoxStyle}" Margin="168,151,0,0" Width="37" Height="24" Grid.Row="1"/>
+                <ToggleButton x:Name="psIntroMovies" Content="Startup Credits" Style="{StaticResource sPanelButtonStyle}" Margin="30,180,0,0" Grid.Row="1"/>
+                <Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,209,20,195" Grid.Row="1"/>
+                <ToggleButton x:Name="psDebug" Content="Debug Mode" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,381,0,0" Grid.Row="1"/>
+                <ToggleButton x:Name="psFPS" Content="Frame Limiter :" Style="{StaticResource sPanelButtonStyle}" Margin="30,218,0,0" Grid.Row="1"/>
+                <TextBox x:Name="psFPSLimit" Style="{StaticResource TextBoxStyle}" Text="60" FontSize="22" Margin="158,218,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
+                <ToggleButton x:Name="psPorts" Content="Base Port :" Style="{StaticResource sPanelButtonStyle}" Margin="30,247,0,0" Grid.Row="1"/>
+                <TextBox x:Name="psPortNumber" Style="{StaticResource TextBoxStyle}" Text="1000" FontSize="22" Margin="122,247,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
+                <ToggleButton x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="30,276,0,0" Grid.Row="1"/>
+                <ToggleButton x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="30,305,0,0" Checked="psMaps_Checked" Grid.Row="1"/>
             </Grid>
         </StackPanel>
         <StackPanel Panel.ZIndex="2" Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
@@ -95,14 +100,14 @@
             <Label x:Name="title" Content="PROJECT CARTOGRAPHER" Style ="{StaticResource PanelTitleStyle}" FontSize="26" Margin="80,75,80,25" HorizontalAlignment="Center"/>
         </Grid>
         <Grid x:Name="menu_grid" Margin="125,223,125,74" HorizontalAlignment="Center">
-            <Button x:Name="LoginButton" Content="LOGIN" Style ="{StaticResource MenuButtonStyle}" Margin="212,10,212,0" Click="LoginButton_Click"/>
-            <Button x:Name="RegisterButton" Content="REGISTER" Style ="{StaticResource MenuButtonStyle}" Margin="189,44,189,0" Click="RegisterButton_Click"/>
-            <Button x:Name="SettingsButton" Content="SETTINGS" Style ="{StaticResource MenuButtonStyle}" Margin="189,78,189,0" Click="SettingsButton_Click"/>
-            <Button x:Name="UpdateButton" Content="CHECK UPDATES" Style ="{StaticResource MenuButtonStyle}" Margin="152,112,152,0" Click="UpdateButton_Click"/>
+            <ToggleButton x:Name="PlayButton" Content="PLAY" Style ="{StaticResource MenuButtonStyle}" Margin="217,10,217,0" Click="PlayButton_Click"/>
+            <ToggleButton x:Name="RegisterButton" Content="REGISTER" Style ="{StaticResource MenuButtonStyle}" Margin="189,44,189,0" Click="RegisterButton_Click"/>
+            <ToggleButton x:Name="SettingsButton" Content="SETTINGS" Style ="{StaticResource MenuButtonStyle}" Margin="189,78,189,0" Click="SettingsButton_Click"/>
+            <ToggleButton x:Name="UpdateButton" Content="CHECK UPDATES" Style ="{StaticResource MenuButtonStyle}" Margin="152,112,152,0" Click="UpdateButton_Click"/>
         </Grid>
         <Grid Height="34" Margin="672,10,10,0" VerticalAlignment="Top" Width="68">
-            <Button x:Name="control_close" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="control_close_Click"/>
-            <Button x:Name="control_minimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="control_minimize_Click"/>
+            <ToggleButton x:Name="control_close" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="control_close_Click"/>
+            <ToggleButton x:Name="control_minimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="control_minimize_Click"/>
         </Grid>
     </Grid>
 </Window>
