@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using H2Launcher.Includes;
+using H2Shield.Includes;
 using Cartographer_Launcher.Includes.Dependencies;
 using Cartographer_Launcher.Includes.Settings;
 using LauncherWPF;
@@ -15,13 +15,13 @@ namespace Cartographer_Launcher.Includes
         private static Runtime _Runtime;
         private static WebHandler _WebControl;
         private static ProjectCartographer _ProjectSettings;
+        private static MainWindow _MainWindow;
 
         public static Launcher LauncherSettings
         {
             get
             {
-                if (_LauncherSettings == null)
-                    _LauncherSettings = new Launcher();
+                if (_LauncherSettings == null) _LauncherSettings = new Launcher();
                 return _LauncherSettings;
             }
         }
@@ -30,18 +30,24 @@ namespace Cartographer_Launcher.Includes
         {
             get
             {
-                if (_ProjectSettings == null)
-                    _ProjectSettings = new ProjectCartographer();
+                if (_ProjectSettings == null) _ProjectSettings = new ProjectCartographer();
                 return _ProjectSettings;
             }
         }
 
+        public static MainWindow MainWindow
+        {
+            get
+            {
+                if (_MainWindow == null) _MainWindow = new MainWindow();
+                return _MainWindow;
+            }
+        }
         public static GameRuntime GameRuntime
         {
             get
             {
-                if (_GameRuntime == null)
-                    _GameRuntime = new GameRuntime();
+                if (_GameRuntime == null) _GameRuntime = new GameRuntime();
                 return _GameRuntime;
             }
         }
@@ -50,8 +56,7 @@ namespace Cartographer_Launcher.Includes
         {
             get
             {
-                if (_Runtime == null)
-                    _Runtime = new Runtime();
+                if (_Runtime == null) _Runtime = new Runtime();
                 return _Runtime;
             }
         }
@@ -60,8 +65,7 @@ namespace Cartographer_Launcher.Includes
         {
             get
             {
-                if (_WebControl == null)
-                    _WebControl = new WebHandler();
+                if (_WebControl == null) _WebControl = new WebHandler();
                 return _WebControl;
             }
         }
@@ -71,22 +75,26 @@ namespace Cartographer_Launcher.Includes
             MainForm.Hide();
             int RunningTicks = 0;
 
+            LauncherSettings.LoadSettings();
+            ProjectSettings.LoadSettings();
+
             LauncherSettings.PlayerTag = Gamertag;
-            LauncherSettings.LoginToken = LoginToken;
+            ProjectSettings.LoginToken = LoginToken;
+
+            ProjectSettings.SaveSettings();
             LauncherSettings.SaveSettings();
 
-            LauncherSettings.SaveSettings();
             await Task.Delay(1);
-            //File.WriteAllLines(Paths.InstallPath + "token.ini", new string[] { "token=" + LoginToken, "username=" + Gamertag });
+            //File.WriteAllLines(Globals.GameDirectory + "token.ini", new string[] { "token=" + LoginToken, "username=" + Gamertag });
             GameRuntime.RunGame();
 
             /*
              * Game Running thread ticks every 1 second with a maximum of 15 ticks till reset.
              * 
-             * */
-            while (Process.GetProcessesByName("halo2").Length == 1)//DURING HALO RUNNING THREAD
+             */
+            while (Process.GetProcessesByName("halo2").Length == 1)
             {
-                if (RunningTicks == 15) //Check Ban Status every 15 ticks
+                if (RunningTicks == 15) 
                 {
                     var banResult = WebControl.CheckBan(Gamertag, LoginToken);
 
@@ -103,10 +111,8 @@ namespace Cartographer_Launcher.Includes
                 }
 
                 #region TickLogic
-                if (RunningTicks == 16)
-                    RunningTicks = 0;
-                else
-                    RunningTicks++;
+                if (RunningTicks == 16) RunningTicks = 0;
+                else RunningTicks++;
                 await Task.Delay(1000);
                 #endregion
             }

@@ -6,6 +6,7 @@ namespace Cartographer_Launcher.Includes.Settings
 {
     public class ProjectCartographer
     {
+        private string _LoginToken = "";
         private int _DebugLog = 0;
         private int _Ports = 1000;
         private int _GunGame = 0;
@@ -16,38 +17,43 @@ namespace Cartographer_Launcher.Includes.Settings
 
         public int DebugLog
         {
-            get { return this._DebugLog; }
-            set { this._DebugLog = value; }
+            get { return _DebugLog; }
+            set { _DebugLog = value; }
+        }
+        public string LoginToken
+        {
+            get { return _LoginToken; }
+            set { _LoginToken = value; }
         }
         public int Ports
         {
-            get { return this._Ports; }
-            set { this._Ports = value; }
+            get { return _Ports; }
+            set { _Ports = value; }
         }
         public int GunGame
         {
-            get { return this._GunGame; }
-            set { this._GunGame = value; }
+            get { return _GunGame; }
+            set { _GunGame = value; }
         }
         public int FPSCap
         {
-            get { return this._FPSCap; }
-            set { this._FPSCap = value; }
+            get { return _FPSCap; }
+            set { _FPSCap = value; }
         }
         public int FPSLimit
         {
-            get { return this._FPSLimit; }
-            set { this._FPSLimit = value; }
+            get { return _FPSLimit; }
+            set { _FPSLimit = value; }
         }
         public int VoiceChat
         {
-            get { return this._VoiceChat; }
-            set { this._VoiceChat = value; }
+            get { return _VoiceChat; }
+            set { _VoiceChat = value; }
         }
         public int MapDownload
         {
-            get { return this._MapDownload; }
-            set { this._MapDownload = value; }
+            get { return _MapDownload; }
+            set { _MapDownload = value; }
         }
 
         public void LoadSettings()
@@ -64,34 +70,39 @@ namespace Cartographer_Launcher.Includes.Settings
                     string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
                     switch (Setting[0])
                     {
+                        case "login_token":
+                            {
+                                LoginToken = Setting[1];
+                                break;
+                            }
                         case "debug_log":
                             {
-                                this.DebugLog = int.Parse(Setting[1]);
+                                DebugLog = int.Parse(Setting[1]);
                                 break;
                             }
                         case "port":
                             {
-                                this.Ports = int.Parse(Setting[1]);
+                                Ports = int.Parse(Setting[1]);
                                 break;
                             }
                         case "fps_enable":
                             {
-                                this.FPSCap = int.Parse(Setting[1]);
+                                FPSCap = int.Parse(Setting[1]);
                                 break;
                             }
                         case "fps_limit":
                             {
-                                this.FPSLimit = int.Parse(Setting[1]);
+                                FPSLimit = int.Parse(Setting[1]);
                                 break;
                             }
                         case "voice_chat":
                             {
-                                this.VoiceChat = int.Parse(Setting[1]);
+                                VoiceChat = int.Parse(Setting[1]);
                                 break;
                             }
                         case "map_downloading_enable":
                             {
-                                this.MapDownload = int.Parse(Setting[1]);
+                                MapDownload = int.Parse(Setting[1]);
                                 break;
                             }
                     }
@@ -101,15 +112,15 @@ namespace Cartographer_Launcher.Includes.Settings
 
         public void SaveSettings()
         {
-            //ADD SETTINGS CONTROLS FOR THE SETTINGS THAT NEED IT.
             StringBuilder SB = new StringBuilder();
-            SB.AppendLine("debug_log = " + this.DebugLog);
-            SB.AppendLine("port = " + this.Ports);
-            SB.AppendLine("gungame = " + this.GunGame);
-            SB.AppendLine("fps_enable = " + this.FPSCap);
-            SB.AppendLine("fps_limit = " + this.FPSLimit);
-            SB.AppendLine("voice_chat = " + this.VoiceChat);
-            SB.AppendLine("map_downloading_enable = " + this.MapDownload);
+            SB.AppendLine("login_token = " + LoginToken);
+            SB.AppendLine("debug_log = " + DebugLog);
+            SB.AppendLine("port = " + Ports);
+            SB.AppendLine("gungame = " + GunGame);
+            SB.AppendLine("fps_enable = " + FPSCap);
+            SB.AppendLine("fps_limit = " + FPSLimit);
+            SB.AppendLine("voice_chat = " + VoiceChat);
+            SB.AppendLine("map_downloading_enable = " + MapDownload);
             File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
         }
     }

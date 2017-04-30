@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,7 +10,7 @@ namespace Cartographer_Launcher.Includes.Dependencies
 {
     public class Runtime
     {
-        Settings.Launcher Launcher = new Settings.Launcher();
+        Settings.Launcher LauncherSettings = new Settings.Launcher();
         private Dictionary<string, object[]> PostCommands = new Dictionary<string, object[]>();
 
         #region DLL Imports
@@ -51,7 +50,7 @@ namespace Cartographer_Launcher.Includes.Dependencies
                 }
                 catch (Exception) { }
             } while (!t);
-            await Task.Delay(6000);
+            await Task.Delay(8000);
             foreach (string Command in PostCommands.Keys)
             {
 
@@ -69,24 +68,30 @@ namespace Cartographer_Launcher.Includes.Dependencies
                         }
                 }
             }
-            this.PostCommands = new Dictionary<string, object[]>();
+            PostCommands = new Dictionary<string, object[]>();
         }
 
         private void SetWindowResolution(int Width, int Height)
         {
-            int ScreenWidthMid = ((Screen.AllScreens[Launcher.DefaultDisplay].Bounds.Width / 2));
-            int ScreenHeightMid = (Screen.AllScreens[Launcher.DefaultDisplay].Bounds.Height / 2);
-            int ResolutionWidthMid = (Launcher.ResolutionWidth / 2);
-            int ResolutionHeightMid = (Launcher.ResolutionHeight / 2);
-            int ScreenWidthOffset = Screen.AllScreens[Launcher.DefaultDisplay].Bounds.X;
-            //SetWindowPos(FindWindow(null, "Halo 2"), IntPtr.Zero, (((Screen.PrimaryScreen.Bounds.Width / 2) - (H2Launcher.LauncherSettings.ResolutionWidth) / 2)), (((Screen.PrimaryScreen.Bounds.Height / 2) - (H2Launcher.LauncherSettings.ResolutionHeight / 2))), H2Launcher.LauncherSettings.ResolutionWidth, H2Launcher.LauncherSettings.ResolutionHeight, 0);
+            int ScreenWidthMid = ((Screen.AllScreens[LauncherSettings.DefaultDisplay].Bounds.Width / 2));
+            int ScreenHeightMid = (Screen.AllScreens[LauncherSettings.DefaultDisplay].Bounds.Height / 2);
+            int ResolutionWidthMid = (LauncherSettings.ResolutionWidth / 2);
+            int ResolutionHeightMid = (LauncherSettings.ResolutionHeight / 2);
+            int ScreenWidthOffset = Screen.AllScreens[LauncherSettings.DefaultDisplay].Bounds.X;
+
+            //SetWindowPos(FindWindow(null, "Halo 2"),
+            //    IntPtr.Zero,
+            //    (((Screen.PrimaryScreen.Bounds.Width / 2) - (LauncherSettings.ResolutionWidth) / 2)),
+            //    (((Screen.PrimaryScreen.Bounds.Height / 2) - (LauncherSettings.ResolutionHeight / 2))),
+            //    LauncherSettings.ResolutionWidth,
+            //    LauncherSettings.ResolutionHeight, 0);
 
             SetWindowPos(FindWindow(null, "Halo 2"), 
                 IntPtr.Zero, 
                 (ScreenWidthOffset + (ScreenWidthMid - ResolutionWidthMid)), 
                 ((ScreenHeightMid - ResolutionHeightMid)), 
-                Launcher.ResolutionWidth, 
-                Launcher.ResolutionHeight, 0);
+                LauncherSettings.ResolutionWidth, 
+                LauncherSettings.ResolutionHeight, 0);
         }
 
         private void SetWindowBorderless()

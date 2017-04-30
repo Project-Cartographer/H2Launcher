@@ -59,8 +59,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="H2Security">
-      <HintPath>Includes\H2Security.dll</HintPath>
+    <Reference Include="H2Shield">
+      <HintPath>Resources\H2Shield.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,6 +103,7 @@
     <Compile Include="Includes\Globals.cs" />
     <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Dependencies\GameRegistrySettings.cs" />
+    <Compile Include="Includes\UpdateCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

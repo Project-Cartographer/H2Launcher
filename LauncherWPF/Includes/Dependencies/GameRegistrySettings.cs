@@ -23,38 +23,20 @@ namespace Cartographer_Launcher.Includes.Dependencies
 
         public static int GetScreenResX()
         {
-            try
-            {
-                return (int)GetVideoSetting("ScreenResX");
-            }
-            catch (Exception)
-            {
-                return (int)Screen.PrimaryScreen.Bounds.Width;
-            }
+            try { return (int)GetVideoSetting("ScreenResX"); }
+            catch (Exception) { return (int)Screen.PrimaryScreen.Bounds.Width; }
         }
 
         public static int GetScreenResY()
         {
-            try
-            {
-                return (int)GetVideoSetting("ScreenResY");
-            }
-            catch (Exception)
-            {
-                return (int)Screen.PrimaryScreen.Bounds.Height;
-            }
+            try { return (int)GetVideoSetting("ScreenResY"); }
+            catch (Exception) { return (int)Screen.PrimaryScreen.Bounds.Height; }
         }
 
         public static SettingsDisplayMode GetDisplayMode()
         {
-            try
-            {
-                return (((int)GetVideoSetting("DisplayMode") == 1) ? SettingsDisplayMode.Windowed : SettingsDisplayMode.Fullscreen);
-            }
-            catch (Exception)
-            {
-                return SettingsDisplayMode.Windowed;
-            }
+            try { return (((int)GetVideoSetting("DisplayMode") == 1) ? SettingsDisplayMode.Windowed : SettingsDisplayMode.Fullscreen); }
+            catch (Exception) { return SettingsDisplayMode.Windowed; }
         }
 
         private static void SetVideoSetting(string Setting, object Value)

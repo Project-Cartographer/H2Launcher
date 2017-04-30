@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Cartographer_Launcher.Includes
 {
@@ -82,6 +81,11 @@ namespace Cartographer_Launcher.Includes
         public static string LogFile
         {
             get { return LocalAppData + "\\H2Launcher.log"; }
+        }
+
+        public static string ExLogFile
+        {
+            get { return LocalAppData + "\\Error.log"; }
         }
 
         public static string Downloads
