@@ -240,10 +240,10 @@ namespace LauncherWPF
         {
             try
             {
-                if (File.Exists(Globals.Files + "LocaleUpdate.xml"))
+                if (File.Exists(Globals.Files + "LocalUpdate.xml"))
                 {
                     //await Task.Delay(0);
-                    XDocument RemoteXML = XDocument.Load(Globals.Files + "LocaleUpdate.xml");
+                    XDocument RemoteXML = XDocument.Load(Globals.Files + "LocalUpdate.xml");
                     UpdateCollection tUpdateColleciton = new UpdateCollection();
                     foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
                                            select
@@ -425,8 +425,8 @@ namespace LauncherWPF
 
         public void Finished()
         {
-            if (File.Exists(Globals.Files + "LocaleUpdate.xml")) File.Delete(Globals.Files + "LocaleUpdate.xml");
-            File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocaleUpdate.xml");
+            if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
+            File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
 
             if (_LauncherUpdated)
             {
@@ -1029,7 +1029,7 @@ namespace LauncherWPF
 
         private void psForceUpdate_Checked(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(Globals.Files + "LocaleUpdate.xml")) File.Delete(Globals.Files + "LocaleUpdate.xml");
+            if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
             Task.Delay(5000);
             ProcessStartInfo p = new ProcessStartInfo();
             p.UseShellExecute = false;
@@ -1119,7 +1119,7 @@ namespace LauncherWPF
         {
             try { SaveSettings(); }
             catch (Exception Ex) { ExLogFile(Ex.ToString()); }
-            if (!File.Exists(Globals.Files + "LocaleUpdate.xml") && File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocaleUpdate.xml");
+            //if (!File.Exists(Globals.Files + "LocalUpdate.xml") && File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
         }
     }
 }
