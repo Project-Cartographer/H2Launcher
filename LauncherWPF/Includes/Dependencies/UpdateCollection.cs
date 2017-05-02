@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 
-namespace Cartographer_Launcher.Includes
+namespace Cartographer_Launcher.Includes.Dependencies
 {
     public class UpdateCollection : CollectionBase, IEnumerable
     {
@@ -53,8 +53,7 @@ namespace Cartographer_Launcher.Includes
             get
             {
                 string LocalDirectoryPath = Path.GetDirectoryName(FormatPath(_localpath));
-                if (!Directory.Exists(LocalDirectoryPath))
-                    Directory.CreateDirectory(LocalDirectoryPath);
+                if (!Directory.Exists(LocalDirectoryPath)) Directory.CreateDirectory(LocalDirectoryPath);
                 return FormatPath(_localpath);
             }
             set { _localpath = value; }
