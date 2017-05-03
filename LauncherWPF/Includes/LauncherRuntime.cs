@@ -81,8 +81,8 @@ namespace Cartographer_Launcher.Includes
             LauncherSettings.PlayerTag = Gamertag;
             ProjectSettings.LoginToken = LoginToken;
 
-            ProjectSettings.SaveSettings();
-            LauncherSettings.SaveSettings();
+            //ProjectSettings.SaveSettings();
+            //LauncherSettings.SaveSettings();
 
             await Task.Delay(1);
             //File.WriteAllLines(Globals.GameDirectory + "token.ini", new string[] { "token=" + LoginToken, "username=" + Gamertag });

@@ -73,7 +73,6 @@ namespace LauncherWPF
 		public MainWindow()
 		{
 			InitializeComponent();
-			//UpdateController _UpdateController = new UpdateController();
 			CheckInstallPath();
 
 			LogFile("Log file initialized.");
@@ -85,6 +84,7 @@ namespace LauncherWPF
 			UpdatePanelCheck = false;
 			usProgressLabel.Tag = "{0}/100";
 			usProgressLabel.Content = "100/100";
+
 			try
 			{
 				LauncherSettings.LoadSettings();
@@ -92,6 +92,11 @@ namespace LauncherWPF
 				LoadSettings();
 			}
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+
+			var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
+			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
+			else PlayButton.Content = "PLAY";
+
 			CheckUpdates();
 		}
 
@@ -272,15 +277,21 @@ namespace LauncherWPF
 
 		public async void CheckUpdates()
 		{
-			if (!LoginPanelCheck && !SettingsPanelCheck)
+			await Task.Delay(1000).ContinueWith(_ =>
 			{
-				if (UpdatePanel.Margin.Bottom == -250)
+				Dispatcher.Invoke(() =>
 				{
-					PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = true;
-				}
-			}
-			await Task.Run(() =>
+					if (!LoginPanelCheck && !SettingsPanelCheck)
+					{
+						if (UpdatePanel.Margin.Bottom == -250)
+						{
+							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = true;
+						}
+					}
+				});
+			});
+			await Task.Delay(1000).ContinueWith(_ => 
 			{
 				if (UpdateGameToLatest())
 				{
@@ -438,7 +449,7 @@ namespace LauncherWPF
 				p.UseShellExecute = false;
 				p.FileName = "cmd.exe";
 				p.WindowStyle = ProcessWindowStyle.Hidden;
-				p.Arguments = "/c ping 127.0.0.1 -n 2 -w 5000 > Nul & Del " + CurrentLauncherName + " & ping 127.0.0.1 -n 2 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 2 -w 2000 > Nul & start H2Launcher.exe";
+				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 5000 > Nul & Del " + CurrentLauncherName + " & ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 2 -w 2000 > Nul & start H2Launcher.exe";
 				p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 				Process.Start(p);
 				Process.GetCurrentProcess().Kill();
@@ -496,12 +507,22 @@ namespace LauncherWPF
 
 		private void LoginVerification()
 		{
-			SaveSettings();
+			Dispatcher.Invoke(() =>
+			{
+				if (LoginPanel.Margin.Top == 0)
+				{
+					PanelAnimation("sbHideLoginMenu", LoginPanel);
+					LoginPanelCheck = false;
+					Task.Delay(1000).ContinueWith(_ => { SaveSettings(); });
+				}
+			});
+
 			var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
 			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull)
 			{
 				lsUser.Text = "";
 				lsPass.Password = "";
+				PlayButton.Content = "LOGIN";
 			}
 
 			switch (loginResult.LoginResultEnum)
@@ -518,12 +539,14 @@ namespace LauncherWPF
 					{
 						MessageBox.Show(this, "This login token is no longer valid.\r\nPlease re-enter your login information and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 						ProjectSettings.LoginToken = "";
+						PlayButton.Content = "LOGIN";
 						LogFile("Login Token was invalid");
 						break;
 					}
 				case LoginResultEnum.InvalidUsernameOrPassword:
 					{
 						MessageBox.Show(this, "The playertag or password entered is invalid.\r\nPlease try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
+						PlayButton.Content = "LOGIN";
 						LogFile("Playertag or the entered password was incorrect.");
 						break;
 					}
@@ -531,6 +554,7 @@ namespace LauncherWPF
 					{
 						if (MessageBox.Show(this, "You have been banned, please visit the forum to appeal your ban.\r\nWould you like us to open the forums for you?.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 							Process.Start(AppealURL);
+						PlayButton.Content = "LOGIN";
 						LogFile("This machine is banned. Please seek help on the discord or forum");
 						break;
 					}
@@ -541,6 +565,7 @@ namespace LauncherWPF
 							PanelAnimation("sbShowLoginMenu", LoginPanel);
 							LoginPanelCheck = true;
 						}
+						PlayButton.Content = "LOGIN";
 						LogFile("General login failure, please try again");
 						break;
 					}
@@ -621,7 +646,7 @@ namespace LauncherWPF
 		{
 			if (lsPass.Password == "")
 			{
-				if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck)
+				if (!SettingsPanelCheck && !UpdatePanelCheck)
 				{
 					if (LoginPanel.Margin.Top == -140)
 					{
@@ -632,10 +657,48 @@ namespace LauncherWPF
 					{
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
+						Task.Delay(500).ContinueWith(_ => { SaveSettings(); });
 					}
 				}
 			}
-			if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck) LoginVerification();
+			if (SettingsPanelCheck)
+			{
+				if (SettingPanel.Margin.Right == 0)
+				{
+					PanelAnimation("sbHideSettingsMenu", SettingPanel);
+					SettingsPanelCheck = false;
+					Task.Delay(500);
+					SaveSettings();
+				}
+				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+				{
+					PanelAnimation("sbShowLoginMenu", LoginPanel);
+					LoginPanelCheck = true;
+				}
+			}
+			if (UpdatePanelCheck)
+			{
+				if (UpdatePanel.Margin.Bottom == 0)
+				{
+					PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+					UpdatePanelCheck = false;
+				}
+				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+				{
+					PanelAnimation("sbShowLoginMenu", LoginPanel);
+					LoginPanelCheck = true;
+				}
+			}
+			if (LoginPanelCheck)
+			{
+				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
+				{
+					PanelAnimation("sbHideLoginMenu", LoginPanel);
+					LoginPanelCheck = false;
+					Task.Delay(500).ContinueWith(_ => { SaveSettings(); });
+				}
+			}
+			if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY") LoginVerification();
 		}
 
 		private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -651,6 +714,7 @@ namespace LauncherWPF
 				{
 					PanelAnimation("sbHideSettingsMenu", SettingPanel);
 					SettingsPanelCheck = false;
+					Task.Delay(1000).ContinueWith(_ => { SaveSettings(); });
 				}
 			}
 		}
@@ -688,6 +752,7 @@ namespace LauncherWPF
 					PanelAnimation("sbHideSettingsMenu", SettingPanel);
 					SettingsPanelCheck = false;
 				}
+				Task.Delay(1000).ContinueWith(_ => { SaveSettings(); });
 			}
 			else if (UpdatePanelCheck)
 			{
@@ -701,8 +766,10 @@ namespace LauncherWPF
 			{
 				if (LoginPanel.Margin.Top == 0)
 				{
+					if (lsPass.Password != "") PlayButton.Content = "PLAY";
 					PanelAnimation("sbHideLoginMenu", LoginPanel);
 					LoginPanelCheck = false;
+					Task.Delay(1000).ContinueWith(_ => { SaveSettings(); });
 				}
 			}
 		}
@@ -1011,9 +1078,15 @@ namespace LauncherWPF
 		{
 			if (lsUser.Text != LauncherSettings.PlayerTag)
 			{
+				PlayButton.Content = "LOGIN";
 				lsPass.Password = "";
 				lsRememberMe.IsChecked = false;
 			}
+		}
+		private void lsPass_PasswordChanged(object sender, RoutedEventArgs e)
+		{
+			if (lsUser.Text != "" && lsPass.Password != "") PlayButton.Content = "PLAY";
+			else PlayButton.Content = "LOGIN";
 		}
 
 		private void psRes_Unchecked(object sender, RoutedEventArgs e)

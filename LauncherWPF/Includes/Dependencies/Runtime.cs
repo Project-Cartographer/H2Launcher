@@ -50,7 +50,7 @@ namespace Cartographer_Launcher.Includes.Dependencies
                 }
                 catch (Exception) { }
             } while (!t);
-            await Task.Delay(8000);
+            await Task.Delay(4000);
             foreach (string Command in PostCommands.Keys)
             {
 
