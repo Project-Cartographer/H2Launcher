@@ -104,7 +104,6 @@
     <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Dependencies\GameRegistrySettings.cs" />
     <Compile Include="Includes\Dependencies\UpdateCollection.cs" />
-    <Compile Include="Includes\Update.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

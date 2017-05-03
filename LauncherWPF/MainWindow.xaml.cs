@@ -425,6 +425,7 @@ namespace LauncherWPF
 
         public void Finished()
         {
+            string CurrentLauncherName = Assembly.GetExecutingAssembly().Location;
             if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
             File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
 
@@ -433,12 +434,13 @@ namespace LauncherWPF
                 AddToDetails("Restarting Launcher to complete update");
                 Task.Delay(5000);
                 ProcessStartInfo p = new ProcessStartInfo();
-                p.UseShellExecute = false;
-                p.Arguments = "/C ping 127.0.0.1 -n 1 -w 5000 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\" & ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 20000 > Nul & start H2Launcher.exe";
-                p.WindowStyle = ProcessWindowStyle.Hidden;
                 p.CreateNoWindow = true;
-                p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                p.UseShellExecute = false;
                 p.FileName = "cmd.exe";
+                //MessageBox.Show(CurrentLauncherName);
+                p.WindowStyle = ProcessWindowStyle.Hidden;
+                p.Arguments = "/C ping 127.0.0.1 -n 1 -w 10000 > Nul & Del " + CurrentLauncherName + " & ping 127.0.0.1 -n 1 -w 100000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe"; //& ping 127.0.0.1 -n 1 -w 20000 > Nul & start H2Launcher.exe
+                p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 Process.Start(p);
                 Process.GetCurrentProcess().Kill();
             }
@@ -1029,11 +1031,11 @@ namespace LauncherWPF
 
         private void psForceUpdate_Checked(object sender, RoutedEventArgs e)
         {
-            if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
+            File.Delete(Globals.Files + "LocalUpdate.xml");
             Task.Delay(5000);
             ProcessStartInfo p = new ProcessStartInfo();
             p.UseShellExecute = false;
-            p.Arguments = "/C ping 127.0.0.1 -n 1 -w 5000 > Nul & start H2Launcher.exe";
+            p.Arguments = "/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe";
             p.WindowStyle = ProcessWindowStyle.Hidden;
             p.CreateNoWindow = true;
             p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -1119,7 +1121,6 @@ namespace LauncherWPF
         {
             try { SaveSettings(); }
             catch (Exception Ex) { ExLogFile(Ex.ToString()); }
-            //if (!File.Exists(Globals.Files + "LocalUpdate.xml") && File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
         }
     }
 }

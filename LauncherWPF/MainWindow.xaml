@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LauncherWPF"
         mc:Ignorable="d"       
-        Title="" Height="450" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" AllowsTransparency="True" MouseDown="main_form_MouseDown" Initialized="main_form_Initialized" Closed="main_form_Closed">
+        Title="H2Launcher" Height="450" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" AllowsTransparency="True" MouseDown="main_form_MouseDown" Initialized="main_form_Initialized" Closed="main_form_Closed">
     <Window.Background>
         <ImageBrush ImageSource="Resources/Images/launcher background.png"/>
     </Window.Background>
