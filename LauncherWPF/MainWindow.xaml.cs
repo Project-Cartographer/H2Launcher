@@ -667,7 +667,7 @@ namespace LauncherWPF
 				{
 					PanelAnimation("sbHideSettingsMenu", SettingPanel);
 					SettingsPanelCheck = false;
-					Task.Delay(500);
+					Task.Delay(1000);
 					SaveSettings();
 				}
 				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
