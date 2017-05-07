@@ -3,6 +3,7 @@ using H2Shield.Includes;
 using Cartographer_Launcher.Includes.Dependencies;
 using Cartographer_Launcher.Includes.Settings;
 using LauncherWPF;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -65,26 +66,24 @@ namespace Cartographer_Launcher.Includes
             MainForm.Hide();
             int RunningTicks = 0;
 
-            LauncherSettings.LoadSettings();
-            ProjectSettings.LoadSettings();
+			LauncherSettings.LoadSettings();
+			ProjectSettings.LoadSettings();
 
-            LauncherSettings.PlayerTag = Gamertag;
+			LauncherSettings.PlayerTag = Gamertag;
             ProjectSettings.LoginToken = LoginToken;
 
-            //ProjectSettings.SaveSettings();
-            //LauncherSettings.SaveSettings();
-
             await Task.Delay(1);
-            //File.WriteAllLines(Globals.GameDirectory + "token.ini", new string[] { "token=" + LoginToken, "username=" + Gamertag });
             GameRuntime.RunGame();
 
-            /*
-             * Game Running thread ticks every 1 second with a maximum of 15 ticks till reset.
-             * 
-             */
             while (Process.GetProcessesByName("halo2").Length == 1)
             {
-                if (RunningTicks == 15) 
+				#region TickLogic
+				if (RunningTicks == 16) RunningTicks = 0;
+				else RunningTicks++;
+				await Task.Delay(1000);
+				#endregion
+
+				if (RunningTicks == 15) 
                 {
                     var banResult = WebControl.CheckBan(Gamertag, LoginToken);
 
@@ -94,17 +93,12 @@ namespace Cartographer_Launcher.Includes
                         MainForm.Topmost = true;
                         MainForm.Focus();
                         MainForm.Topmost = false;
-                        if (MessageBox.Show("You have been banned, please visit the forum to appeal your ban.\r\nWould you like us to open the forums for you?.",
+                        if (MessageBox.Show("You have been banned, please visit the forum to appeal your ban." + Environment.NewLine + "Would you like us to open the forums for you?.",
                             Kantanomo.PauseIdiomGenerator, MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes)
                             Process.Start(@"http://www.halo2vista.com/forums/viewforum.php?f=45");
                     }
                 }
 
-                #region TickLogic
-                if (RunningTicks == 16) RunningTicks = 0;
-                else RunningTicks++;
-                await Task.Delay(1000);
-                #endregion
             }
             MainForm.Show();
         }

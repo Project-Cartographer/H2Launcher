@@ -88,7 +88,7 @@ namespace Cartographer_Launcher.Includes.Settings
             else
             {
                 StreamReader SR = new StreamReader(Globals.Files + "Settings.ini");
-                string[] Lines = SR.ReadToEnd().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] Lines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 SR.Close();
                 SR.Dispose();
                 foreach (string Line in Lines)

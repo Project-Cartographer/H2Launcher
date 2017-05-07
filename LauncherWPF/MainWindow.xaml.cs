@@ -94,7 +94,13 @@ namespace LauncherWPF
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
 
 			var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
+			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull)
+			{
+				PlayButton.Content = "LOGIN";
+				lsUser.Text = "";
+				lsPass.Password = "";
+				ProjectSettings.LoginToken = "";
+			}
 			else PlayButton.Content = "PLAY";
 
 			CheckUpdates();
@@ -159,8 +165,8 @@ namespace LauncherWPF
 			{
 				Dispatcher.Invoke(() =>
 				{
-					string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]\r\n";
-					usTextBox.Text += DateStamp + Message + "\r\n" + "\r\n";
+					string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]" + Environment.NewLine;
+					usTextBox.Text += DateStamp + Message + Environment.NewLine + Environment.NewLine;
 				});
 				//usTextBox.Text.SelectionStart = usTextBox.Text.Length;
 				//usTextBox.Text.ScrollToCaret();
@@ -339,7 +345,7 @@ namespace LauncherWPF
 		private bool UpdateGameToLatest()
 		{
 			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GameDirectory + "halo2.exe").FileVersion;
-			AddToDetails(string.Format("Halo 2 Version Current Version: {0}\r\nHalo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version));
+			AddToDetails(string.Format("Halo 2 Version Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version));
 
 			if (_Halo2Version != CurrentHalo2Version)
 			{
@@ -463,7 +469,7 @@ namespace LauncherWPF
 			{
 				using (Stream DestinationStream = File.Create(Destination))
 				{
-					AddToDetails("Moving " + Name + " \r\n\tFrom " + Source + " \r\n\tTo " + Destination);
+					AddToDetails("Moving " + Name + Environment.NewLine + " \tFrom " + Source + Environment.NewLine + " \tTo " + Destination);
 					UpdateProgress(0);
 					byte[] buffer = new byte[SourceStream.Length / 1024];
 					int read;
@@ -513,7 +519,6 @@ namespace LauncherWPF
 				{
 					PanelAnimation("sbHideLoginMenu", LoginPanel);
 					LoginPanelCheck = false;
-					Task.Delay(1000).ContinueWith(_ => { SaveSettings(); });
 				}
 			});
 
@@ -522,6 +527,7 @@ namespace LauncherWPF
 			{
 				lsUser.Text = "";
 				lsPass.Password = "";
+				ProjectSettings.LoginToken = "";
 				PlayButton.Content = "LOGIN";
 			}
 
@@ -531,31 +537,33 @@ namespace LauncherWPF
 					{
 						LauncherSettings.PlayerTag = lsUser.Text;
 						ProjectSettings.LoginToken = loginResult.LoginToken;
+						ProjectSettings.SaveSettings();
+						LauncherSettings.SaveSettings();
 						LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
 						LogFile("Login successful, game starting...");
 						break;
 					}
 				case LoginResultEnum.InvalidLoginToken:
 					{
-						MessageBox.Show(this, "This login token is no longer valid.\r\nPlease re-enter your login information and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
+						MessageBox.Show(this, "This login token is no longer valid." + Environment.NewLine + "Please re -enter your login information and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 						ProjectSettings.LoginToken = "";
 						PlayButton.Content = "LOGIN";
-						LogFile("Login Token was invalid");
+						LogFile("Project Cartographer: Login token invalid");
 						break;
 					}
 				case LoginResultEnum.InvalidUsernameOrPassword:
 					{
-						MessageBox.Show(this, "The playertag or password entered is invalid.\r\nPlease try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
+						MessageBox.Show(this, "The playertag or password entered is invalid." + Environment.NewLine + "Please try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 						PlayButton.Content = "LOGIN";
-						LogFile("Playertag or the entered password was incorrect.");
+						LogFile("Project Cartographer: Player credentials invalid");
 						break;
 					}
 				case LoginResultEnum.Banned:
 					{
-						if (MessageBox.Show(this, "You have been banned, please visit the forum to appeal your ban.\r\nWould you like us to open the forums for you?.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+						if (MessageBox.Show(this, "You have been banned, please visit the forum to appeal your ban." + Environment.NewLine + "Would you like us to open the forums for you?.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 							Process.Start(AppealURL);
 						PlayButton.Content = "LOGIN";
-						LogFile("This machine is banned. Please seek help on the discord or forum");
+						LogFile("Project Cartographer: Machine is banned");
 						break;
 					}
 				case LoginResultEnum.GenericFailure:
@@ -566,7 +574,7 @@ namespace LauncherWPF
 							LoginPanelCheck = true;
 						}
 						PlayButton.Content = "LOGIN";
-						LogFile("General login failure, please try again");
+						LogFile("Project Cartographer: General login failure");
 						break;
 					}
 			}
@@ -604,7 +612,7 @@ namespace LauncherWPF
 
 			exlog.WriteLine("Date: " + DateTimeStamp);
 			exlog.WriteLine(Message);
-			exlog.WriteLine("\r\n");
+			exlog.WriteLine(Environment.NewLine);
 
 			exlog.Flush();
 			exlog.Dispose();
@@ -657,7 +665,8 @@ namespace LauncherWPF
 					{
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
-						Task.Delay(500).ContinueWith(_ => { SaveSettings(); });
+						//ProjectSettings.SaveSettings();
+						//LauncherSettings.SaveSettings();
 					}
 				}
 			}
@@ -1046,6 +1055,7 @@ namespace LauncherWPF
 			{
 				PlayButton.Content = "LOGIN";
 				lsPass.Password = "";
+				ProjectSettings.LoginToken = "";
 				lsRememberMe.IsChecked = false;
 			}
 		}
