@@ -94,14 +94,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Includes\Dependencies\Runtime.cs" />
     <Compile Include="Includes\LauncherRuntime.cs" />
     <Compile Include="Includes\Settings\GameRuntime.cs" />
     <Compile Include="Includes\Dependencies\Kantanomo.cs" />
+    <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Settings\ProjectCartographer.cs" />
     <Compile Include="Includes\Dependencies\Enumerators.cs" />
     <Compile Include="Includes\Globals.cs" />
-    <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Dependencies\GameRegistrySettings.cs" />
     <Compile Include="Includes\Dependencies\UpdateCollection.cs" />
     <Compile Include="MainWindow.xaml.cs">

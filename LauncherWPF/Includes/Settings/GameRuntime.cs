@@ -7,7 +7,6 @@ namespace Cartographer_Launcher.Includes.Settings
     {
         Launcher LauncherSettings = new Launcher();
         ProjectCartographer ProjectSettings = new ProjectCartographer();
-        Runtime Runtime = new Runtime();
 
         public void RunGame()
         {
@@ -17,16 +16,12 @@ namespace Cartographer_Launcher.Includes.Settings
             ProcInfo.WorkingDirectory = Globals.GameDirectory;
             ProcInfo.FileName = "halo2.exe";
 
-            GameRegistrySettings.SetScreenResX(LauncherSettings.ResolutionWidth);
-            GameRegistrySettings.SetScreenResY(LauncherSettings.ResolutionHeight);
-
             switch (LauncherSettings.DisplayMode)
             {
                 case SettingsDisplayMode.Windowed:
                     {
                         ProcInfo.Arguments += "-windowed ";
                         GameRegistrySettings.SetDisplayMode(false);
-                        Runtime.AddCommand("SetWindowResolution", new object[] { LauncherSettings.ResolutionWidth, LauncherSettings.ResolutionHeight });
                         break;
                     }
                 case SettingsDisplayMode.Fullscreen:
@@ -35,15 +30,6 @@ namespace Cartographer_Launcher.Includes.Settings
                         ProcInfo.Arguments += "-monitor:" + LauncherSettings.DefaultDisplay.ToString() + " ";
                         break;
                     }
-                case SettingsDisplayMode.Borderless:
-                    {
-                        ProcInfo.Arguments += "-windowed ";
-                        GameRegistrySettings.SetDisplayMode(false);
-                        Runtime.AddCommand("SetWindowBorderless");
-                        Runtime.AddCommand("SetWindowResolution", new object[] { LauncherSettings.ResolutionWidth, LauncherSettings.ResolutionHeight });
-                        break;
-                    }
-
             }
             ProjectSettings.SaveSettings();
             LauncherSettings.SaveSettings();
@@ -52,7 +38,6 @@ namespace Cartographer_Launcher.Includes.Settings
             if (LauncherSettings.VerticalSync == 0) ProcInfo.Arguments += "-novsync ";
 
             Process.Start(ProcInfo);
-            Runtime.RunCommands();
         }
 
         public void KillGame()

@@ -49,12 +49,8 @@
 				</Grid.RowDefinitions>
 				<Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123" Grid.RowSpan="2"/>
 				<ToggleButton x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="30,16,0,0" Checked="psFullScreen_Checked" Unchecked="psFullScreen_Unchecked" Grid.Row="1"/>
-				<ToggleButton x:Name="psWindowed" Content="Windowed" Style="{StaticResource sPanelButtonStyle}" Margin="30,45,0,0" Checked="psWindowed_Checked" Unchecked="psWindowed_Unchecked" Grid.Row="1"/>
-				<ToggleButton x:Name="psBorderless" Content="Borderless" Style="{StaticResource sPanelButtonStyle}" Margin="120,45,0,0" Checked="psBorderless_Checked" Grid.Row="1"/>
 				<TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" FontSize="18" Margin="60,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
 				<TextBox x:Name="psResY" Style="{StaticResource TextBoxStyle}" FontSize="18" Margin="130,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" Grid.Row="1"/>
-				<ToggleButton x:Name="psResx" Content="X :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="40,68,0,0" HorizontalAlignment="Left" Grid.Row="1" Unchecked="psRes_Unchecked"/>
-				<ToggleButton x:Name="psResy" Content="Y :" Style="{StaticResource sPanelButtonStyle}" FontSize="18" Margin="110,68,0,0" HorizontalAlignment="Left" Grid.Row="1" Unchecked="psRes_Unchecked"/>
 				<ToggleButton x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="30,93,0,0" Grid.Row="1" Checked="psVsync_Checked" Unchecked="psVsync_Unchecked"/>
 				<ToggleButton x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="30,122,0,0" Grid.Row="1" Checked="psSound_Checked" Unchecked="psSound_Unchecked"/>
 				<ToggleButton x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="30,151,0,0" Grid.Row="1" Unchecked="psMonitor_Unchecked"/>

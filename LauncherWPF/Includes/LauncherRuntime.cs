@@ -12,7 +12,6 @@ namespace Cartographer_Launcher.Includes
     {
         private static Launcher _LauncherSettings;
         private static GameRuntime _GameRuntime;
-        private static Runtime _Runtime;
         private static WebHandler _WebControl;
         private static ProjectCartographer _ProjectSettings;
         private static MainWindow _MainWindow;
@@ -49,15 +48,6 @@ namespace Cartographer_Launcher.Includes
             {
                 if (_GameRuntime == null) _GameRuntime = new GameRuntime();
                 return _GameRuntime;
-            }
-        }
-
-        public static Runtime Runtime
-        {
-            get
-            {
-                if (_Runtime == null) _Runtime = new Runtime();
-                return _Runtime;
             }
         }
 

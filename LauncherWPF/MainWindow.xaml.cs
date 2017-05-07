@@ -133,7 +133,7 @@ namespace LauncherWPF
 						Globals.GameDirectory = ofd.FileName.Replace(ofd.SafeFileName, "");
 						LauncherSettings.SaveSettings();
 					}
-					else CheckInstallPath();
+					else Application.Current.Shutdown();
 				}
 			}
 			else
@@ -804,45 +804,14 @@ namespace LauncherWPF
 				case SettingsDisplayMode.Fullscreen:
 					{
 						psFullScreen.IsChecked = true;
-						psWindowed.IsChecked = false;
-						psBorderless.IsChecked = false;
 						break;
 					}
 				case SettingsDisplayMode.Windowed:
 					{
 						psFullScreen.IsChecked = false;
-						psWindowed.IsChecked = true;
-						psBorderless.IsChecked = false;
-						break;
-					}
-				case SettingsDisplayMode.Borderless:
-					{
-						psFullScreen.IsChecked = false;
-						psWindowed.IsChecked = true;
-						psBorderless.IsChecked = true;
 						break;
 					}
 			}
-			//
-			//Custom Resolution :: Width
-			//
-			if (LauncherSettings.ResolutionWidth.ToString() != null)
-			{
-				psResX.Text = LauncherSettings.ResolutionWidth.ToString();
-				psResx.IsChecked = true;
-				psResX.Foreground = MenuItemSelect;
-			}
-			else psResx.IsChecked = false;
-			//
-			//Custom Resolution :: Height
-			//
-			if (LauncherSettings.ResolutionHeight.ToString() != null)
-			{
-				psResY.Text = LauncherSettings.ResolutionHeight.ToString();
-				psResy.IsChecked = true;
-				psResY.Foreground = MenuItemSelect;
-			}
-			else psResx.IsChecked = false;
 			//
 			//Ports
 			//
@@ -904,9 +873,6 @@ namespace LauncherWPF
 			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
 
 			LauncherSettings.PlayerTag = lsUser.Text;
-			LauncherSettings.ResolutionHeight = int.Parse(psResY.Text);
-			LauncherSettings.ResolutionWidth = int.Parse(psResX.Text);
-
 			LauncherSettings.DisplayMode = (SettingsDisplayMode)Enum.Parse(typeof(SettingsDisplayMode), DefaultDisplay.ToString());
 			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
 			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
@@ -1089,12 +1055,6 @@ namespace LauncherWPF
 			else PlayButton.Content = "LOGIN";
 		}
 
-		private void psRes_Unchecked(object sender, RoutedEventArgs e)
-		{
-			psResx.IsChecked = true;
-			psResy.IsChecked = true;
-		}
-
 		private void psIntroMovies_Unchecked(object sender, RoutedEventArgs e)
 		{
 			StartupCredits = false;
@@ -1149,43 +1109,16 @@ namespace LauncherWPF
 
 		private void psFullScreen_Checked(object sender, RoutedEventArgs e)
 		{
-			if (psWindowed.IsChecked == true || psBorderless.IsChecked == true)
-			{
-				psWindowed.IsChecked = false;
-				psBorderless.IsChecked = false;
-			}
+			psFullScreen.IsChecked = true;
 			DefaultDisplay = "Fullscreen";
 			LogFile("Display Mode: Full Screen enabled.");
 		}
 
 		private void psFullScreen_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (psWindowed.IsChecked == false) psFullScreen.IsChecked = true;
-		}
-
-		private void psBorderless_Checked(object sender, RoutedEventArgs e)
-		{
-			if (psFullScreen.IsChecked == true)
-			{
-				psFullScreen.IsChecked = false;
-				psWindowed.IsChecked = true;
-				psBorderless.IsChecked = true;
-			}
-			DefaultDisplay = "Borderless";
-			LogFile("Display Mode: Borderless window enabled.");
-		}
-
-		private void psWindowed_Checked(object sender, RoutedEventArgs e)
-		{
-			if (psFullScreen.IsChecked == true) psFullScreen.IsChecked = false;
+			psFullScreen.IsChecked = false;
 			DefaultDisplay = "Windowed";
-			LogFile("Display Mode: Windowed enabled.");
-		}
-
-		private void psWindowed_Unchecked(object sender, RoutedEventArgs e)
-		{
-			if (psBorderless.IsChecked == true) psBorderless.IsChecked = false;
-			if (psBorderless.IsChecked == false && psFullScreen.IsChecked == false) psWindowed.IsChecked = true;
+			LogFile("Display Mode: Full Screen disabled.");
 		}
 		#endregion
 

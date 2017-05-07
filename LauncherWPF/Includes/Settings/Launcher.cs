@@ -13,26 +13,12 @@ namespace Cartographer_Launcher.Includes.Settings
         private string _GameDirectory = Globals.GameDirectory;
         private string _PlayerTag = "Player_1";
         private string _PlayerLoginToken = "";
-        private int _ResolutionWidth = GameRegistrySettings.GetScreenResX();
-        private int _ResolutionHeight = GameRegistrySettings.GetScreenResY();
         private SettingsDisplayMode _DisplayMode = GameRegistrySettings.GetDisplayMode();
         private int _GameSound = 1;
         private int _VerticalSync = 1;
         private int _DefaultDisplay = 0;
         private int _StartupCredits = 1;
         private int _RememberMe = 0;
-
-        public int ResolutionWidth
-        {
-            get { return _ResolutionWidth; }
-            set { _ResolutionWidth = value; }
-        }
-
-        public int ResolutionHeight
-        {
-            get { return _ResolutionHeight; }
-            set { _ResolutionHeight = value; }
-        }
 
         public SettingsDisplayMode DisplayMode
         {
@@ -120,16 +106,6 @@ namespace Cartographer_Launcher.Includes.Settings
                                 GameDirectory = Setting[1];
                                 break;
                             }
-                        case "ResolutionHeight":
-                            {
-                                ResolutionHeight = int.Parse(Setting[1]);
-                                break;
-                            }
-                        case "ResolutionWidth":
-                            {
-                                ResolutionWidth = int.Parse(Setting[1]);
-                                break;
-                            }
                         case "DisplayMode":
                             {
                                 DisplayMode = (SettingsDisplayMode)Enum.Parse(typeof(SettingsDisplayMode), Setting[1]);
@@ -178,8 +154,6 @@ namespace Cartographer_Launcher.Includes.Settings
             SB.AppendLine("GameDirectory:" + Globals.GameDirectory);
             SB.AppendLine("LauncherRunPath:" + AppDomain.CurrentDomain.BaseDirectory);
             SB.AppendLine("PlayerTag:" + PlayerTag);
-            SB.AppendLine("ResolutionHeight:" + ResolutionHeight.ToString());
-            SB.AppendLine("ResolutionWidth:" + ResolutionWidth.ToString());
             SB.AppendLine("DisplayMode:" + DisplayMode.ToString());
             SB.AppendLine("GameSound:" + GameSound.ToString());
             SB.AppendLine("VerticalSync:" + VerticalSync.ToString());
