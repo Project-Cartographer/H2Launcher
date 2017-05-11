@@ -665,161 +665,167 @@ namespace LauncherWPF
 
 		private void PlayButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (lsPass.Password == "")
+			if (!SaveSettingsCheck)
 			{
-				if (!SettingsPanelCheck && !UpdatePanelCheck)
+				if (lsPass.Password == "")
 				{
-					if (LoginPanel.Margin.Top == -140)
+					if (!SettingsPanelCheck && !UpdatePanelCheck)
 					{
-						PanelAnimation("sbShowLoginMenu", LoginPanel);
-						LoginPanelCheck = true;
-					}
-					if (LoginPanel.Margin.Top == 0)
-					{
-						PanelAnimation("sbHideLoginMenu", LoginPanel);
-						LoginPanelCheck = false;
-						SaveSettingsCheck = true;
-						if (SaveSettingsCheck) SaveSettings();
+						if (LoginPanel.Margin.Top == -140)
+						{
+							PanelAnimation("sbShowLoginMenu", LoginPanel);
+							LoginPanelCheck = true;
+						}
+						if (LoginPanel.Margin.Top == 0)
+						{
+							PanelAnimation("sbHideLoginMenu", LoginPanel);
+							LoginPanelCheck = false;
+							SaveSettingsCheck = true;
+							SaveSettings();
+						}
 					}
 				}
-			}
-			if (SettingsPanelCheck)
-			{
 				if (SettingPanel.Margin.Right == 0)
 				{
 					PanelAnimation("sbHideSettingsMenu", SettingPanel);
 					SettingsPanelCheck = false;
 					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
+					SaveSettings();
 				}
 				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
 				{
 					PanelAnimation("sbShowLoginMenu", LoginPanel);
 					LoginPanelCheck = true;
 				}
-			}
-			if (UpdatePanelCheck)
-			{
-				if (UpdatePanel.Margin.Bottom == 0)
+				if (UpdatePanelCheck)
 				{
-					PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = false;
+					if (UpdatePanel.Margin.Bottom == 0)
+					{
+						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = false;
+					}
+					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+					{
+						PanelAnimation("sbShowLoginMenu", LoginPanel);
+						LoginPanelCheck = true;
+					}
 				}
-				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+				if (LoginPanelCheck)
 				{
-					PanelAnimation("sbShowLoginMenu", LoginPanel);
-					LoginPanelCheck = true;
+					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
+					{
+						PanelAnimation("sbHideLoginMenu", LoginPanel);
+						LoginPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
 				}
+				if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY") LoginVerification();
 			}
-			if (LoginPanelCheck)
-			{
-				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
-				{
-					PanelAnimation("sbHideLoginMenu", LoginPanel);
-					LoginPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
-				}
-			}
-			if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY") LoginVerification();
 		}
 
 		private void SettingsButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!LoginPanelCheck && !UpdatePanelCheck)
+			if (!SaveSettingsCheck)
 			{
-				if (SettingPanel.Margin.Right == -220)
+				if (!LoginPanelCheck && !UpdatePanelCheck)
 				{
-					PanelAnimation("sbShowSettingsMenu", SettingPanel);
-					SettingsPanelCheck = true;
+					if (SettingPanel.Margin.Right == -220)
+					{
+						PanelAnimation("sbShowSettingsMenu", SettingPanel);
+						SettingsPanelCheck = true;
+					}
+					else if (SettingPanel.Margin.Right == 0)
+					{
+						PanelAnimation("sbHideSettingsMenu", SettingPanel);
+						SettingsPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
 				}
-				else if (SettingPanel.Margin.Right == 0)
+				if (LoginPanelCheck)
 				{
-					PanelAnimation("sbHideSettingsMenu", SettingPanel);
-					SettingsPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
+					if (LoginPanel.Margin.Top == 0)
+					{
+						PanelAnimation("sbHideLoginMenu", LoginPanel);
+						LoginPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
+					if (SettingPanel.Margin.Right == -220)
+					{
+						PanelAnimation("sbShowSettingsMenu", SettingPanel);
+						SettingsPanelCheck = true;
+					}
 				}
-			}
-			if (LoginPanelCheck)
-			{
-				if (LoginPanel.Margin.Top == 0)
+				if (UpdatePanelCheck)
 				{
-					PanelAnimation("sbHideLoginMenu", LoginPanel);
-					LoginPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
-				}
-				if (SettingPanel.Margin.Right == -220)
-				{
-					PanelAnimation("sbShowSettingsMenu", SettingPanel);
-					SettingsPanelCheck = true;
-				}
-			}
-			if (UpdatePanelCheck)
-			{
-				if (UpdatePanel.Margin.Bottom == 0)
-				{
-					PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = false;
-				}
-				if (SettingPanel.Margin.Right == -220)
-				{
-					PanelAnimation("sbShowSettingsMenu", SettingPanel);
-					SettingsPanelCheck = true;
+					if (UpdatePanel.Margin.Bottom == 0)
+					{
+						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = false;
+					}
+					if (SettingPanel.Margin.Right == -220)
+					{
+						PanelAnimation("sbShowSettingsMenu", SettingPanel);
+						SettingsPanelCheck = true;
+					}
 				}
 			}
 		}
 
 		private void UpdateButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!LoginPanelCheck && !SettingsPanelCheck)
+			if (!SaveSettingsCheck)
 			{
-				if (UpdatePanel.Margin.Bottom == -250)
+				if (!LoginPanelCheck && !SettingsPanelCheck)
 				{
-					usTextBox.Clear();
-					CheckUpdates();
-					PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = true;
+					if (UpdatePanel.Margin.Bottom == -250)
+					{
+						usTextBox.Clear();
+						CheckUpdates();
+						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = true;
+					}
+					else if (UpdatePanel.Margin.Bottom == 0)
+					{
+						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = false;
+					}
 				}
-				else if (UpdatePanel.Margin.Bottom == 0)
+				if (LoginPanelCheck)
 				{
-					PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = false;
+					if (LoginPanel.Margin.Top == 0)
+					{
+						PanelAnimation("sbHideLoginMenu", LoginPanel);
+						LoginPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
+					if (UpdatePanel.Margin.Bottom == -250)
+					{
+						usTextBox.Clear();
+						CheckUpdates();
+						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = true;
+					}
 				}
-			}
-			if (LoginPanelCheck)
-			{
-				if (LoginPanel.Margin.Top == 0)
+				if (SettingsPanelCheck)
 				{
-					PanelAnimation("sbHideLoginMenu", LoginPanel);
-					LoginPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
-				}
-				if (UpdatePanel.Margin.Bottom == -250)
-				{
-					usTextBox.Clear();
-					CheckUpdates();
-					PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = true;
-				}
-			}
-			if(SettingsPanelCheck)
-			{
-				if (SettingPanel.Margin.Right == 0)
-				{
-					PanelAnimation("sbHideSettingsMenu", SettingPanel);
-					SettingsPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
-				}
-				if (UpdatePanel.Margin.Bottom == -250)
-				{
-					usTextBox.Clear();
-					CheckUpdates();
-					PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = true;
+					if (SettingPanel.Margin.Right == 0)
+					{
+						PanelAnimation("sbHideSettingsMenu", SettingPanel);
+						SettingsPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
+					if (UpdatePanel.Margin.Bottom == -250)
+					{
+						usTextBox.Clear();
+						CheckUpdates();
+						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = true;
+					}
 				}
 			}
 		}
@@ -831,34 +837,34 @@ namespace LauncherWPF
 
 		private void PanelClose_Click(object sender, RoutedEventArgs e)
 		{
-			if (SettingsPanelCheck)
+			if (!SaveSettingsCheck)
 			{
-				if (SettingPanel.Margin.Right == 0)
+				if (SettingsPanelCheck)
 				{
-					PanelAnimation("sbHideSettingsMenu", SettingPanel);
-					SettingsPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck) SaveSettings();
-				}
-			}
-			else if (UpdatePanelCheck)
-			{
-				if (UpdatePanel.Margin.Bottom == 0)
-				{
-					PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-					UpdatePanelCheck = false;
-				}
-			}
-			else if (LoginPanelCheck)
-			{
-				if (LoginPanel.Margin.Top == 0)
-				{
-					if (lsPass.Password != "") PlayButton.Content = "PLAY";
-					PanelAnimation("sbHideLoginMenu", LoginPanel);
-					LoginPanelCheck = false;
-					SaveSettingsCheck = true;
-					if (SaveSettingsCheck)
+					if (SettingPanel.Margin.Right == 0)
 					{
+						PanelAnimation("sbHideSettingsMenu", SettingPanel);
+						SettingsPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
+				}
+				else if (UpdatePanelCheck)
+				{
+					if (UpdatePanel.Margin.Bottom == 0)
+					{
+						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+						UpdatePanelCheck = false;
+					}
+				}
+				else if (LoginPanelCheck)
+				{
+					if (LoginPanel.Margin.Top == 0)
+					{
+						if (lsPass.Password != "") PlayButton.Content = "PLAY";
+						PanelAnimation("sbHideLoginMenu", LoginPanel);
+						LoginPanelCheck = false;
+						SaveSettingsCheck = true;
 						LoginTokenCheck();
 						SaveSettings();
 					}
@@ -1122,12 +1128,6 @@ namespace LauncherWPF
 			else PlayButton.Content = "LOGIN";
 		}
 
-		//private void psIntroMovies_Unchecked(object sender, RoutedEventArgs e)
-		//{
-		//	StartupCredits = false;
-		//	LogFile("Launcher: Startup Credits disabled");
-		//}
-
 		private void psForceUpdate_Checked(object sender, RoutedEventArgs e)
 		{
 			File.Delete(Globals.Files + "LocalUpdate.xml");
@@ -1149,12 +1149,6 @@ namespace LauncherWPF
 		{
 			psForceUpdate.IsChecked = false;
 		}
-
-		//private void psIntroMovies_Checked(object sender, RoutedEventArgs e)
-		//{
-		//	StartupCredits = true;
-		//	LogFile("Launcher: Startup Credits enabled");
-		//}
 
 		private void psMaps_Unchecked(object sender, RoutedEventArgs e)
 		{
