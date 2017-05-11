@@ -1,22 +1,22 @@
-﻿using System;
+﻿using Cartographer_Launcher.Includes;
+using Cartographer_Launcher.Includes.Dependencies;
+using Cartographer_Launcher.Includes.Settings;
+using H2Shield.Includes;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using Cartographer_Launcher.Includes;
-using Cartographer_Launcher.Includes.Dependencies;
-using Cartographer_Launcher.Includes.Settings;
-using H2Shield.Includes;
-using System.Net;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Linq;
-using System.Reflection;
 
 namespace LauncherWPF
 {

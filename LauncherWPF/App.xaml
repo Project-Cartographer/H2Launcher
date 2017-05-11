@@ -3,195 +3,195 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LauncherWPF"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
-        <SolidColorBrush x:Key="TitleColor" Color="#C1DAF8" />
-        <SolidColorBrush x:Key="menuItemColor" Color="#5E6D8B" />
-        <SolidColorBrush x:Key="menuItemHoverColor" Color="#7E93B2" />
-        <SolidColorBrush x:Key="menuItemClickColor" Color="#B2D3F6" />
-        <SolidColorBrush x:Key="ControlButtonColor" Color="#B8CDE0" />
-        <SolidColorBrush x:Key="ControlButtonHoverColor" Color="#213F84" />
-        <SolidColorBrush x:Key="ControlButtonClickColor" Color="#2E53A6" />
-        <SolidColorBrush x:Key="PanelBackground" Color= "#000C2D" Opacity="0.75"/>
+	<Application.Resources>
+		<SolidColorBrush x:Key="TitleColor" Color="#C1DAF8" />
+		<SolidColorBrush x:Key="menuItemColor" Color="#5E6D8B" />
+		<SolidColorBrush x:Key="menuItemHoverColor" Color="#7E93B2" />
+		<SolidColorBrush x:Key="menuItemClickColor" Color="#B2D3F6" />
+		<SolidColorBrush x:Key="ControlButtonColor" Color="#B8CDE0" />
+		<SolidColorBrush x:Key="ControlButtonHoverColor" Color="#213F84" />
+		<SolidColorBrush x:Key="ControlButtonClickColor" Color="#2E53A6" />
+		<SolidColorBrush x:Key="PanelBackground" Color= "#000C2D" Opacity="0.75"/>
 
-        <Style TargetType="Label" x:Key="LabelTemplate">
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-        </Style>
+		<Style TargetType="Label" x:Key="LabelTemplate">
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+		</Style>
 
-        <Style TargetType="Label" x:Key="PanelTitleStyle" BasedOn="{StaticResource LabelTemplate}">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Foreground" Value="{StaticResource TitleColor}"/>
-            <Setter Property="Margin" Value="10,10,0,0"/>
-        </Style>
+		<Style TargetType="Label" x:Key="PanelTitleStyle" BasedOn="{StaticResource LabelTemplate}">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
+			<Setter Property="FontSize" Value="24"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Foreground" Value="{StaticResource TitleColor}"/>
+			<Setter Property="Margin" Value="10,10,0,0"/>
+		</Style>
 
-        <Style TargetType="Label" x:Key="ElementStyle" BasedOn="{StaticResource LabelTemplate}">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+		<Style TargetType="Label" x:Key="ElementStyle" BasedOn="{StaticResource LabelTemplate}">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="22"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <Style TargetType="ToggleButton" x:Key="ButtonTemplate">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Grid Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
+		<Style TargetType="ToggleButton" x:Key="ButtonTemplate">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ToggleButton">
+						<Grid Background="{TemplateBinding Background}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Background" Value="{x:Null}"/>
+			<Setter Property="BorderBrush" Value="{x:Null}"/>
 			<Style.Triggers>
 				<Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
-                </Trigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
+					<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+				</Trigger>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
+				</Trigger>
+				<Trigger Property="IsPressed" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
 				<Trigger Property="IsEnabled" Value="False">
 					<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
 				</Trigger>
 			</Style.Triggers>
-        </Style>
+		</Style>
 
-        <Style TargetType="ToggleButton" x:Key="MenuButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
-            <Setter Property="FontSize" Value="24"/>
-            <Setter Property="Height" Value="34"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-        </Style>
+		<Style TargetType="ToggleButton" x:Key="MenuButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
+			<Setter Property="FontSize" Value="24"/>
+			<Setter Property="Height" Value="34"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+		</Style>
 
-        <Style TargetType="ToggleButton" x:Key="ControlButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="Height" Value="34"/>
-            <Setter Property="Width" Value="34"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource ControlButtonHoverColor}"/>
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{StaticResource ControlButtonClickColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+		<Style TargetType="ToggleButton" x:Key="ControlButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Handel Gothic D"/>
+			<Setter Property="FontSize" Value="28"/>
+			<Setter Property="Height" Value="34"/>
+			<Setter Property="Width" Value="34"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Background" Value="{StaticResource ControlButtonHoverColor}"/>
+				</Trigger>
+				<Trigger Property="IsPressed" Value="True">
+					<Setter Property="Background" Value="{StaticResource ControlButtonClickColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <Style TargetType="ToggleButton" x:Key="sPanelButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
+		<Style TargetType="ToggleButton" x:Key="sPanelButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="22"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
 			<Style.Triggers>
 				<Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+					<Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <Style TargetType="TextBox" x:Key="TextBoxStyle">
-            <Setter Property="TextWrapping" Value="Wrap"/>
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
-            <Setter Property="CaretBrush" Value="{StaticResource menuItemColor}"/>
-            <Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
-                    <Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
-                    <Setter Property="SelectionBrush" Value="{StaticResource ControlButtonHoverColor}"/>
-                    <Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
-                    <Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+		<Style TargetType="TextBox" x:Key="TextBoxStyle">
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Background" Value="{x:Null}"/>
+			<Setter Property="BorderBrush" Value="{x:Null}"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+			<Setter Property="CaretBrush" Value="{StaticResource menuItemColor}"/>
+			<Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
+			<Setter Property="Cursor" Value="Arrow"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
+					<Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
+					<Setter Property="SelectionBrush" Value="{StaticResource ControlButtonHoverColor}"/>
+					<Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+				<Trigger Property="IsFocused" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
+					<Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <Style TargetType="RichTextBox" x:Key="RichTextBoxStyle">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
-                    <Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
-                    <Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
-                </Trigger>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
-                    <Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+		<Style TargetType="RichTextBox" x:Key="RichTextBoxStyle">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="IsReadOnly" Value="True"/>
+			<Setter Property="Background" Value="{x:Null}"/>
+			<Setter Property="BorderBrush" Value="{x:Null}"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+			<Setter Property="Cursor" Value="Arrow"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
+					<Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
+					<Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
+				</Trigger>
+				<Trigger Property="IsFocused" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
+					<Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 
-        <Style TargetType="PasswordBox" x:Key="PasswordBoxStyle">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Background" Value="{x:Null}"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
-            <Setter Property="CaretBrush" Value="{StaticResource menuItemColor}"/>
-            <Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
-            <Setter Property="Cursor" Value="Arrow"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
-                    <Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
-                    <Setter Property="SelectionBrush" Value="{StaticResource ControlButtonHoverColor}"/>
-                    <Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
-                    <Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        
-        <Style TargetType="ComboBox" x:Key="ComboBoxStyle">
-            <Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Regular"/>
-            <Setter Property="Background" Value="AliceBlue"/>
-            <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-    </Application.Resources>
+		<Style TargetType="PasswordBox" x:Key="PasswordBoxStyle">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Background" Value="{x:Null}"/>
+			<Setter Property="BorderBrush" Value="{x:Null}"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+			<Setter Property="CaretBrush" Value="{StaticResource menuItemColor}"/>
+			<Setter Property="SelectionBrush" Value="{StaticResource ControlButtonClickColor}"/>
+			<Setter Property="Cursor" Value="Arrow"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="BorderBrush" Value="{Binding ToYourBorder}"/>
+					<Setter Property="Foreground" Value="{StaticResource menuItemHoverColor}"/>
+					<Setter Property="SelectionBrush" Value="{StaticResource ControlButtonHoverColor}"/>
+					<Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+				<Trigger Property="IsFocused" Value="True">
+					<Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
+					<Setter Property="CaretBrush" Value="{StaticResource menuItemClickColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+		<Style TargetType="ComboBox" x:Key="ComboBoxStyle">
+			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="FontWeight" Value="Regular"/>
+			<Setter Property="Background" Value="AliceBlue"/>
+			<Setter Property="BorderBrush" Value="{x:Null}"/>
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+	</Application.Resources>
 </Application>
