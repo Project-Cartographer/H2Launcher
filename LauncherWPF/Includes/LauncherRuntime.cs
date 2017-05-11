@@ -66,14 +66,13 @@ namespace Cartographer_Launcher.Includes
             MainForm.Hide();
             int RunningTicks = 0;
 
-			LauncherSettings.LoadSettings();
-			ProjectSettings.LoadSettings();
-
 			LauncherSettings.PlayerTag = Gamertag;
             ProjectSettings.LoginToken = LoginToken;
 
-            await Task.Delay(1);
-            GameRuntime.RunGame();
+			LauncherSettings.SaveSettings();
+			ProjectSettings.SaveSettings();
+
+			await Task.Delay(500).ContinueWith(_ => { MainForm.Dispatcher.Invoke(() => { GameRuntime.RunGame(); }); });
 
             while (Process.GetProcessesByName("halo2").Length == 1)
             {

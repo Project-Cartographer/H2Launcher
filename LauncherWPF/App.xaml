@@ -52,8 +52,8 @@
             <Setter Property="FontWeight" Value="Regular"/>
             <Setter Property="Background" Value="{x:Null}"/>
             <Setter Property="BorderBrush" Value="{x:Null}"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="False">
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="False">
                     <Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -62,7 +62,10 @@
                 <Trigger Property="IsPressed" Value="True">
                     <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
                 </Trigger>
-            </Style.Triggers>
+				<Trigger Property="IsEnabled" Value="False">
+					<Setter Property="Foreground" Value="{StaticResource menuItemColor}"/>
+				</Trigger>
+			</Style.Triggers>
         </Style>
 
         <Style TargetType="ToggleButton" x:Key="MenuButtonStyle" BasedOn="{StaticResource ButtonTemplate}">
@@ -93,8 +96,8 @@
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
-            <Style.Triggers>
-                <Trigger Property="IsChecked" Value="True">
+			<Style.Triggers>
+				<Trigger Property="IsChecked" Value="True">
                     <Setter Property="Foreground" Value="{StaticResource menuItemClickColor}"/>
                 </Trigger>
             </Style.Triggers>

@@ -24,11 +24,4 @@
         RegisterUsernameInvalid = 41,
         RegisterUsernameFailed = 42,
     }
-
-    public enum GameLaunchEnvironment : int
-    {
-        Cartographer = 1,
-        Xliveless = 2,
-        LIVE = 3
-    }
 }

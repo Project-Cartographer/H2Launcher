@@ -17,7 +17,6 @@ namespace Cartographer_Launcher.Includes.Settings
         private int _GameSound = 1;
         private int _VerticalSync = 1;
         private int _DefaultDisplay = 0;
-        private int _StartupCredits = 1;
         private int _RememberMe = 0;
 
         public SettingsDisplayMode DisplayMode
@@ -42,12 +41,6 @@ namespace Cartographer_Launcher.Includes.Settings
         {
             get { return _DefaultDisplay; }
             set { _DefaultDisplay = value; }
-        }
-
-        public int StartupCredits
-        {
-            get { return _StartupCredits; }
-            set { _StartupCredits = value; }
         }
 
         public int RememberMe
@@ -126,11 +119,6 @@ namespace Cartographer_Launcher.Includes.Settings
                                 DefaultDisplay = int.Parse(Setting[1]);
                                 break;
                             }
-                        case "StartupCredits":
-                            {
-                                StartupCredits = int.Parse(Setting[1]);
-                                break;
-                            }
                         case "RememberMe":
                             {
                                 RememberMe = int.Parse(Setting[1]);
@@ -158,7 +146,6 @@ namespace Cartographer_Launcher.Includes.Settings
             SB.AppendLine("GameSound:" + GameSound.ToString());
             SB.AppendLine("VerticalSync:" + VerticalSync.ToString());
             SB.AppendLine("DefaultDisplay:" + DefaultDisplay.ToString());
-            SB.AppendLine("StartupCredits:" + StartupCredits.ToString());
             SB.AppendLine("RememberMe:" + RememberMe.ToString());
             SB.AppendLine("PlayerLoginToken:" + Encrypt.EncryptStringAES(PlayerLoginToken));
             SW.Write(SB.ToString());
