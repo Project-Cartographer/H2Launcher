@@ -76,6 +76,7 @@ namespace LauncherWPF
 		public MainWindow()
 		{
 			InitializeComponent();
+
 			LauncherCheck();
 			CheckInstallPath();
 
@@ -85,7 +86,7 @@ namespace LauncherWPF
 
 			usProgressLabel.Tag = "{0}/100";
 			usProgressLabel.Content = "100/100";
-			StatusLabel.Content = Globals.VersionNumber;
+			StatusButton.Content = Globals.VersionNumber;
 
 			try { LoadSettings(); }
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
@@ -185,7 +186,7 @@ namespace LauncherWPF
 
 		private async void LoginTokenCheck()
 		{
-			StatusLabel.Content = "Currently verifying login...";
+			StatusButton.Content = "Currently verifying login...";
 			await Task.Delay(1000).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
@@ -818,6 +819,7 @@ namespace LauncherWPF
 
 		public void Finished()
 		{
+			string CurrentName = Assembly.GetExecutingAssembly().Location.ToString();
 			if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
 			File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
 
@@ -830,7 +832,7 @@ namespace LauncherWPF
 				p.UseShellExecute = false;
 				p.FileName = "cmd.exe";
 				p.WindowStyle = ProcessWindowStyle.Hidden;
-				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 5000 > Nul & Del " + Assembly.GetExecutingAssembly().Location + " & ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 2 -w 2000 > Nul & start H2Launcher.exe";
+				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 2000 > Nul & Del " + "\"" + CurrentName + "\"" + "& ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 1000 > Nul & start H2Launcher.exe";
 				p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
 				Process.Start(p);
 				Process.GetCurrentProcess().Kill();
@@ -985,7 +987,7 @@ namespace LauncherWPF
 
 		public async void SaveSettings()
 		{
-			StatusLabel.Content = "Currently saving configuration files...";
+			StatusButton.Content = "Currently saving configuration files...";
 			await Task.Delay(1000);
 			if (lsUser.Text == "") LauncherSettings.RememberMe = 0;
 			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
@@ -1007,7 +1009,7 @@ namespace LauncherWPF
 
 			LogFile("Settings saved");
 			SaveSettingsCheck = false;
-			StatusLabel.Content = Globals.VersionNumber;
+			StatusButton.Content = Globals.VersionNumber;
 			if (ApplicationShutdownCheck) Application.Current.Shutdown();
 		}
 
@@ -1117,6 +1119,12 @@ namespace LauncherWPF
 		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			LogFile("Project Cartographer: Maximum frames allowed changed to " + psFPSLimit.Text.ToString());
+		}
+
+		private void StatusButton_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBox.Show("-Core developers of this launcher-" + Environment.NewLine + Environment.NewLine + "Kantanomo : code base from previous launcher" + Environment.NewLine + "supersniper : current launcher", "The Props", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+			if (StatusButton.IsChecked == true) StatusButton.IsChecked = false;
 		}
 
 		private void psMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)

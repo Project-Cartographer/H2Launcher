@@ -137,7 +137,7 @@ namespace Cartographer_Launcher.Includes
 
 		public static string RemoteUpdateXML
 		{
-			get { return WebHost + "update_test.xml"; }
+			get { return WebHost + "update.xml"; }
 			//get { return RemotePath + "dev_update.xml"; }
 		}
 

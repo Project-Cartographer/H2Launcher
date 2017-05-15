@@ -92,6 +92,6 @@
 			<ToggleButton x:Name="ControlClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="ControlClose_Click"/>
 			<ToggleButton x:Name="ControlMinimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ControlMinimize_Click"/>
 		</Grid>
-		<Label x:Name="StatusLabel" Style ="{StaticResource ElementStyle}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+		<ToggleButton x:Name="StatusButton" Style ="{StaticResource sPanelButtonStyle}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="StatusButton_Click"/>
 	</Grid>
 </Window>
