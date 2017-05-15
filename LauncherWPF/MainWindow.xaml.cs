@@ -27,18 +27,31 @@ namespace LauncherWPF
 	public partial class MainWindow : Window
 	{
 		#region Global Declares
+		BitmapImage TitleLogo = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/h2logo.png"));
+		SolidColorBrush MenuItemSelect = new SolidColorBrush(Color.FromRgb(178, 211, 246));
+		SolidColorBrush MenuItem = new SolidColorBrush(Color.FromRgb(94, 109, 139));
+		Launcher LauncherSettings = new Launcher();
+		ProjectCartographer ProjectSettings = new ProjectCartographer();
+
 		private string RegisterURL = @"http://www.cartographer.h2pc.org/";
 		private string AppealURL = @"http://www.halo2vista.com/forums/viewforum.php?f=45";
 		private string DateTimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
 		private string LogFilePath = Globals.LogFile;
 		private string ExLogFilePath = Globals.ExLogFile;
 		private string DisplayMode;
-		private bool ApplicationShutdownCheck, SaveSettingsCheck, LoginPanelCheck, SettingsPanelCheck, UpdatePanelCheck, Vsync, GameSound, DebugLog, VoiceChat, MapDownloading, fpsEnable, RememberMe;
-		private static bool NoTextInput(string NumericText)
-		{
-			Regex r = new Regex("[^0-9.-]+");
-			return !r.IsMatch(NumericText);
-		}
+		private bool ApplicationShutdownCheck,
+			SaveSettingsCheck,
+			LoginPanelCheck,
+			SettingsPanelCheck,
+			UpdatePanelCheck,
+			GameSound,
+			Vsync,
+			DebugLog,
+			VoiceChat,
+			MapDownloading,
+			fpsEnable,
+			RememberMe;
+		private static bool NoTextInput(string NumericText) { Regex r = new Regex("[^0-9.-]+"); return !r.IsMatch(NumericText); }
 
 		#region Update
 		private volatile string _Halo2Version = "1.00.00.11122";
@@ -50,12 +63,6 @@ namespace LauncherWPF
 		delegate void UpdateProgressCallback(int Precentage);
 		delegate void UpdaterFinishedCallback();
 		#endregion
-
-		BitmapImage TitleLogo = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/h2logo.png"));
-		SolidColorBrush MenuItemSelect = new SolidColorBrush(Color.FromRgb(178, 211, 246));
-		SolidColorBrush MenuItem = new SolidColorBrush(Color.FromRgb(94, 109, 139));
-		Launcher LauncherSettings = new Launcher();
-		ProjectCartographer ProjectSettings = new ProjectCartographer();
 
 		//Disable ALT+Space shortcut for startmenu
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -69,17 +76,16 @@ namespace LauncherWPF
 		public MainWindow()
 		{
 			InitializeComponent();
+			LauncherCheck();
 			CheckInstallPath();
 
 			LogFile("Log file initialized.");
 			LogFile("Game install directory: " + Globals.GameDirectory);
 			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
 
-			LoginPanelCheck = false;
-			SettingsPanelCheck = false;
-			UpdatePanelCheck = false;
 			usProgressLabel.Tag = "{0}/100";
 			usProgressLabel.Content = "100/100";
+			StatusLabel.Content = Globals.VersionNumber;
 
 			try { LoadSettings(); }
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
@@ -91,22 +97,61 @@ namespace LauncherWPF
 			CheckUpdates();
 		}
 
-		private void MainForm_Initialized(object sender, EventArgs e)
+		public void LogFile(string Message)
 		{
-			if (File.Exists(LogFilePath)) File.Delete(LogFilePath);
-			if (File.Exists(ExLogFilePath)) File.Delete(ExLogFilePath);
+			StreamWriter log;
+			if (!File.Exists(LogFilePath)) log = new StreamWriter(LogFilePath);
+			else log = File.AppendText(LogFilePath);
+
+			log.WriteLine("Date: " + DateTimeStamp + " - " + Message);
+
+			log.Flush();
+			log.Dispose();
+			log.Close();
 		}
 
-		private void MainForm_MouseDown(object sender, MouseButtonEventArgs e)
+		public void ExLogFile(string Message)
 		{
-			if (e.LeftButton == MouseButtonState.Pressed) DragMove();
-			MainGrid.Focus();
+			StreamWriter exlog;
+			if (!File.Exists(LogFilePath)) exlog = new StreamWriter(ExLogFilePath);
+			else exlog = File.AppendText(ExLogFilePath);
+
+			exlog.WriteLine("Date: " + DateTimeStamp);
+			exlog.WriteLine(Message);
+			exlog.WriteLine(Environment.NewLine);
+
+			exlog.Flush();
+			exlog.Dispose();
+			exlog.Close();
+		}
+
+		private void LauncherCheck()
+		{
+			HttpWebRequest request = WebRequest.Create(Globals.LauncherCheck) as HttpWebRequest;
+			request.Method = "HEAD";
+			HttpWebResponse response;
+			try { response = request.GetResponse() as HttpWebResponse; }
+			catch (WebException wex) { response = wex.Response as HttpWebResponse; }
+
+			if (response.StatusCode == HttpStatusCode.NotFound)
+			{
+				Task.Delay(1000);
+				ProcessStartInfo Info = new ProcessStartInfo();
+				Info.Arguments = "/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"";
+				Info.WindowStyle = ProcessWindowStyle.Hidden;
+				Info.CreateNoWindow = true;
+				Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				Info.FileName = "cmd.exe";
+				Process.Start(Info);
+				Process.GetCurrentProcess().Kill();
+			}
 		}
 
 		public void CheckInstallPath()
 		{
 			if (Globals.GameDirectory == "")
 			{
+				MessageBox.Show("The game directory was not found, please locate it to continue.", "", MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
 				string BaseFolder;
 
 				if (Environment.Is64BitOperatingSystem) BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
@@ -115,7 +160,7 @@ namespace LauncherWPF
 				using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog())
 				{
 					ofd.InitialDirectory = BaseFolder;
-					ofd.Title = "Navigate to Halo 2 Install Path";
+					ofd.Title = "Find Halo 2 Game Directory";
 					ofd.Filter = "Halo 2 Executable|halo2.exe";
 					ofd.FilterIndex = 1;
 
@@ -138,366 +183,9 @@ namespace LauncherWPF
 			}
 		}
 
-		#region Updates
-		public void AddToDetails(string Message)
-		{
-			if (usTextBox.Dispatcher.CheckAccess())
-			{
-				AddToDetailsCallback Update = new AddToDetailsCallback(AddToDetails);
-				Dispatcher.Invoke(Update, new object[] { Message });
-			}
-			else
-			{
-				Dispatcher.Invoke(() =>
-				{
-					string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]" + Environment.NewLine;
-					usTextBox.Text += DateStamp + Message + Environment.NewLine + Environment.NewLine;
-				});
-				//usTextBox.Text.SelectionStart = usTextBox.Text.Length;
-				//usTextBox.Text.ScrollToCaret();
-			}
-		}
-
-		public void UpdateProgress(int Percentage)
-		{
-			if (usProgressBar.Dispatcher.CheckAccess() & usProgressLabel.Dispatcher.CheckAccess())
-			{
-				UpdateProgressCallback Update = new UpdateProgressCallback(UpdateProgress);
-				Dispatcher.Invoke(Update, new object[] { Percentage });
-			}
-			else
-			{
-				Dispatcher.Invoke(() =>
-				{
-					usProgressBar.Value = Percentage;
-					usProgressLabel.Content = usProgressLabel.Tag.ToString().Replace("{0}", Percentage.ToString());
-				});
-			}
-		}
-
-		public void UpdaterFinished()
-		{
-			if (Dispatcher.CheckAccess())
-			{
-				UpdaterFinishedCallback Update = new UpdaterFinishedCallback(UpdaterFinished);
-				Dispatcher.Invoke(Update);
-			}
-		}
-
-		public bool LoadRemoteUpdateCollection()
-		{
-			try
-			{
-				AddToDetails("Downloading remote update XML file....");
-				WebClient Client = new WebClient();
-				bool _isDownloading = false;
-				if (File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Delete(Globals.Files + "RemoteUpdate.xml");
-
-				Client.DownloadFileCompleted += (s, e) =>
-				{
-					UpdateProgress(100);
-					AddToDetails("RemoteUpdate XML file download complete.");
-
-					Client.Dispose();
-					Client = null;
-					_isDownloading = false;
-				};
-				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
-				Client.DownloadFileAsync(new Uri(Globals.RemoteUpdateXML), Globals.Files + "RemoteUpdate.xml");
-				_isDownloading = true;
-				while (_isDownloading) { }
-				XDocument RemoteXML = XDocument.Load(Globals.Files + "RemoteUpdate.xml");
-				UpdateCollection tUpdateColleciton = new UpdateCollection();
-				//replaceoriginal = (XmlRoot.Element("localpath").HasAttributes) ? ((XmlRoot.Element("localpath").Attribute("replaceoriginal") != null) ? true : false) : false
-				foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
-									   select
-										   new UpdateObject
-										   {
-											   localpath = (string)XmlRoot.Element("localpath"),
-											   remotepath = (string)XmlRoot.Element("remotepath"),
-											   version = (string)XmlRoot.Element("version"),
-											   name = (string)XmlRoot.Element("name")
-										   }
-									)
-				)
-					tUpdateColleciton.AddObject((UpdateObject)UO);
-				_RemoteUpdateCollection = tUpdateColleciton;
-				return true;
-
-			}
-			catch (Exception)
-			{
-				AddToDetails("There was an issue loading the remote updates, try restarting the launcher to fix the issue.");
-				return false;
-			}
-		}
-
-		public bool LoadLocalUpdateCollection()
-		{
-			try
-			{
-				if (File.Exists(Globals.Files + "LocalUpdate.xml"))
-				{
-					//await Task.Delay(0);
-					XDocument RemoteXML = XDocument.Load(Globals.Files + "LocalUpdate.xml");
-					UpdateCollection tUpdateColleciton = new UpdateCollection();
-					foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
-										   select
-											   new UpdateObject
-											   {
-												   localpath = (string)XmlRoot.Element("localpath"),
-												   remotepath = (string)XmlRoot.Element("remotepath"),
-												   version = (string)XmlRoot.Element("version"),
-												   name = (string)XmlRoot.Element("name")
-												   //replaceoriginal = (bool)XmlRoot.Element("localpath").Attribute("replaceoriginal")
-											   }
-										)
-					)
-						if (File.Exists(((UpdateObject)UO).localpath.Replace("_temp", ""))) tUpdateColleciton.AddObject((UpdateObject)UO);
-					_LocalUpdateCollection = tUpdateColleciton;
-					return true;
-				}
-				else return true;
-			}
-			catch (Exception)
-			{
-				AddToDetails("There was an issue loading the local updates, try restarting the launcher to fix the issue.");
-				return false;
-			}
-		}
-
-		public async void CheckUpdates()
-		{
-			await Task.Delay(1000).ContinueWith(_ =>
-			{
-				Dispatcher.Invoke(() =>
-				{
-					if (!LoginPanelCheck && !SettingsPanelCheck)
-					{
-						if (UpdatePanel.Margin.Bottom == -250)
-						{
-							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-							UpdatePanelCheck = true;
-						}
-					}
-				});
-			});
-			await Task.Delay(1000).ContinueWith(_ =>
-			{
-				if (UpdateGameToLatest())
-				{
-					if (LoadLocalUpdateCollection())
-					{
-						if (LoadRemoteUpdateCollection())
-						{
-							if (NeedToUpdate())
-							{
-								DownloadUpdates();
-								AddToDetails("All necessary updates downloaded.");
-								Task.Delay(1000);
-								Finished();
-							}
-							else
-							{
-								AddToDetails("No updates found.");
-								Task.Delay(1000);
-								UpdaterFinished();
-							}
-						}
-						else
-						{
-							AddToDetails("Failure to load Remote Update XML.");
-							Task.Delay(1000);
-							Finished();
-						}
-					}
-					else
-					{
-						AddToDetails("Failure to load Local Update XML.");
-						Task.Delay(1000);
-						Finished();
-					}
-				}
-				else
-				{
-					AddToDetails("Failure to update game version.");
-					Task.Delay(1000);
-					Finished();
-				}
-			});
-		}
-
-		private bool UpdateGameToLatest()
-		{
-			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GameDirectory + "halo2.exe").FileVersion;
-			AddToDetails(string.Format("Halo 2 Version Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version));
-
-			if (_Halo2Version != CurrentHalo2Version)
-			{
-				AddToDetails("Updating Halo 2 to the latest version.");
-
-				WebClient Client = new WebClient();
-				bool _isDownloading = false;
-				Client.DownloadFileCompleted += (s, e) =>
-				{
-					UpdateProgress(100);
-					AddToDetails("Game update downloaded.");
-					Client.Dispose();
-					Client = null;
-					_isDownloading = false;
-				};
-				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
-
-				try
-				{
-					Client.DownloadFileAsync(new Uri(Globals.RemoteUpdate + "halo2/Update.exe"), Globals.Downloads + "\\Update.exe");
-					_isDownloading = true;
-				}
-				catch (Exception) { throw new Exception("Error"); }
-
-				while (_isDownloading) { }
-				AddToDetails("Waiting for updates to finish installing.");
-
-				bool _isUpdating = true;
-				Process.Start(Globals.Downloads + "\\Update.exe");
-
-				while (_isUpdating) if (Process.GetProcessesByName("Update").Length == 0) _isUpdating = false;
-
-				File.Delete(Globals.Downloads + "\\Update.exe");
-				return true;
-			}
-			return true;
-		}
-
-		private bool NeedToUpdate()
-		{
-			if (_LocalUpdateCollection != null)
-			{
-				_UpdateCollection = new UpdateCollection();
-
-				foreach (UpdateObject UO in _RemoteUpdateCollection)
-				{
-					UpdateObject tUO = _LocalUpdateCollection[UO.name];
-					if (tUO == null) _UpdateCollection.AddObject(UO);
-					else if (tUO.version != UO.version) _UpdateCollection.AddObject(UO);
-					else if (tUO.localpath != UO.localpath) MoveFile(tUO.name, tUO.localpath, UO.localpath);
-
-				}
-			}
-
-			_UpdateCollection = (_UpdateCollection != null) ? _UpdateCollection : _RemoteUpdateCollection;
-
-			if (_UpdateCollection.Count > 0) return true;
-			else return false;
-		}
-
-		private void DownloadUpdates()
-		{
-
-			for (int i = 0; i < _UpdateCollection.Count; i++)
-			{
-				UpdateObject tUO = _UpdateCollection[i];
-				AddToDetails("Downloading " + tUO.name + "....");
-
-				if (tUO.name == "H2Launcher") _LauncherUpdated = true;
-				WebClient Client = new WebClient();
-				bool _isDownloading = false;
-				Client.DownloadFileCompleted += (s, e) =>
-				{
-					UpdateProgress(100);
-					//AddToDetails("Download Complete.");
-					Client.Dispose();
-					Client = null;
-					_isDownloading = false;
-				};
-
-				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
-
-				try
-				{
-					Client.DownloadFileAsync(new Uri(tUO.remotepath), tUO.localpath);
-					_isDownloading = true;
-				}
-				catch (Exception) { throw new Exception("Error"); }
-				//Smoke weed everyday
-				DownloadFile(tUO.remotepath, tUO.localpath);
-				while (_isDownloading) { }
-			}
-		}
-
-		public void Finished()
-		{
-			string CurrentLauncherName = Assembly.GetExecutingAssembly().Location;
-			if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
-			File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
-
-			if (_LauncherUpdated)
-			{
-				AddToDetails("Restarting Launcher to complete update");
-				Task.Delay(5000);
-				ProcessStartInfo p = new ProcessStartInfo();
-				p.CreateNoWindow = true;
-				p.UseShellExecute = false;
-				p.FileName = "cmd.exe";
-				p.WindowStyle = ProcessWindowStyle.Hidden;
-				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 5000 > Nul & Del " + CurrentLauncherName + " & ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 2 -w 2000 > Nul & start H2Launcher.exe";
-				p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				Process.Start(p);
-				Process.GetCurrentProcess().Kill();
-			}
-			else UpdaterFinished();
-		}
-
-		private void MoveFile(string Name, string Source, string Destination)
-		{
-			using (Stream SourceStream = File.Open(Source, FileMode.Open))
-			{
-				using (Stream DestinationStream = File.Create(Destination))
-				{
-					AddToDetails("Moving " + Name + Environment.NewLine + " \tFrom " + Source + Environment.NewLine + " \tTo " + Destination);
-					UpdateProgress(0);
-					byte[] buffer = new byte[SourceStream.Length / 1024];
-					int read;
-					while ((read = SourceStream.Read(buffer, 0, buffer.Length)) > 0)
-					{
-						DestinationStream.Write(buffer, 0, buffer.Length);
-						int progress = (read / buffer.Length) * 100;
-						UpdateProgress(progress);
-					}
-					UpdateProgress(100);
-					AddToDetails("Installation complete.");
-				}
-			}
-			Task.Delay(500);
-			File.Delete(Source);
-		}
-
-		private void DownloadFile(String remoteFilename, String localFilename)
-		{
-			bool _isDownloading = false;
-			WebClient Client = new WebClient();
-			Client.DownloadFileCompleted += (s, e) =>
-			{
-				UpdateProgress(100);
-				//AddToDetails("Downloading " + remoteFilename + " complete.");
-				Client = null;
-				_isDownloading = false;
-			};
-			Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
-			try
-			{
-				UpdateProgress(0);
-				Client.Dispose();
-				Client.DownloadFileAsync(new Uri(remoteFilename), localFilename);
-				_isDownloading = true;
-				while (_isDownloading) { }
-			}
-			catch (Exception) { throw new Exception("Error"); }
-		}
-		#endregion
-
 		private async void LoginTokenCheck()
 		{
+			StatusLabel.Content = "Currently verifying login...";
 			await Task.Delay(1000).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
@@ -583,6 +271,25 @@ namespace LauncherWPF
 			});
 		}
 
+		private void MainForm_Initialized(object sender, EventArgs e)
+		{
+			if (File.Exists(LogFilePath)) File.Delete(LogFilePath);
+			if (File.Exists(ExLogFilePath)) File.Delete(ExLogFilePath);
+		}
+
+		private void MainForm_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+			MainGrid.Focus();
+		}
+
+		private void MainForm_Closed(object sender, EventArgs e)
+		{
+			ApplicationShutdownCheck = true;
+			try { SaveSettings(); }
+			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+		}
+
 		private void Image_Loaded(object sender, RoutedEventArgs e)
 		{
 			BitmapImage b = new BitmapImage();
@@ -592,34 +299,6 @@ namespace LauncherWPF
 
 			var image = sender as Image;
 			image.Source = b;
-		}
-
-		public void LogFile(string Message)
-		{
-			StreamWriter log;
-			if (!File.Exists(LogFilePath)) log = new StreamWriter(LogFilePath);
-			else log = File.AppendText(LogFilePath);
-
-			log.WriteLine("Date: " + DateTimeStamp + " - " + Message);
-
-			log.Flush();
-			log.Dispose();
-			log.Close();
-		}
-
-		public void ExLogFile(string Message)
-		{
-			StreamWriter exlog;
-			if (!File.Exists(LogFilePath)) exlog = new StreamWriter(ExLogFilePath);
-			else exlog = File.AppendText(ExLogFilePath);
-
-			exlog.WriteLine("Date: " + DateTimeStamp);
-			exlog.WriteLine(Message);
-			exlog.WriteLine(Environment.NewLine);
-
-			exlog.Flush();
-			exlog.Dispose();
-			exlog.Close();
 		}
 
 		private void PanelAnimation(string Storyboard, StackPanel sp)
@@ -656,13 +335,7 @@ namespace LauncherWPF
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
 		}
 
-		private void MainForm_Closed(object sender, EventArgs e)
-		{
-			ApplicationShutdownCheck = true;
-			try { SaveSettings(); }
-			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
-		}
-
+		#region Menu Buttons
 		private void PlayButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (!SaveSettingsCheck)
@@ -849,7 +522,7 @@ namespace LauncherWPF
 						SaveSettings();
 					}
 				}
-				else if (UpdatePanelCheck)
+				if (UpdatePanelCheck)
 				{
 					if (UpdatePanel.Margin.Bottom == 0)
 					{
@@ -857,7 +530,7 @@ namespace LauncherWPF
 						UpdatePanelCheck = false;
 					}
 				}
-				else if (LoginPanelCheck)
+				if (LoginPanelCheck)
 				{
 					if (LoginPanel.Margin.Top == 0)
 					{
@@ -871,6 +544,347 @@ namespace LauncherWPF
 				}
 			}
 		}
+		#endregion
+
+		#region Updates
+		public void AddToDetails(string Message)
+		{
+			if (usTextBox.Dispatcher.CheckAccess())
+			{
+				AddToDetailsCallback Update = new AddToDetailsCallback(AddToDetails);
+				Dispatcher.Invoke(Update, new object[] { Message });
+			}
+			else Dispatcher.Invoke(() => { usTextBox.Text += Message + Environment.NewLine; });
+		}
+
+		public void UpdateProgress(int Percentage)
+		{
+			if (usProgressBar.Dispatcher.CheckAccess() & usProgressLabel.Dispatcher.CheckAccess())
+			{
+				UpdateProgressCallback Update = new UpdateProgressCallback(UpdateProgress);
+				Dispatcher.Invoke(Update, new object[] { Percentage });
+			}
+			else
+			{
+				Dispatcher.Invoke(() =>
+				{
+					usProgressBar.Value = Percentage;
+					usProgressLabel.Content = usProgressLabel.Tag.ToString().Replace("{0}", Percentage.ToString());
+				});
+			}
+		}
+
+		public void UpdaterFinished()
+		{
+			if (Dispatcher.CheckAccess())
+			{
+				UpdaterFinishedCallback Update = new UpdaterFinishedCallback(UpdaterFinished);
+				Dispatcher.Invoke(Update);
+			}
+		}
+
+		public bool LoadRemoteUpdateCollection()
+		{
+			try
+			{
+				AddToDetails("Downloading remote update XML file....");
+				WebClient Client = new WebClient();
+				bool _isDownloading = false;
+				if (File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Delete(Globals.Files + "RemoteUpdate.xml");
+
+				Client.DownloadFileCompleted += (s, e) =>
+				{
+					UpdateProgress(100);
+					AddToDetails("Remote update XML file download complete." + Environment.NewLine);
+
+					Client.Dispose();
+					Client = null;
+					_isDownloading = false;
+				};
+
+				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
+				Client.DownloadFileAsync(new Uri(Globals.RemoteUpdateXML), Globals.Files + "RemoteUpdate.xml");
+				_isDownloading = true;
+				while (_isDownloading) { }
+				XDocument RemoteXML = XDocument.Load(Globals.Files + "RemoteUpdate.xml");
+				UpdateCollection tUpdateColleciton = new UpdateCollection();
+				foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
+									   select
+									   new UpdateObject
+									   {
+										   localpath = (string)XmlRoot.Element("localpath"),
+										   remotepath = (string)XmlRoot.Element("remotepath"),
+										   version = (string)XmlRoot.Element("version"),
+										   name = (string)XmlRoot.Element("name")
+									   }
+									))
+					tUpdateColleciton.AddObject((UpdateObject)UO);
+				_RemoteUpdateCollection = tUpdateColleciton;
+				return true;
+			}
+			catch (Exception)
+			{
+				AddToDetails("There was an issue loading the remote updates, try restarting the launcher to fix the issue.");
+				return false;
+			}
+		}
+
+		public bool LoadLocalUpdateCollection()
+		{
+			try
+			{
+				if (File.Exists(Globals.Files + "LocalUpdate.xml"))
+				{
+					XDocument RemoteXML = XDocument.Load(Globals.Files + "LocalUpdate.xml");
+					UpdateCollection tUpdateColleciton = new UpdateCollection();
+					foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
+										   select
+										   new UpdateObject
+										   {
+											   localpath = (string)XmlRoot.Element("localpath"),
+											   remotepath = (string)XmlRoot.Element("remotepath"),
+											   version = (string)XmlRoot.Element("version"),
+											   name = (string)XmlRoot.Element("name")
+										   }
+										))
+						if (File.Exists(((UpdateObject)UO).localpath.Replace("_temp", ""))) tUpdateColleciton.AddObject((UpdateObject)UO);
+					_LocalUpdateCollection = tUpdateColleciton;
+					return true;
+				}
+				else return true;
+			}
+			catch (Exception)
+			{
+				AddToDetails("There was an issue loading the local updates, try restarting the launcher to fix the issue.");
+				return false;
+			}
+		}
+
+		public async void CheckUpdates()
+		{
+			await Task.Delay(1000).ContinueWith(_ =>
+			{
+				Dispatcher.Invoke(() =>
+				{
+					if (!LoginPanelCheck && !SettingsPanelCheck)
+					{
+						if (UpdatePanel.Margin.Bottom == -250)
+						{
+							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = true;
+						}
+					}
+				});
+			});
+			await Task.Delay(1000).ContinueWith(_ =>
+			{
+				if (UpdateGameToLatest())
+				{
+					if (LoadLocalUpdateCollection())
+					{
+						if (LoadRemoteUpdateCollection())
+						{
+							if (NeedToUpdate())
+							{
+								DownloadUpdates();
+								AddToDetails("All necessary updates downloaded.");
+								Task.Delay(1000);
+								Finished();
+							}
+							else
+							{
+								AddToDetails("Project Cartographer up to date.");
+								Task.Delay(1000);
+								UpdaterFinished();
+							}
+						}
+						else
+						{
+							AddToDetails("Failed to load the remote update file.");
+							Task.Delay(1000);
+							Finished();
+						}
+					}
+					else
+					{
+						AddToDetails("Failed to load the local update file.");
+						Task.Delay(1000);
+						Finished();
+					}
+				}
+				else
+				{
+					AddToDetails("Failed to update the game to the latest version.");
+					Task.Delay(1000);
+					Finished();
+				}
+			});
+		}
+
+		private bool UpdateGameToLatest()
+		{
+			string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]" + Environment.NewLine;
+			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GameDirectory + "halo2.exe").FileVersion;
+			AddToDetails(string.Format(DateStamp + "Halo 2 Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version + Environment.NewLine));
+
+			if (_Halo2Version != CurrentHalo2Version)
+			{
+				AddToDetails("Updating Halo 2 to the latest version...");
+
+				WebClient Client = new WebClient();
+				bool _isDownloading = false;
+				Client.DownloadFileCompleted += (s, e) =>
+				{
+					UpdateProgress(100);
+					AddToDetails("Halo 2 update patch download completed.");
+					Client.Dispose();
+					Client = null;
+					_isDownloading = false;
+				};
+				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
+
+				try
+				{
+					Client.DownloadFileAsync(new Uri(Globals.RemoteUpdate + "halo2/Update.exe"), Globals.Downloads + "\\Update.exe");
+					_isDownloading = true;
+				}
+				catch (Exception) { throw new Exception("Error"); }
+
+				while (_isDownloading) { }
+				AddToDetails("Waiting for updates to finish installing." + Environment.NewLine);
+
+				bool _isUpdating = true;
+				Process.Start(Globals.Downloads + "\\Update.exe");
+
+				while (_isUpdating) if (Process.GetProcessesByName("Update").Length == 0) _isUpdating = false;
+
+				File.Delete(Globals.Downloads + "\\Update.exe");
+				return true;
+			}
+			return true;
+		}
+
+		private bool NeedToUpdate()
+		{
+			if (_LocalUpdateCollection != null)
+			{
+				_UpdateCollection = new UpdateCollection();
+
+				foreach (UpdateObject UO in _RemoteUpdateCollection)
+				{
+					UpdateObject tUO = _LocalUpdateCollection[UO.name];
+					if (tUO == null) _UpdateCollection.AddObject(UO);
+					else if (tUO.version != UO.version) _UpdateCollection.AddObject(UO);
+					else if (tUO.localpath != UO.localpath) MoveFile(tUO.name, tUO.localpath, UO.localpath);
+
+				}
+			}
+			_UpdateCollection = (_UpdateCollection != null) ? _UpdateCollection : _RemoteUpdateCollection;
+
+			if (_UpdateCollection.Count > 0) return true;
+			else return false;
+		}
+
+		private void DownloadUpdates()
+		{
+			for (int i = 0; i < _UpdateCollection.Count; i++)
+			{
+				UpdateObject tUO = _UpdateCollection[i];
+				AddToDetails("Downloading " + tUO.name + "....");
+
+				if (tUO.name == "H2Launcher") _LauncherUpdated = true;
+				WebClient Client = new WebClient();
+				bool _isDownloading = false;
+				Client.DownloadFileCompleted += (s, e) =>
+				{
+					UpdateProgress(100);
+					AddToDetails("File downloaded." + Environment.NewLine);
+					Client.Dispose();
+					Client = null;
+					_isDownloading = false;
+				};
+				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
+
+				try
+				{
+					Client.DownloadFileAsync(new Uri(tUO.remotepath), tUO.localpath);
+					_isDownloading = true;
+				}
+				catch (Exception) { throw new Exception("Error"); }
+				DownloadFile(tUO.remotepath, tUO.localpath);
+				while (_isDownloading) { }
+			}
+		}
+
+		public void Finished()
+		{
+			if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
+			File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
+
+			if (_LauncherUpdated)
+			{
+				AddToDetails("The launcher needs to restart to complete the update.");
+				Task.Delay(5000);
+				ProcessStartInfo p = new ProcessStartInfo();
+				p.CreateNoWindow = true;
+				p.UseShellExecute = false;
+				p.FileName = "cmd.exe";
+				p.WindowStyle = ProcessWindowStyle.Hidden;
+				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 5000 > Nul & Del " + Assembly.GetExecutingAssembly().Location + " & ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 2 -w 2000 > Nul & start H2Launcher.exe";
+				p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				Process.Start(p);
+				Process.GetCurrentProcess().Kill();
+			}
+			else UpdaterFinished();
+		}
+
+		private void MoveFile(string Name, string Source, string Destination)
+		{
+			using (Stream SourceStream = File.Open(Source, FileMode.Open))
+			{
+				using (Stream DestinationStream = File.Create(Destination))
+				{
+					AddToDetails("Moving " + Name + Environment.NewLine + " \tfrom " + Source + Environment.NewLine + " \tto " + Destination);
+					UpdateProgress(0);
+					byte[] buffer = new byte[SourceStream.Length / 1024];
+					int read;
+					while ((read = SourceStream.Read(buffer, 0, buffer.Length)) > 0)
+					{
+						DestinationStream.Write(buffer, 0, buffer.Length);
+						int progress = (read / buffer.Length) * 100;
+						UpdateProgress(progress);
+					}
+					UpdateProgress(100);
+					AddToDetails("Installation complete." + Environment.NewLine);
+				}
+			}
+			Task.Delay(500);
+			File.Delete(Source);
+		}
+
+		private void DownloadFile(String remoteFilename, String localFilename)
+		{
+			bool _isDownloading = false;
+			WebClient Client = new WebClient();
+			Client.DownloadFileCompleted += (s, e) =>
+			{
+				UpdateProgress(100);
+				AddToDetails("Downloading complete.");
+				Client = null;
+				_isDownloading = false;
+			};
+			Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
+			try
+			{
+				UpdateProgress(0);
+				Client.Dispose();
+				Client.DownloadFileAsync(new Uri(remoteFilename), localFilename);
+				_isDownloading = true;
+				while (_isDownloading) { }
+			}
+			catch (Exception) { throw new Exception("Error"); }
+		}
+		#endregion
 
 		#region Settings Panel
 		private void LoadSettings()
@@ -971,7 +985,8 @@ namespace LauncherWPF
 
 		public async void SaveSettings()
 		{
-			await Task.Delay(1200);
+			StatusLabel.Content = "Currently saving configuration files...";
+			await Task.Delay(1000);
 			if (lsUser.Text == "") LauncherSettings.RememberMe = 0;
 			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
 
@@ -992,6 +1007,7 @@ namespace LauncherWPF
 
 			LogFile("Settings saved");
 			SaveSettingsCheck = false;
+			StatusLabel.Content = Globals.VersionNumber;
 			if (ApplicationShutdownCheck) Application.Current.Shutdown();
 		}
 

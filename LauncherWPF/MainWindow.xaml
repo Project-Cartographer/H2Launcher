@@ -74,23 +74,24 @@
 				<Label x:Name="usProgressLabel" Style ="{StaticResource PanelTitleStyle}" Width="69" Margin="250,15,31,206" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Height="29"/>
 			</Grid>
 		</StackPanel>
-		<Grid x:Name="title_grid" Margin="125,84,125,227" HorizontalAlignment="Center">
-			<Image x:Name="h2_logo" Height="60" VerticalAlignment="Top" Loaded ="Image_Loaded" RenderTransformOrigin="0,0" Margin="10,10,10,0">
+		<Grid x:Name="TitleGrid" Margin="125,84,125,227" HorizontalAlignment="Center">
+			<Image x:Name="H2Logo" Height="60" VerticalAlignment="Top" Loaded ="Image_Loaded" RenderTransformOrigin="0,0" Margin="10,10,10,0">
 				<Image.OpacityMask>
 					<ImageBrush ImageSource="Resources/Images/h2logo.png"/>
 				</Image.OpacityMask>
 			</Image>
-			<Label x:Name="title" Content="PROJECT CARTOGRAPHER" Style ="{StaticResource PanelTitleStyle}" FontSize="26" Margin="80,75,80,25" HorizontalAlignment="Center"/>
+			<Label x:Name="TitleLabel" Content="PROJECT CARTOGRAPHER" Style ="{StaticResource PanelTitleStyle}" FontSize="26" Margin="80,75,80,25" HorizontalAlignment="Center"/>
 		</Grid>
-		<Grid x:Name="menu_grid" Margin="125,223,125,74" HorizontalAlignment="Center">
+		<Grid x:Name="MenuGrid" Margin="125,223,125,74" HorizontalAlignment="Center">
 			<ToggleButton x:Name="PlayButton" Content="LOGIN" Style ="{StaticResource MenuButtonStyle}" Margin="212,10,212,0" Click="PlayButton_Click" HorizontalAlignment="Stretch"/>
 			<ToggleButton x:Name="RegisterButton" Content="REGISTER" Style ="{StaticResource MenuButtonStyle}" Margin="189,44,189,0" Click="RegisterButton_Click"/>
 			<ToggleButton x:Name="SettingsButton" Content="SETTINGS" Style ="{StaticResource MenuButtonStyle}" Margin="189,78,189,0" Click="SettingsButton_Click"/>
 			<ToggleButton x:Name="UpdateButton" Content="CHECK UPDATES" Style ="{StaticResource MenuButtonStyle}" Margin="152,112,152,0" Click="UpdateButton_Click"/>
 		</Grid>
 		<Grid Height="34" Margin="672,10,10,0" VerticalAlignment="Top" Width="68">
-			<ToggleButton x:Name="control_close" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="ControlClose_Click"/>
-			<ToggleButton x:Name="control_minimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ControlMinimize_Click"/>
+			<ToggleButton x:Name="ControlClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="34,0,0,0" VerticalAlignment="Top" Click="ControlClose_Click"/>
+			<ToggleButton x:Name="ControlMinimize" Content="—" Style ="{StaticResource ControlButtonStyle}" Margin="0,0,34,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="ControlMinimize_Click"/>
 		</Grid>
+		<Label x:Name="StatusLabel" Style ="{StaticResource ElementStyle}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 	</Grid>
 </Window>

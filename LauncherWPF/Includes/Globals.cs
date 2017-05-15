@@ -120,6 +120,11 @@ namespace Cartographer_Launcher.Includes
 			get { return @"http://69.195.136.203/H2Cartographer/"; }
 		}
 
+		public static string LauncherCheck
+		{
+			get { return WebHost + "v2.txt"; }
+		}
+
 		public static string RemoteAPI
 		{
 			get { return WebHost + "H2Cartographer.php"; }
@@ -134,6 +139,11 @@ namespace Cartographer_Launcher.Includes
 		{
 			get { return WebHost + "update_test.xml"; }
 			//get { return RemotePath + "dev_update.xml"; }
+		}
+
+		public static string VersionNumber
+		{
+			get { return "Version: 2.0.0"; }
 		}
 	}
 }
