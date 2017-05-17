@@ -69,8 +69,8 @@ namespace Cartographer_Launcher.Includes
 			LauncherSettings.PlayerTag = Gamertag;
 			ProjectSettings.LoginToken = LoginToken;
 
-			LauncherSettings.SaveSettings();
-			ProjectSettings.SaveSettings();
+			//LauncherSettings.SaveSettings();
+			//ProjectSettings.SaveSettings();
 
 			await Task.Delay(500).ContinueWith(_ => { MainForm.Dispatcher.Invoke(() => { GameRuntime.RunGame(); }); });
 
@@ -99,6 +99,7 @@ namespace Cartographer_Launcher.Includes
 				}
 
 			}
+			MainForm.PlayCheck = false;
 			MainForm.Show();
 		}
 	}

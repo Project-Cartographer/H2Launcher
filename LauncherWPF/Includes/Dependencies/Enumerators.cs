@@ -3,8 +3,8 @@
 	public enum SettingsDisplayMode : int
 	{
 		None = -1,
-		Windowed = 0,
-		Fullscreen = 1,
+		Fullscreen = 0,
+		Windowed = 1,
 	}
 
 	public enum H2ResponseCode : int

@@ -32,6 +32,7 @@ namespace LauncherWPF
 		SolidColorBrush MenuItem = new SolidColorBrush(Color.FromRgb(94, 109, 139));
 		Launcher LauncherSettings = new Launcher();
 		ProjectCartographer ProjectSettings = new ProjectCartographer();
+		H2Startup H2StartupSettings = new H2Startup();
 
 		private string RegisterURL = @"http://www.cartographer.h2pc.org/";
 		private string AppealURL = @"http://www.halo2vista.com/forums/viewforum.php?f=45";
@@ -39,6 +40,7 @@ namespace LauncherWPF
 		private string LogFilePath = Globals.LogFile;
 		private string ExLogFilePath = Globals.ExLogFile;
 		private string DisplayMode;
+		public bool PlayCheck;
 		private bool ApplicationShutdownCheck,
 			SaveSettingsCheck,
 			LoginPanelCheck,
@@ -51,7 +53,7 @@ namespace LauncherWPF
 			MapDownloading,
 			fpsEnable,
 			RememberMe;
-		private static bool NoTextInput(string NumericText) { Regex r = new Regex("[^0-9.-]+"); return !r.IsMatch(NumericText); }
+		private static bool NumbericInputOnly(string NumericText) { Regex r = new Regex("[^0-9.]+"); return !r.IsMatch(NumericText); }
 
 		#region Update
 		private volatile string _Halo2Version = "1.00.00.11122";
@@ -76,7 +78,6 @@ namespace LauncherWPF
 		public MainWindow()
 		{
 			InitializeComponent();
-
 			LauncherCheck();
 			CheckInstallPath();
 
@@ -98,6 +99,7 @@ namespace LauncherWPF
 			CheckUpdates();
 		}
 
+		#region Main Methods
 		public void LogFile(string Message)
 		{
 			StreamWriter log;
@@ -229,6 +231,8 @@ namespace LauncherWPF
 							{
 								LauncherSettings.PlayerTag = lsUser.Text;
 								ProjectSettings.LoginToken = loginResult.LoginToken;
+								ProjectSettings.SaveSettings();
+								LauncherSettings.SaveSettings();
 								LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
 								LogFile("Login successful, game starting...");
 								break;
@@ -272,6 +276,9 @@ namespace LauncherWPF
 			});
 		}
 
+		#endregion
+
+		#region Form Event Methods
 		private void MainForm_Initialized(object sender, EventArgs e)
 		{
 			if (File.Exists(LogFilePath)) File.Delete(LogFilePath);
@@ -293,13 +300,25 @@ namespace LauncherWPF
 
 		private void Image_Loaded(object sender, RoutedEventArgs e)
 		{
-			BitmapImage b = new BitmapImage();
-			b.BeginInit();
-			b.UriSource = new Uri("pack://application:,,,/Resources/Images/h2logo.png");
-			b.EndInit();
+			BitmapImage logo = new BitmapImage();
+			logo.BeginInit();
+			logo.UriSource = new Uri("pack://application:,,,/Resources/Images/h2logo.png");
+			logo.DecodePixelWidth = 800;
+			logo.EndInit();
+			logo.Freeze();
 
-			var image = sender as Image;
-			image.Source = b;
+			BitmapImage bg = new BitmapImage();
+			bg.BeginInit();
+			bg.UriSource = new Uri("pack://application:,,,/Resources/Images/launcher_background.png");
+			bg.DecodePixelWidth = 800;
+			bg.EndInit();
+			bg.Freeze();
+
+			var logo_image = sender as Image;
+			logo_image.Source = logo;
+
+			var bg_image = sender as Image;
+			bg_image.Source = bg;
 		}
 
 		private void PanelAnimation(string Storyboard, StackPanel sp)
@@ -310,7 +329,7 @@ namespace LauncherWPF
 
 		private void Numeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
-			e.Handled = !NoTextInput(e.Text);
+			e.Handled = !NumbericInputOnly(e.Text);
 		}
 
 		private void NumericPasteCheck(object sender, DataObjectPastingEventArgs e)
@@ -318,7 +337,7 @@ namespace LauncherWPF
 			if (e.DataObject.GetDataPresent(typeof(String)))
 			{
 				String numeric_text = (String)e.DataObject.GetData(typeof(String));
-				if (!NoTextInput(numeric_text)) e.CancelCommand();
+				if (!NumbericInputOnly(numeric_text)) e.CancelCommand();
 			}
 			else e.CancelCommand();
 		}
@@ -336,21 +355,66 @@ namespace LauncherWPF
 			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
 		}
 
+		private void StatusButton_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBox.Show("-Core developers of this launcher-" + Environment.NewLine + Environment.NewLine + "Kantanomo : code base from previous launcher" + Environment.NewLine + "supersniper : current launcher", "The Props", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+			if (StatusButton.IsChecked == true) StatusButton.IsChecked = false;
+		}
+		#endregion
+
 		#region Menu Buttons
 		private void PlayButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (!SaveSettingsCheck)
 			{
-				if (lsPass.Password == "")
+				if (!PlayCheck)
 				{
-					if (!SettingsPanelCheck && !UpdatePanelCheck)
+					if (lsPass.Password == "")
 					{
-						if (LoginPanel.Margin.Top == -140)
+						if (!SettingsPanelCheck && !UpdatePanelCheck)
+						{
+							if (LoginPanel.Margin.Top == -140)
+							{
+								PanelAnimation("sbShowLoginMenu", LoginPanel);
+								LoginPanelCheck = true;
+							}
+							if (LoginPanel.Margin.Top == 0)
+							{
+								PanelAnimation("sbHideLoginMenu", LoginPanel);
+								LoginPanelCheck = false;
+								SaveSettingsCheck = true;
+								SaveSettings();
+							}
+						}
+					}
+					if (SettingPanel.Margin.Right == 0)
+					{
+						PanelAnimation("sbHideSettingsMenu", SettingPanel);
+						SettingsPanelCheck = false;
+						SaveSettingsCheck = true;
+						SaveSettings();
+					}
+					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+					{
+						PanelAnimation("sbShowLoginMenu", LoginPanel);
+						LoginPanelCheck = true;
+					}
+					if (UpdatePanelCheck)
+					{
+						if (UpdatePanel.Margin.Bottom == 0)
+						{
+							PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = false;
+						}
+						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
 						{
 							PanelAnimation("sbShowLoginMenu", LoginPanel);
 							LoginPanelCheck = true;
 						}
-						if (LoginPanel.Margin.Top == 0)
+					}
+					if (LoginPanelCheck)
+					{
+						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
 						{
 							PanelAnimation("sbHideLoginMenu", LoginPanel);
 							LoginPanelCheck = false;
@@ -358,43 +422,12 @@ namespace LauncherWPF
 							SaveSettings();
 						}
 					}
-				}
-				if (SettingPanel.Margin.Right == 0)
-				{
-					PanelAnimation("sbHideSettingsMenu", SettingPanel);
-					SettingsPanelCheck = false;
-					SaveSettingsCheck = true;
-					SaveSettings();
-				}
-				if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
-				{
-					PanelAnimation("sbShowLoginMenu", LoginPanel);
-					LoginPanelCheck = true;
-				}
-				if (UpdatePanelCheck)
-				{
-					if (UpdatePanel.Margin.Bottom == 0)
+					if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY")
 					{
-						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = false;
-					}
-					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
-					{
-						PanelAnimation("sbShowLoginMenu", LoginPanel);
-						LoginPanelCheck = true;
+						PlayCheck = true;
+						LoginVerification();
 					}
 				}
-				if (LoginPanelCheck)
-				{
-					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
-					{
-						PanelAnimation("sbHideLoginMenu", LoginPanel);
-						LoginPanelCheck = false;
-						SaveSettingsCheck = true;
-						SaveSettings();
-					}
-				}
-				if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY") LoginVerification();
 			}
 		}
 
@@ -905,13 +938,13 @@ namespace LauncherWPF
 			{
 				case SettingsDisplayMode.Fullscreen:
 					{
-						psFullScreen.IsChecked = true;
+						psWindow.IsChecked = false;
 						DisplayMode = "Fullscreen";
 						break;
 					}
 				case SettingsDisplayMode.Windowed:
 					{
-						psFullScreen.IsChecked = false;
+						psWindow.IsChecked = true;
 						DisplayMode = "Windowed";
 						break;
 					}
@@ -983,6 +1016,18 @@ namespace LauncherWPF
 			//
 			if (ProjectSettings.MapDownload == 1) psMaps.IsChecked = true;
 			else psMaps.IsChecked = false;
+			//
+			//FOV
+			//
+			psFOV.IsChecked = true;
+			psFOVSetting.Foreground = MenuItemSelect;
+			psFOVSetting.Text = ProjectSettings.FOV.ToString();
+			//
+			//Crosshair
+			//
+			psCrosshair.IsChecked = true;
+			psCrosshairSetting.Foreground = MenuItemSelect;
+			psCrosshairSetting.Text = ProjectSettings.Reticle;
 		}
 
 		public async void SaveSettings()
@@ -998,11 +1043,17 @@ namespace LauncherWPF
 			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
 			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
 			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
-			ProjectSettings.Ports = int.Parse(psPortNumber.Text);
+			if (psPortNumber.Text == "") ProjectSettings.Ports = int.Parse("1000");
+			else ProjectSettings.Ports = int.Parse(psPortNumber.Text);
 			ProjectSettings.FPSCap = (fpsEnable) ? 1 : 0;
-			ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
+			if (psFPSLimit.Text == "") ProjectSettings.FPSLimit = int.Parse("60");
+			else ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
 			ProjectSettings.VoiceChat = (VoiceChat) ? 1 : 0;
 			ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
+			if (psFOVSetting.Text == "") ProjectSettings.FOV = int.Parse("72");
+			else ProjectSettings.FOV = int.Parse(psFOVSetting.Text);
+			if (psCrosshairSetting.Text == "") ProjectSettings.Reticle = "0.165";
+			else ProjectSettings.Reticle = psCrosshairSetting.Text;
 
 			LauncherSettings.SaveSettings();
 			ProjectSettings.SaveSettings();
@@ -1013,130 +1064,7 @@ namespace LauncherWPF
 			if (ApplicationShutdownCheck) Application.Current.Shutdown();
 		}
 
-		private void lsRememberMe_Checked(object sender, RoutedEventArgs e)
-		{
-			RememberMe = true;
-			LogFile("Autologin enabled.");
-		}
-
-		private void lsRememberMe_Unchecked(object sender, RoutedEventArgs e)
-		{
-			RememberMe = false;
-			LogFile("Autologin disabled.");
-		}
-
-		private void psChangePlayer_Checked(object sender, RoutedEventArgs e)
-		{
-			if (SettingPanel.Margin.Right == 0)
-			{
-				PanelAnimation("sbHideSettingsMenu", SettingPanel);
-				SettingsPanelCheck = false;
-			}
-
-			if (!SettingsPanelCheck && !UpdatePanelCheck)
-			{
-				if (LoginPanel.Margin.Top == -140)
-				{
-					PanelAnimation("sbShowLoginMenu", LoginPanel);
-					LoginPanelCheck = true;
-				}
-			}
-			psChangePlayer.IsChecked = false;
-		}
-
-		private void psChangePlayer_Unchecked(object sender, RoutedEventArgs e)
-		{
-			psChangePlayer.IsChecked = false;
-		}
-
-		private void psVsync_Checked(object sender, RoutedEventArgs e)
-		{
-			Vsync = true;
-			LogFile("Halo 2 Launch Parameter: -novsync removed from game launch.");
-		}
-
-		private void psVsync_Unchecked(object sender, RoutedEventArgs e)
-		{
-			Vsync = false;
-			LogFile("Halo 2 Launch Parameter: -novsync added to game launch.");
-		}
-
-		private void psSound_Checked(object sender, RoutedEventArgs e)
-		{
-			GameSound = true;
-			LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
-		}
-
-		private void psSound_Unchecked(object sender, RoutedEventArgs e)
-		{
-			GameSound = false;
-			LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
-		}
-
-		private void psDebug_Checked(object sender, RoutedEventArgs e)
-		{
-			DebugLog = true;
-			LogFile("Project Cartographer: Trace logs enabled.");
-		}
-
-		private void psDebug_Unchecked(object sender, RoutedEventArgs e)
-		{
-			DebugLog = false;
-			LogFile("Project Cartographer: Trace logs disabled.");
-		}
-
-		private void psFPS_Checked(object sender, RoutedEventArgs e)
-		{
-			fpsEnable = true;
-			psFPSLimit.IsEnabled = true;
-			psFPSLimit.Foreground = MenuItemSelect;
-			LogFile("Project Cartographer: FPS limiter enabled.");
-		}
-
-		private void psFPS_Unchecked(object sender, RoutedEventArgs e)
-		{
-			fpsEnable = false;
-			psFPSLimit.IsEnabled = false;
-			LogFile("Project Cartographer: FPS limiter disabled.");
-		}
-
-		private void psMaps_Checked(object sender, RoutedEventArgs e)
-		{
-			MapDownloading = true;
-			LogFile("Project Cartographer: Custom map downloading enabled.");
-		}
-
-		private void psPorts_Unchecked(object sender, RoutedEventArgs e)
-		{
-			psPorts.IsChecked = true;
-		}
-
-		private void psPortNumber_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			LogFile("Project Cartographer: Game base port changed to " + psPortNumber.Text.ToString());
-		}
-
-		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			LogFile("Project Cartographer: Maximum frames allowed changed to " + psFPSLimit.Text.ToString());
-		}
-
-		private void StatusButton_Click(object sender, RoutedEventArgs e)
-		{
-			MessageBox.Show("-Core developers of this launcher-" + Environment.NewLine + Environment.NewLine + "Kantanomo : code base from previous launcher" + Environment.NewLine + "supersniper : current launcher", "The Props", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
-			if (StatusButton.IsChecked == true) StatusButton.IsChecked = false;
-		}
-
-		private void psMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			LogFile("Halo 2 Launch Parameter: -monitor:" + psMonitorSelect.SelectedIndex.ToString());
-		}
-
-		private void psMonitor_Unchecked(object sender, RoutedEventArgs e)
-		{
-			psMonitor.IsChecked = true;
-		}
-
+		#region Other Setting Events
 		private void lsUser_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (lsUser.Text != LauncherSettings.PlayerTag)
@@ -1146,6 +1074,7 @@ namespace LauncherWPF
 				ProjectSettings.LoginToken = "";
 			}
 		}
+
 		private void lsPass_PasswordChanged(object sender, RoutedEventArgs e)
 		{
 			if (lsUser.Text != "" && lsPass.Password != "") PlayButton.Content = "PLAY";
@@ -1174,10 +1103,136 @@ namespace LauncherWPF
 			psForceUpdate.IsChecked = false;
 		}
 
-		private void psMaps_Unchecked(object sender, RoutedEventArgs e)
+		private void psChangePlayer_Checked(object sender, RoutedEventArgs e)
 		{
-			MapDownloading = false;
-			LogFile("Project Cartographer: Custom map downloading disabled");
+			if (SettingPanel.Margin.Right == 0)
+			{
+				PanelAnimation("sbHideSettingsMenu", SettingPanel);
+				SettingsPanelCheck = false;
+			}
+
+			if (!SettingsPanelCheck && !UpdatePanelCheck)
+			{
+				if (LoginPanel.Margin.Top == -140)
+				{
+					PanelAnimation("sbShowLoginMenu", LoginPanel);
+					LoginPanelCheck = true;
+				}
+			}
+			psChangePlayer.IsChecked = false;
+		}
+
+		private void psChangePlayer_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psChangePlayer.IsChecked = false;
+		}
+		#endregion
+
+		#region Launcher Settings
+		private void psWindow_Checked(object sender, RoutedEventArgs e)
+		{
+			psWindow.IsChecked = true;
+			DisplayMode = "Windowed";
+			GameRegistrySettings.SetDisplayMode(false);
+			LogFile("Display Mode: Window mode enabled.");
+		}
+
+		private void psWindow_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psWindow.IsChecked = false;
+			DisplayMode = "Fullscreen";
+			GameRegistrySettings.SetDisplayMode(true);
+			LogFile("Display Mode: Window mode disabled.");
+		}
+
+		private void psSound_Checked(object sender, RoutedEventArgs e)
+		{
+			GameSound = true;
+			LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
+		}
+
+		private void psSound_Unchecked(object sender, RoutedEventArgs e)
+		{
+			GameSound = false;
+			LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
+		}
+
+		private void psVsync_Checked(object sender, RoutedEventArgs e)
+		{
+			Vsync = true;
+			LogFile("Halo 2 Launch Parameter: -novsync removed from game launch.");
+		}
+
+		private void psVsync_Unchecked(object sender, RoutedEventArgs e)
+		{
+			Vsync = false;
+			LogFile("Halo 2 Launch Parameter: -novsync added to game launch.");
+		}
+
+		private void psMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			LogFile("Halo 2 Launch Parameter: -monitor:" + psMonitorSelect.SelectedIndex.ToString());
+		}
+
+		private void psMonitor_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psMonitor.IsChecked = true;
+		}
+
+		private void lsRememberMe_Checked(object sender, RoutedEventArgs e)
+		{
+			RememberMe = true;
+			LogFile("Autologin enabled.");
+		}
+
+		private void lsRememberMe_Unchecked(object sender, RoutedEventArgs e)
+		{
+			RememberMe = false;
+			LogFile("Autologin disabled.");
+		}
+		#endregion
+
+		#region Xlive Settings
+		private void psDebug_Checked(object sender, RoutedEventArgs e)
+		{
+			DebugLog = true;
+			LogFile("Project Cartographer: Trace logs enabled.");
+		}
+
+		private void psDebug_Unchecked(object sender, RoutedEventArgs e)
+		{
+			DebugLog = false;
+			LogFile("Project Cartographer: Trace logs disabled.");
+		}
+
+		private void psPorts_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psPorts.IsChecked = true;
+		}
+
+		private void psPortNumber_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			LogFile("Project Cartographer: Game base port changed to " + psPortNumber.Text.ToString());
+		}
+
+		private void psFPS_Checked(object sender, RoutedEventArgs e)
+		{
+			fpsEnable = true;
+			psFPSLimit.IsEnabled = true;
+			psFPSLimit.Foreground = MenuItemSelect;
+			LogFile("Project Cartographer: FPS limiter enabled.");
+		}
+
+		private void psFPS_Unchecked(object sender, RoutedEventArgs e)
+		{
+			fpsEnable = false;
+			psFPSLimit.IsEnabled = false;
+			LogFile("Project Cartographer: FPS limiter disabled.");
+		}
+
+		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			LogFile("Project Cartographer: Maximum frames allowed changed to " + psFPSLimit.Text.ToString());
 		}
 
 		private void psVoice_Checked(object sender, RoutedEventArgs e)
@@ -1192,19 +1247,40 @@ namespace LauncherWPF
 			LogFile("Project Cartographer: Voice chat disabled.");
 		}
 
-		private void psFullScreen_Checked(object sender, RoutedEventArgs e)
+		private void psMaps_Checked(object sender, RoutedEventArgs e)
 		{
-			psFullScreen.IsChecked = true;
-			DisplayMode = "Fullscreen";
-			LogFile("Display Mode: Full Screen enabled.");
+			MapDownloading = true;
+			LogFile("Project Cartographer: Custom map downloading enabled.");
 		}
 
-		private void psFullScreen_Unchecked(object sender, RoutedEventArgs e)
+		private void psMaps_Unchecked(object sender, RoutedEventArgs e)
 		{
-			psFullScreen.IsChecked = false;
-			DisplayMode = "Windowed";
-			LogFile("Display Mode: Full Screen disabled.");
+			MapDownloading = false;
+			LogFile("Project Cartographer: Custom map downloading disabled");
 		}
+
+		private void psFOV_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psFOV.IsChecked = true;
+		}
+
+		private void psFOVSetting_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (psFOVSetting.Text == "" || int.Parse(psFOVSetting.Text) <= 0 || int.Parse(psFOVSetting.Text) >= 115) psFOVSetting.Text = "";
+			LogFile("Project Cartographer: Game FOV changed to " + psFOVSetting.Text.ToString());
+		}
+
+		private void psCrosshair_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psCrosshair.IsChecked = true;
+		}
+
+		private void psCrosshairSetting_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			LogFile("Project Cartographer: Game reticle position changed to " + psFOVSetting.Text);
+		}
+		#endregion
+
 		#endregion
 	}
 }

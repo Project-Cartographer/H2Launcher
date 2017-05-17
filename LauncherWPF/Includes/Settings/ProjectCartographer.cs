@@ -14,6 +14,8 @@ namespace Cartographer_Launcher.Includes.Settings
 		private int _FPSLimit = 60;
 		private int _VoiceChat = 0;
 		private int _MapDownload = 1;
+		private int _FOV;
+		private string _Reticle = "0.165";
 
 		public int DebugLog
 		{
@@ -54,6 +56,16 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			get { return _MapDownload; }
 			set { _MapDownload = value; }
+		}
+		public int FOV
+		{
+			get { return _FOV; }
+			set { _FOV = value; }
+		}
+		public string Reticle
+		{
+			get { return _Reticle; }
+			set { _Reticle = value; }
 		}
 
 		public void LoadSettings()
@@ -105,6 +117,16 @@ namespace Cartographer_Launcher.Includes.Settings
 								MapDownload = int.Parse(Setting[1]);
 								break;
 							}
+						case "field_of_view":
+							{
+								FOV = int.Parse(Setting[1]);
+								break;
+							}
+						case "crosshair_offset":
+							{
+								Reticle = Setting[1];
+								break;
+							}
 					}
 				}
 			}
@@ -121,6 +143,8 @@ namespace Cartographer_Launcher.Includes.Settings
 			SB.AppendLine("fps_limit = " + FPSLimit);
 			SB.AppendLine("voice_chat = " + VoiceChat);
 			SB.AppendLine("map_downloading_enable = " + MapDownload);
+			SB.AppendLine("field_of_view = " + FOV);
+			SB.AppendLine("crosshair_offset = " + Reticle);
 			File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
 		}
 	}

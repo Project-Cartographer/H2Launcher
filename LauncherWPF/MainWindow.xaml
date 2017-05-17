@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:LauncherWPF"
         mc:Ignorable="d"       
         Title="H2Launcher" Height="450" Width="750" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" WindowStyle="None" AllowsTransparency="True" MouseDown="MainForm_MouseDown" Initialized="MainForm_Initialized" Closed="MainForm_Closed">
-	<Window.Background>
-		<ImageBrush ImageSource="Resources/Images/launcher background.png"/>
-	</Window.Background>
+	<!--<Window.Background>
+		<ImageBrush ImageSource="Resources/Images/launcher_background.png"/>
+	</Window.Background>-->
 	<Window.Resources>
 		<Storyboard x:Key="sbShowLoginMenu" >
 			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,-140,0,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1"/>
@@ -17,10 +17,10 @@
 			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,-140,0,0" AccelerationRatio=".9" Duration="0:0:1"/>
 		</Storyboard>
 		<Storyboard x:Key="sbShowSettingsMenu" >
-			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,-220,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1"/>
+			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,-220,0" To="0,0,0,0" DecelerationRatio=".1" Duration="0:0:.65"/>
 		</Storyboard>
 		<Storyboard x:Key="sbHideSettingsMenu">
-			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-220,0" AccelerationRatio=".9" Duration="0:0:1"/>
+			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-220,0" AccelerationRatio=".9" Duration="0:0:.65"/>
 		</Storyboard>
 		<Storyboard x:Key="sbShowUpdateMenu" >
 			<ThicknessAnimation Storyboard.TargetProperty="Margin" From="750,0,-350,-250" To="400,0,0,0" DecelerationRatio=".9" Duration="0:0:1"/>
@@ -30,7 +30,8 @@
 		</Storyboard>
 	</Window.Resources>
 	<Grid x:Name="MainGrid" Margin=" 0,0,0,0" Focusable="True">
-		<StackPanel Panel.ZIndex="2" Name="LoginPanel" Orientation="Vertical" Height="140" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-140,0,0" Background="{StaticResource PanelBackground}">
+		<Image x:Name="BackgroundImage" HorizontalAlignment="Left" Height="450" VerticalAlignment="Top" Width="750" Loaded="Image_Loaded" Stretch="Fill"/>
+		<StackPanel Panel.ZIndex="2" x:Name="LoginPanel" Orientation="Vertical" Height="140" Width="300" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-140,0,0" Background="{StaticResource PanelBackground}">
 			<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="140" Width="300">
 				<Label x:Name="pLogin" Content="LOGIN" Style ="{StaticResource PanelTitleStyle}" Width="80" Height="36"/>
 				<ToggleButton x:Name="lsUsername" Content="Username :" Style="{StaticResource sPanelButtonStyle}" Margin="20,55,0,0"/>
@@ -41,12 +42,10 @@
 				<ToggleButton x:Name="lsClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Margin="274,5,5,0" Click="PanelClose_Click" Height="22" Width="Auto" FontSize="22" VerticalAlignment="Top"/>
 			</Grid>
 		</StackPanel>
-		<StackPanel Panel.ZIndex="2" Name="SettingPanel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-220,0" Background="{StaticResource PanelBackground}" Width="220">
+		<StackPanel Panel.ZIndex="2" x:Name="SettingPanel" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-220,0" Background="{StaticResource PanelBackground}" Width="220">
 			<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="450" Width="220">
 				<Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123"/>
-				<ToggleButton x:Name="psFullScreen" Content="Full Screen" Style="{StaticResource sPanelButtonStyle}" Margin="30,49,0,0" Checked="psFullScreen_Checked" Unchecked="psFullScreen_Unchecked"/>
-				<TextBox x:Name="psResX" Style="{StaticResource TextBoxStyle}" FontSize="18" Margin="60,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
-				<TextBox x:Name="psResY" Style="{StaticResource TextBoxStyle}" FontSize="18" Margin="130,68,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck"/>
+				<ToggleButton x:Name="psWindow" Content="Window Mode" Style="{StaticResource sPanelButtonStyle}" Margin="30,49,0,0" Checked="psWindow_Checked" Unchecked="psWindow_Unchecked"/>
 				<ToggleButton x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="30,97,0,0" Checked="psVsync_Checked" Unchecked="psVsync_Unchecked"/>
 				<ToggleButton x:Name="psSound" Content="Game Sound" Style="{StaticResource sPanelButtonStyle}" Margin="30,73,0,0" Checked="psSound_Checked" Unchecked="psSound_Unchecked"/>
 				<ToggleButton x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="30,121,0,0" Unchecked="psMonitor_Unchecked"/>
@@ -54,18 +53,22 @@
 				<Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,150,20,296"/>
 				<ToggleButton x:Name="psDebug" Content="Debug Mode" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,411,0,0" Checked="psDebug_Checked" Unchecked="psDebug_Unchecked"/>
 				<ToggleButton x:Name="psFPS" Content="Frame Limiter :" Style="{StaticResource sPanelButtonStyle}" Margin="30,183,0,0" Checked="psFPS_Checked" Unchecked="psFPS_Unchecked"/>
-				<TextBox x:Name="psFPSLimit" Style="{StaticResource TextBoxStyle}" Text="60" FontSize="22" Margin="153,183,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFPSLimit_TextChanged"/>
+				<TextBox x:Name="psFPSLimit" Style="{StaticResource TextBoxStyle}" FontSize="22" Margin="153,183,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFPSLimit_TextChanged"/>
 				<ToggleButton x:Name="psPorts" Content="Base Port :" Style="{StaticResource sPanelButtonStyle}" Margin="30,159,0,0" Unchecked="psPorts_Unchecked"/>
-				<TextBox x:Name="psPortNumber" Style="{StaticResource TextBoxStyle}" Text="1000" FontSize="22" Margin="117,159,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psPortNumber_TextChanged"/>
+				<TextBox x:Name="psPortNumber" Style="{StaticResource TextBoxStyle}" FontSize="22" Margin="117,159,0,0" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psPortNumber_TextChanged"/>
 				<ToggleButton x:Name="psVoice" Content="Voice Chat" Style="{StaticResource sPanelButtonStyle}" Margin="30,207,0,0" Checked="psVoice_Checked" Unchecked="psVoice_Unchecked" IsEnabled="false"/>
 				<ToggleButton x:Name="psMaps" Content="Map Downloading" Style="{StaticResource sPanelButtonStyle}" Margin="30,231,0,0" Checked="psMaps_Checked" Unchecked="psMaps_Unchecked"/>
 				<ToggleButton x:Name="psChangePlayer" Content="Switch Account" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="10,428,0,0" Checked="psChangePlayer_Checked" Unchecked="psChangePlayer_Unchecked"/>
 				<ToggleButton x:Name="psClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Click="PanelClose_Click" Height="22" Width="21" FontSize="22" VerticalAlignment="Top" Margin="189,5,5,0"/>
 				<ToggleButton x:Name="psForceUpdate" Content="Force Update" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,428,0,0" Checked="psForceUpdate_Checked" Unchecked="psForceUpdate_Unchecked"/>
+				<ToggleButton x:Name="psFOV" Content="Field of View :" Style="{StaticResource sPanelButtonStyle}" Margin="30,255,0,0" Unchecked="psFOV_Unchecked"/>
+				<TextBox x:Name="psFOVSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFOVSetting_TextChanged" Margin="140,255,0,0"/>
+				<ToggleButton x:Name="psCrosshair" Content="Reticle Place :" Style="{StaticResource sPanelButtonStyle}" Margin="30,279,0,0" Unchecked="psCrosshair_Unchecked"/>
+				<TextBox x:Name="psCrosshairSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psCrosshairSetting_TextChanged" Margin="144,279,0,0"/>
 			</Grid>
 		</StackPanel>
-		<StackPanel Panel.ZIndex="2" Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
-			<Grid Name="UpdateGrid" Height="250" Width="350">
+		<StackPanel Panel.ZIndex="2" x:Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
+			<Grid x:Name="UpdateGrid" Height="250" Width="350">
 				<ToggleButton x:Name="usClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Click="PanelClose_Click" Height="22" Width="21" FontSize="22" VerticalAlignment="Top" Margin="324,5,5,0"/>
 				<Label x:Name="pUpdate" Content="UPDATES" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="118"/>
 				<!--<Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,49,163,197"/>-->

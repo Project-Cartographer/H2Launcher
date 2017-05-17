@@ -128,7 +128,7 @@
     <value>..\Resources\Fonts\handel_gothic_medium.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="launcher_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Images\launcher background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\Images\launcher_background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_343_Guilty_Spark_transparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\343_Guilty_Spark-transparent.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

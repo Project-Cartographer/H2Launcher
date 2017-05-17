@@ -18,24 +18,20 @@ namespace Cartographer_Launcher.Includes.Settings
 
 			switch (LauncherSettings.DisplayMode)
 			{
-				case SettingsDisplayMode.Windowed:
-					{
-						ProcInfo.Arguments += "-windowed ";
-						GameRegistrySettings.SetDisplayMode(false);
-						break;
-					}
 				case SettingsDisplayMode.Fullscreen:
 					{
-						GameRegistrySettings.SetDisplayMode(true);
-						ProcInfo.Arguments += "-monitor:" + LauncherSettings.DefaultDisplay.ToString() + " ";
+						ProcInfo.Arguments += " -monitor:" + LauncherSettings.DefaultDisplay.ToString();
+						break;
+					}
+				case SettingsDisplayMode.Windowed:
+					{
+						ProcInfo.Arguments += " -windowed";
 						break;
 					}
 			}
-			ProjectSettings.SaveSettings();
-			LauncherSettings.SaveSettings();
 
-			if (LauncherSettings.GameSound == 0) ProcInfo.Arguments += "-nosound ";
-			if (LauncherSettings.VerticalSync == 0) ProcInfo.Arguments += "-novsync ";
+			if (LauncherSettings.GameSound == 0) ProcInfo.Arguments += " -nosound";
+			if (LauncherSettings.VerticalSync == 0) ProcInfo.Arguments += " -novsync";
 
 			Process.Start(ProcInfo);
 		}

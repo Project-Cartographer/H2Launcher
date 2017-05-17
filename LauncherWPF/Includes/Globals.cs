@@ -137,13 +137,13 @@ namespace Cartographer_Launcher.Includes
 
 		public static string RemoteUpdateXML
 		{
-			get { return WebHost + "update.xml"; }
+			get { return WebHost + "update3.xml"; }
 			//get { return RemotePath + "dev_update.xml"; }
 		}
 
 		public static string VersionNumber
 		{
-			get { return "Version: 2.0.0"; }
+			get { return "Version: 2.0.1"; }
 		}
 	}
 }

@@ -97,6 +97,7 @@
     <Compile Include="Includes\LauncherRuntime.cs" />
     <Compile Include="Includes\Settings\GameRuntime.cs" />
     <Compile Include="Includes\Dependencies\Kantanomo.cs" />
+    <Compile Include="Includes\Settings\H2Startup.cs" />
     <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Settings\ProjectCartographer.cs" />
     <Compile Include="Includes\Dependencies\Enumerators.cs" />
@@ -147,7 +148,7 @@
     <Resource Include="Resources\Images\h2logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\launcher background.png" />
+    <Resource Include="Resources\Images\launcher_background.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
