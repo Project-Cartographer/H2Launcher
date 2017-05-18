@@ -34,7 +34,7 @@ namespace LauncherWPF
 		ProjectCartographer ProjectSettings = new ProjectCartographer();
 		H2Startup H2StartupSettings = new H2Startup();
 
-		private string RegisterURL = @"http://www.cartographer.h2pc.org/";
+		private string RegisterURL = @"http://www.cartographer.online/";
 		private string AppealURL = @"http://www.halo2vista.com/forums/viewforum.php?f=45";
 		private string DateTimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
 		private string LogFilePath = Globals.LogFile;
@@ -1015,13 +1015,13 @@ namespace LauncherWPF
 			//
 			//FOV
 			//
-			psFOV.IsChecked = true;
+			psFOV.IsChecked = false;
 			psFOVSetting.Foreground = MenuItemSelect;
 			psFOVSetting.Text = ProjectSettings.FOV.ToString();
 			//
 			//Crosshair
 			//
-			psCrosshair.IsChecked = true;
+			psCrosshair.IsChecked = false;
 			psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
 		}

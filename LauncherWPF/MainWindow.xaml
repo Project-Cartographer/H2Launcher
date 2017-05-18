@@ -61,10 +61,10 @@
 				<ToggleButton x:Name="psChangePlayer" Content="Switch Account" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="10,428,0,0" Checked="psChangePlayer_Checked" Unchecked="psChangePlayer_Unchecked"/>
 				<ToggleButton x:Name="psClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Click="PanelClose_Click" Height="22" Width="21" FontSize="22" VerticalAlignment="Top" Margin="189,5,5,0"/>
 				<ToggleButton x:Name="psForceUpdate" Content="Force Update" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,428,0,0" Checked="psForceUpdate_Checked" Unchecked="psForceUpdate_Unchecked"/>
-				<ToggleButton x:Name="psFOV" Content="Field of View :" Style="{StaticResource sPanelButtonStyle}" Margin="30,255,0,0" Unchecked="psFOV_Unchecked"/>
-				<TextBox x:Name="psFOVSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFOVSetting_TextChanged" Margin="140,255,0,0"/>
-				<ToggleButton x:Name="psCrosshair" Content="Reticle Place :" Style="{StaticResource sPanelButtonStyle}" Margin="30,279,0,0" Unchecked="psCrosshair_Unchecked"/>
-				<TextBox x:Name="psCrosshairSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psCrosshairSetting_TextChanged" Margin="144,279,0,0"/>
+				<ToggleButton x:Name="psFOV" Content="Field of View :" Style="{StaticResource sPanelButtonStyle}" Margin="30,255,0,0" Unchecked="psFOV_Unchecked" IsEnabled="false"/>
+				<TextBox x:Name="psFOVSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFOVSetting_TextChanged" Margin="140,255,0,0" IsEnabled="false"/>
+				<ToggleButton x:Name="psCrosshair" Content="Reticle Place :" Style="{StaticResource sPanelButtonStyle}" Margin="30,279,0,0" Unchecked="psCrosshair_Unchecked" IsEnabled="false"/>
+				<TextBox x:Name="psCrosshairSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psCrosshairSetting_TextChanged" Margin="144,279,0,0" IsEnabled="false"/>
 			</Grid>
 		</StackPanel>
 		<StackPanel Panel.ZIndex="2" x:Name="UpdatePanel" Orientation="Vertical" Width="350" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="750,0,-350,-250" Height="250" Background="{StaticResource PanelBackground}">
