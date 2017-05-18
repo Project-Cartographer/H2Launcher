@@ -81,6 +81,9 @@ namespace LauncherWPF
 			LauncherCheck();
 			CheckInstallPath();
 
+			try { LoadSettings(); }
+			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+
 			LogFile("Log file initialized.");
 			LogFile("Game install directory: " + Globals.GameDirectory);
 			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
@@ -88,9 +91,6 @@ namespace LauncherWPF
 			usProgressLabel.Tag = "{0}/100";
 			usProgressLabel.Content = "100/100";
 			StatusButton.Content = Globals.VersionNumber;
-
-			try { LoadSettings(); }
-			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
 
 			var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
 			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
@@ -154,19 +154,15 @@ namespace LauncherWPF
 		{
 			if (Globals.GameDirectory == "")
 			{
-				MessageBox.Show("The game directory was not found, please locate it to continue.", "", MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
 				string BaseFolder;
-
 				if (Environment.Is64BitOperatingSystem) BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 				else BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-
 				using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog())
 				{
 					ofd.InitialDirectory = BaseFolder;
-					ofd.Title = "Find Halo 2 Game Directory";
+					ofd.Title = "Navigate to Halo 2 Install Path";
 					ofd.Filter = "Halo 2 Executable|halo2.exe";
 					ofd.FilterIndex = 1;
-
 					if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 					{
 						Globals.GameDirectory = ofd.FileName.Replace(ofd.SafeFileName, "");
@@ -179,7 +175,7 @@ namespace LauncherWPF
 			{
 				if (!Directory.Exists(Globals.GameDirectory))
 				{
-					MessageBox.Show("The game directory was not found, please locate it to continue.", "", MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
+					MessageBox.Show("Halo 2 game directory was not found, please relocate the executable.", Kantanomo.GoIdioms, MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
 					Globals.GameDirectory = "";
 					CheckInstallPath();
 				}
