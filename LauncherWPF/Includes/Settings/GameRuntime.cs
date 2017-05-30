@@ -30,7 +30,7 @@ namespace Cartographer_Launcher.Includes.Settings
 					}
 			}
 
-			if (LauncherSettings.GameSound == 0) ProcInfo.Arguments += " -nosound";
+			if (LauncherSettings.GameSound == 1) ProcInfo.Arguments += " -nosound";
 			if (LauncherSettings.VerticalSync == 0) ProcInfo.Arguments += " -novsync";
 
 			Process.Start(ProcInfo);
