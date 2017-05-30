@@ -1,6 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Cartographer_Launcher.Includes
 {
@@ -117,6 +120,42 @@ namespace Cartographer_Launcher.Includes
 			get { return @"http://www.cartographer.online/H2Cartographer/"; }
 		}
 
+		public static string LANIP
+		{
+			get
+			{
+				var localhost = Dns.GetHostEntry(Dns.GetHostName());
+				foreach (var lanip in localhost.AddressList)
+				{
+					if (lanip.AddressFamily == AddressFamily.InterNetwork)
+					{
+						return lanip.ToString();
+					}
+				}
+				throw new Exception("Local IP Address Not Found!");
+			}
+		}
+		
+
+		public static string WANIP
+		{
+			get
+			{
+				try
+				{
+					WebClient wc = new WebClient();
+					string url = @"http://www.cartographer.online/wanip.php";
+					byte[] response = wc.DownloadData(url);
+					UTF8Encoding utf = new UTF8Encoding();
+					string wanip = utf.GetString(response);
+					return wanip;
+				}
+				catch (Exception)
+				{
+					return "";
+				}
+			}
+		}
 		public static string LauncherCheck
 		{
 			get { return WebHost + "v2.txt"; }

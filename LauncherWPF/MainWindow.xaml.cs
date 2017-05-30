@@ -46,7 +46,7 @@ namespace LauncherWPF
 			LoginPanelCheck,
 			SettingsPanelCheck,
 			UpdatePanelCheck,
-			GameSound,
+			NoGameSound,
 			Vsync,
 			DebugLog,
 			VoiceChat,
@@ -231,6 +231,7 @@ namespace LauncherWPF
 								LauncherSettings.SaveSettings();
 								LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
 								LogFile("Login successful, game starting...");
+								PlayCheck = false;
 								break;
 							}
 						case LoginResultEnum.InvalidLoginToken:
@@ -239,6 +240,7 @@ namespace LauncherWPF
 								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Login token invalid");
+								PlayCheck = false;
 								break;
 							}
 						case LoginResultEnum.InvalidUsernameOrPassword:
@@ -246,6 +248,7 @@ namespace LauncherWPF
 								MessageBox.Show(this, "The playertag or password entered is invalid." + Environment.NewLine + "Please try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Player credentials invalid");
+								PlayCheck = false;
 								break;
 							}
 						case LoginResultEnum.Banned:
@@ -254,6 +257,7 @@ namespace LauncherWPF
 									Process.Start(AppealURL);
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Machine is banned");
+								PlayCheck = false;
 								break;
 							}
 						case LoginResultEnum.GenericFailure:
@@ -265,6 +269,7 @@ namespace LauncherWPF
 								}
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: General login failure");
+								PlayCheck = false;
 								break;
 							}
 					}
@@ -1049,7 +1054,7 @@ namespace LauncherWPF
 
 			LauncherSettings.PlayerTag = lsUser.Text;
 			LauncherSettings.DisplayMode = (SettingsDisplayMode)Enum.Parse(typeof(SettingsDisplayMode), DisplayMode.ToString());
-			LauncherSettings.GameSound = (GameSound) ? 1 : 0;
+			LauncherSettings.GameSound = (NoGameSound) ? 1 : 0;
 			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
 			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
 			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
@@ -1137,6 +1142,17 @@ namespace LauncherWPF
 		{
 			psChangePlayer.IsChecked = false;
 		}
+
+		private void psGameDirectory_Checked(object sender, RoutedEventArgs e)
+		{
+			Process.Start(Globals.GameDirectory);
+			psGameDirectory.IsChecked = false;
+		}
+
+		private void psGameDirectory_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psGameDirectory.IsChecked = false;
+		}
 		#endregion
 
 		#region Launcher Settings
@@ -1158,13 +1174,13 @@ namespace LauncherWPF
 
 		private void psSound_Checked(object sender, RoutedEventArgs e)
 		{
-			GameSound = true;
+			NoGameSound = true;
 			LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
 		}
 
 		private void psSound_Unchecked(object sender, RoutedEventArgs e)
 		{
-			GameSound = false;
+			NoGameSound = false;
 			LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
 		}
 

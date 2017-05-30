@@ -9,12 +9,14 @@ namespace Cartographer_Launcher.Includes.Settings
 		private string _LoginToken = "";
 		private int _DebugLog = 0;
 		private int _Ports = 1000;
+		private string _LANIP;
+		private string _WANIP;
 		private int _GunGame = 0;
 		private int _FPSCap = 1;
 		private int _FPSLimit = 60;
 		private int _VoiceChat = 0;
 		private int _MapDownload = 1;
-		private int _FOV;
+		private int _FOV = 72;
 		private string _Reticle = "0.165";
 
 		public int DebugLog
@@ -31,6 +33,16 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			get { return _Ports; }
 			set { _Ports = value; }
+		}
+		public string LANIP
+		{
+			get { return _LANIP; }
+			set { _LANIP = value; }
+		}
+		public string WANIP
+		{
+			get { return _WANIP; }
+			set { _WANIP = value; }
 		}
 		public int GunGame
 		{
@@ -97,6 +109,16 @@ namespace Cartographer_Launcher.Includes.Settings
 								Ports = int.Parse(Setting[1]);
 								break;
 							}
+						case "LANIP":
+							{
+								LANIP = Setting[1];
+								break;
+							}
+						case "WANIP":
+							{
+								WANIP = Setting[1];
+								break;
+							}
 						case "fps_enable":
 							{
 								FPSCap = int.Parse(Setting[1]);
@@ -138,6 +160,8 @@ namespace Cartographer_Launcher.Includes.Settings
 			SB.AppendLine("login_token = " + LoginToken);
 			SB.AppendLine("debug_log = " + DebugLog);
 			SB.AppendLine("port = " + Ports);
+			SB.AppendLine("LANIP = " + Globals.LANIP);
+			SB.AppendLine("WANIP = " + Globals.WANIP);
 			SB.AppendLine("gungame = " + GunGame);
 			SB.AppendLine("fps_enable = " + FPSCap);
 			SB.AppendLine("fps_limit = " + FPSLimit);
