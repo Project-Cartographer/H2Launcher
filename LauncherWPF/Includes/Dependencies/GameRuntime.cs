@@ -1,9 +1,9 @@
-﻿using Cartographer_Launcher.Includes.Dependencies;
+﻿using Cartographer_Launcher.Includes.Settings;
 using System.Diagnostics;
 
-namespace Cartographer_Launcher.Includes.Settings
+namespace Cartographer_Launcher.Includes.Dependencies
 {
-	public class GameRuntime
+	public class GameLaunch
 	{
 		Launcher LauncherSettings = new Launcher();
 		ProjectCartographer ProjectSettings = new ProjectCartographer();
@@ -12,33 +12,29 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			LauncherSettings.LoadSettings();
 			ProjectSettings.LoadSettings();
+
 			ProcessStartInfo ProcInfo = new ProcessStartInfo();
 			ProcInfo.WorkingDirectory = Globals.GameDirectory;
 			ProcInfo.FileName = "halo2.exe";
 
 			switch (LauncherSettings.DisplayMode)
 			{
-				case SettingsDisplayMode.Fullscreen:
+				case Globals.SettingsDisplayMode.Fullscreen:
 					{
 						ProcInfo.Arguments += " -monitor:" + LauncherSettings.DefaultDisplay.ToString();
 						break;
 					}
-				case SettingsDisplayMode.Windowed:
+				case Globals.SettingsDisplayMode.Windowed:
 					{
 						ProcInfo.Arguments += " -windowed";
 						break;
 					}
 			}
 
-			if (LauncherSettings.GameSound == 1) ProcInfo.Arguments += " -nosound";
+			if (LauncherSettings.NoGameSound == 1) ProcInfo.Arguments += " -nosound";
 			if (LauncherSettings.VerticalSync == 0) ProcInfo.Arguments += " -novsync";
 
 			Process.Start(ProcInfo);
-		}
-
-		public void KillGame()
-		{
-			foreach (Process P in Process.GetProcessesByName("halo2")) P.Kill();
 		}
 	}
 }

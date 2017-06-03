@@ -120,23 +120,22 @@ namespace Cartographer_Launcher.Includes
 			get { return @"http://www.cartographer.online/H2Cartographer/"; }
 		}
 
+		public enum SettingsDisplayMode : int
+		{
+			Fullscreen = 0,
+			Windowed = 1,
+		}
+
 		public static string LANIP
 		{
 			get
 			{
 				var localhost = Dns.GetHostEntry(Dns.GetHostName());
-				foreach (var lanip in localhost.AddressList)
-				{
-					if (lanip.AddressFamily == AddressFamily.InterNetwork)
-					{
-						return lanip.ToString();
-					}
-				}
+				foreach (var lanip in localhost.AddressList) if (lanip.AddressFamily == AddressFamily.InterNetwork) return lanip.ToString();
 				throw new Exception("Local IP Address Not Found!");
 			}
 		}
 		
-
 		public static string WANIP
 		{
 			get
@@ -150,12 +149,10 @@ namespace Cartographer_Launcher.Includes
 					string wanip = utf.GetString(response);
 					return wanip;
 				}
-				catch (Exception)
-				{
-					return "";
-				}
+				catch (Exception) { return ""; }
 			}
 		}
+
 		public static string LauncherCheck
 		{
 			get { return WebHost + "v2.txt"; }
@@ -173,7 +170,7 @@ namespace Cartographer_Launcher.Includes
 
 		public static string VersionNumber
 		{
-			get { return "Version: 2.0.5"; }
+			get { return "Version: 2.0.9"; }
 		}
 	}
 }

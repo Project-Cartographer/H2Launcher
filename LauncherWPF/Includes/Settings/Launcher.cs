@@ -13,22 +13,22 @@ namespace Cartographer_Launcher.Includes.Settings
 		private string _GameDirectory = Globals.GameDirectory;
 		private string _PlayerTag = "Player_1";
 		private string _PlayerLoginToken = "";
-		private SettingsDisplayMode _DisplayMode = GameRegistrySettings.GetDisplayMode();
-		private int _GameSound = 1;
+		private Globals.SettingsDisplayMode _DisplayMode = GameRegistrySettings.GetDisplayMode();
+		private int _NoGameSound = 0;
 		private int _VerticalSync = 1;
 		private int _DefaultDisplay = 0;
 		private int _RememberMe = 0;
 
-		public SettingsDisplayMode DisplayMode
+		public Globals.SettingsDisplayMode DisplayMode
 		{
 			get { return _DisplayMode; }
 			set { _DisplayMode = value; }
 		}
 
-		public int GameSound
+		public int NoGameSound
 		{
-			get { return _GameSound; }
-			set { _GameSound = value; }
+			get { return _NoGameSound; }
+			set { _NoGameSound = value; }
 		}
 
 		public int VerticalSync
@@ -101,12 +101,12 @@ namespace Cartographer_Launcher.Includes.Settings
 							}
 						case "DisplayMode":
 							{
-								DisplayMode = (SettingsDisplayMode)Enum.Parse(typeof(SettingsDisplayMode), Setting[1]);
+								DisplayMode = (Globals.SettingsDisplayMode)Enum.Parse(typeof(Globals.SettingsDisplayMode), Setting[1]);
 								break;
 							}
 						case "GameSound":
 							{
-								GameSound = int.Parse(Setting[1]);
+								NoGameSound = int.Parse(Setting[1]);
 								break;
 							}
 						case "VerticalSync":
@@ -143,7 +143,7 @@ namespace Cartographer_Launcher.Includes.Settings
 			SB.AppendLine("LauncherRunPath:" + AppDomain.CurrentDomain.BaseDirectory);
 			SB.AppendLine("PlayerTag:" + PlayerTag);
 			SB.AppendLine("DisplayMode:" + DisplayMode.ToString());
-			SB.AppendLine("GameSound:" + GameSound.ToString());
+			SB.AppendLine("GameSound:" + NoGameSound.ToString());
 			SB.AppendLine("VerticalSync:" + VerticalSync.ToString());
 			SB.AppendLine("DefaultDisplay:" + DefaultDisplay.ToString());
 			SB.AppendLine("RememberMe:" + RememberMe.ToString());

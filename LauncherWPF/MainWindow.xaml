@@ -66,7 +66,7 @@
 				<Label x:Name="pSettings" Content="SETTINGS" Style ="{StaticResource PanelTitleStyle}" Height="34" Width="123"/>
 				<ToggleButton x:Name="psWindow" Content="Window Mode" Style="{StaticResource sPanelButtonStyle}" Margin="30,49,0,0" Checked="psWindow_Checked" Unchecked="psWindow_Unchecked"/>
 				<ToggleButton x:Name="psVsync" Content="Vertical Sync" Style="{StaticResource sPanelButtonStyle}" Margin="30,97,0,0" Checked="psVsync_Checked" Unchecked="psVsync_Unchecked"/>
-				<ToggleButton x:Name="psSound" Content="No Sound" Style="{StaticResource sPanelButtonStyle}" Margin="30,73,0,0" Checked="psSound_Checked" Unchecked="psSound_Unchecked"/>
+				<ToggleButton x:Name="psNoSound" Content="No Sound" Style="{StaticResource sPanelButtonStyle}" Margin="30,73,0,0" Checked="psNoSound_Checked" Unchecked="psNoSound_Unchecked"/>
 				<ToggleButton x:Name="psMonitor" Content="Default Display :" Style ="{StaticResource sPanelButtonStyle}" Margin="30,121,0,0" Unchecked="psMonitor_Unchecked"/>
 				<ComboBox x:Name="psMonitorSelect" Style="{StaticResource ComboBoxStyle}" Margin="168,121,0,0" Width="37" Height="24" SelectionChanged="psMonitorSelect_SelectionChanged"/>
 				<Separator Background="{StaticResource TitleColor}" VerticalAlignment="Center" Height="4" Margin="10,150,20,296"/>
@@ -80,10 +80,10 @@
 				<ToggleButton x:Name="psChangePlayer" Content="Switch Account" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="10,428,0,0" Checked="psChangePlayer_Checked" Unchecked="psChangePlayer_Unchecked"/>
 				<ToggleButton x:Name="psClose" Content="X" Style ="{StaticResource ControlButtonStyle}" Click="PanelClose_Click" Height="22" Width="21" FontSize="22" VerticalAlignment="Top" Margin="189,5,5,0"/>
 				<ToggleButton x:Name="psForceUpdate" Content="Force Update" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="136,428,0,0" Checked="psForceUpdate_Checked" Unchecked="psForceUpdate_Unchecked"/>
-				<ToggleButton x:Name="psFOV" Content="Field of View :" Style="{StaticResource sPanelButtonStyle}" Margin="30,255,0,0" Unchecked="psFOV_Unchecked"/>
-				<TextBox x:Name="psFOVSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFOVSetting_TextChanged" Margin="140,255,0,0"/>
-				<ToggleButton x:Name="psCrosshair" Content="Reticle Place :" Style="{StaticResource sPanelButtonStyle}" Margin="30,279,0,0" Unchecked="psCrosshair_Unchecked"/>
-				<TextBox x:Name="psCrosshairSetting" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psCrosshairSetting_TextChanged" Margin="144,279,0,0"/>
+				<ToggleButton x:Name="psFOV" IsEnabled ="False" Content="Field of View :" Style="{StaticResource sPanelButtonStyle}" Margin="30,255,0,0" Unchecked="psFOV_Unchecked"/>
+				<TextBox x:Name="psFOVSetting" IsEnabled ="False" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psFOVSetting_TextChanged" Margin="140,255,0,0"/>
+				<ToggleButton x:Name="psCrosshair" IsEnabled ="False" Content="Reticle Place :" Style="{StaticResource sPanelButtonStyle}" Margin="30,279,0,0" Unchecked="psCrosshair_Unchecked"/>
+				<TextBox x:Name="psCrosshairSetting" IsEnabled ="False" Style="{StaticResource TextBoxStyle}" FontSize="22" PreviewTextInput="Numeric_PreviewTextInput" DataObject.Pasting ="NumericPasteCheck" TextChanged="psCrosshairSetting_TextChanged" Margin="144,279,0,0"/>
 				<ToggleButton x:Name="psGameDirectory" Content="Open Game Folder" Style="{StaticResource sPanelButtonStyle}" FontSize="16" Margin="10,411,0,0" Checked="psGameDirectory_Checked" Unchecked="psGameDirectory_Unchecked"/>
 			</Grid>
 		</StackPanel>

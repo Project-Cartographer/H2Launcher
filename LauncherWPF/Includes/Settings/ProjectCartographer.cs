@@ -24,56 +24,67 @@ namespace Cartographer_Launcher.Includes.Settings
 			get { return _DebugLog; }
 			set { _DebugLog = value; }
 		}
+
 		public string LoginToken
 		{
 			get { return _LoginToken; }
 			set { _LoginToken = value; }
 		}
+
 		public int Ports
 		{
 			get { return _Ports; }
 			set { _Ports = value; }
 		}
+
 		public string LANIP
 		{
 			get { return _LANIP; }
 			set { _LANIP = value; }
 		}
+
 		public string WANIP
 		{
 			get { return _WANIP; }
 			set { _WANIP = value; }
 		}
+
 		public int GunGame
 		{
 			get { return _GunGame; }
 			set { _GunGame = value; }
 		}
+
 		public int FPSCap
 		{
 			get { return _FPSCap; }
 			set { _FPSCap = value; }
 		}
+
 		public int FPSLimit
 		{
 			get { return _FPSLimit; }
 			set { _FPSLimit = value; }
 		}
+
 		public int VoiceChat
 		{
 			get { return _VoiceChat; }
 			set { _VoiceChat = value; }
 		}
+
 		public int MapDownload
 		{
 			get { return _MapDownload; }
 			set { _MapDownload = value; }
 		}
+
 		public int FOV
 		{
 			get { return _FOV; }
 			set { _FOV = value; }
 		}
+
 		public string Reticle
 		{
 			get { return _Reticle; }

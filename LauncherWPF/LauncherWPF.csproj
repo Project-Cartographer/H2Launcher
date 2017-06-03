@@ -96,12 +96,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Includes\LauncherRuntime.cs" />
-    <Compile Include="Includes\Settings\GameRuntime.cs" />
+    <Compile Include="Includes\Dependencies\GameRuntime.cs" />
     <Compile Include="Includes\Dependencies\Kantanomo.cs" />
     <Compile Include="Includes\Settings\H2Startup.cs" />
     <Compile Include="Includes\Settings\Launcher.cs" />
     <Compile Include="Includes\Settings\ProjectCartographer.cs" />
-    <Compile Include="Includes\Dependencies\Enumerators.cs" />
     <Compile Include="Includes\Globals.cs" />
     <Compile Include="Includes\Dependencies\GameRegistrySettings.cs" />
     <Compile Include="Includes\Dependencies\UpdateCollection.cs" />
@@ -140,7 +139,9 @@
     <Resource Include="Resources\Fonts\handel_gothic_medium.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Icons\343_Guilty_Spark-transparent.ico" />

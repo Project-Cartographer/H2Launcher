@@ -77,26 +77,108 @@ namespace LauncherWPF
 
 		public MainWindow()
 		{
-			InitializeComponent();
-			LauncherCheck();
-			CheckInstallPath();
+			try { InitializeComponent(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
 
-			try { LoadSettings(); }
-			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+					case MessageBoxResult.None:
+						break;
+				}
+			}
 
 			LogFile("Log file initialized.");
 			LogFile("Game install directory: " + Globals.GameDirectory);
 			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
 
+			try { LauncherCheck(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
+
+					case MessageBoxResult.None:
+						break;
+				}
+			}
+
+			try { CheckInstallPath(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
+
+					case MessageBoxResult.None:
+						break;
+				}
+			}
+
+			try { LoadSettings(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
+
+					case MessageBoxResult.None:
+						break;
+				}
+			}
+
+			try { LoginTokenCheck(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
+
+					case MessageBoxResult.None:
+						break;
+				}
+			}
+
+			try { CheckUpdates(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Process.Start(Globals.ExLogFile);
+						break;
+
+					case MessageBoxResult.None:
+						break;
+				}
+			}
+
 			usProgressLabel.Tag = "{0}/100";
-			usProgressLabel.Content = "100/100";
-			StatusButton.Content = Globals.VersionNumber;
-
-			var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-			if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
-			else PlayButton.Content = "PLAY";
-
-			CheckUpdates();
+			usProgressLabel.Content = "--/100";
 		}
 
 		#region Main Methods
@@ -190,7 +272,13 @@ namespace LauncherWPF
 				Dispatcher.Invoke(() =>
 				{
 					var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-					if (loginResult.LoginResultEnum == LoginResultEnum.Successfull) ProjectSettings.LoginToken = loginResult.LoginToken;
+					if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
+					if (loginResult.LoginResultEnum == LoginResultEnum.Successfull)
+					{
+						ProjectSettings.LoginToken = loginResult.LoginToken;
+						StatusButton.Content = Globals.VersionNumber;
+					}
+					else PlayButton.Content = "PLAY";
 				});
 			});
 		}
@@ -876,7 +964,7 @@ namespace LauncherWPF
 
 		public async void CheckUpdates()
 		{
-			await Task.Delay(500).ContinueWith(_ =>
+			await Task.Delay(1000).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
 				{
@@ -890,7 +978,7 @@ namespace LauncherWPF
 					}
 				});
 			});
-			await Task.Delay(1000).ContinueWith(_ =>
+			await Task.Delay(1200).ContinueWith(_ =>
 			{
 				if (UpdateGameToLatest())
 				{
@@ -951,13 +1039,13 @@ namespace LauncherWPF
 			//
 			switch (LauncherSettings.DisplayMode)
 			{
-				case SettingsDisplayMode.Fullscreen:
+				case Globals.SettingsDisplayMode.Fullscreen:
 					{
 						psWindow.IsChecked = false;
 						DisplayMode = "Fullscreen";
 						break;
 					}
-				case SettingsDisplayMode.Windowed:
+				case Globals.SettingsDisplayMode.Windowed:
 					{
 						psWindow.IsChecked = true;
 						DisplayMode = "Windowed";
@@ -967,8 +1055,8 @@ namespace LauncherWPF
 			//
 			//Game Sound
 			//
-			if (LauncherSettings.GameSound == 1) psSound.IsChecked = true;
-			else psSound.IsChecked = false;
+			if (LauncherSettings.NoGameSound == 1) psNoSound.IsChecked = true;
+			else psNoSound.IsChecked = false;
 			//
 			//Vertical Sync
 			//
@@ -1034,14 +1122,14 @@ namespace LauncherWPF
 			//
 			//FOV
 			//
-			psFOV.IsChecked = true;
-			psFOVSetting.Foreground = MenuItemSelect;
+			psFOV.IsChecked = false;
+			//psFOVSetting.Foreground = MenuItemSelect;
 			psFOVSetting.Text = ProjectSettings.FOV.ToString();
 			//
 			//Crosshair
 			//
-			psCrosshair.IsChecked = true;
-			psCrosshairSetting.Foreground = MenuItemSelect;
+			psCrosshair.IsChecked = false;
+			//psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
 		}
 
@@ -1053,8 +1141,8 @@ namespace LauncherWPF
 			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
 
 			LauncherSettings.PlayerTag = lsUser.Text;
-			LauncherSettings.DisplayMode = (SettingsDisplayMode)Enum.Parse(typeof(SettingsDisplayMode), DisplayMode.ToString());
-			LauncherSettings.GameSound = (NoGameSound) ? 1 : 0;
+			LauncherSettings.DisplayMode = (Globals.SettingsDisplayMode)Enum.Parse(typeof(Globals.SettingsDisplayMode), DisplayMode.ToString());
+			LauncherSettings.NoGameSound = (NoGameSound) ? 1 : 0;
 			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
 			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
 			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
@@ -1172,13 +1260,13 @@ namespace LauncherWPF
 			LogFile("Display Mode: Window mode disabled.");
 		}
 
-		private void psSound_Checked(object sender, RoutedEventArgs e)
+		private void psNoSound_Checked(object sender, RoutedEventArgs e)
 		{
 			NoGameSound = true;
 			LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
 		}
 
-		private void psSound_Unchecked(object sender, RoutedEventArgs e)
+		private void psNoSound_Unchecked(object sender, RoutedEventArgs e)
 		{
 			NoGameSound = false;
 			LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
