@@ -81,16 +81,7 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to load components.");
 			}
 
 			LogFile("Log file initialized.");
@@ -101,80 +92,35 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to check launcher.");
 			}
 
 			try { CheckInstallPath(); }
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to open Windows Explorer.");
 			}
 
 			try { LoadSettings(); }
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to load setting files.");
 			}
 
 			try { LoginTokenCheck(); }
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to verify login token.");
 			}
 
 			try { CheckUpdates(); }
 			catch (Exception Ex)
 			{
 				ExLogFile(Ex.ToString());
-				MessageBoxResult mr = MessageBox.Show(Ex.ToString(), Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-				switch (mr)
-				{
-					case MessageBoxResult.OK:
-						Process.Start(Globals.ExLogFile);
-						break;
-
-					case MessageBoxResult.None:
-						break;
-				}
+				Debug("Failed to begin update process");
 			}
 
 			usProgressLabel.Tag = "{0}/100";
@@ -182,6 +128,22 @@ namespace LauncherWPF
 		}
 
 		#region Main Methods
+		public void Debug(string Error)
+		{
+			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+			switch (mr)
+			{
+				case MessageBoxResult.OK:
+					Process.Start(Globals.ExLogFile);
+					Application.Current.Shutdown();
+					break;
+
+				case MessageBoxResult.None:
+					Application.Current.Shutdown();
+					break;
+			}
+		}
+
 		public void LogFile(string Message)
 		{
 			StreamWriter log;
@@ -216,7 +178,19 @@ namespace LauncherWPF
 			request.Method = "HEAD";
 			HttpWebResponse response;
 			try { response = request.GetResponse() as HttpWebResponse; }
-			catch (WebException wex) { response = wex.Response as HttpWebResponse; }
+			catch (WebException wex)
+			{
+				response = wex.Response as HttpWebResponse;
+				Task.Delay(1000);
+				ProcessStartInfo Info = new ProcessStartInfo();
+				Info.Arguments = "/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"";
+				Info.WindowStyle = ProcessWindowStyle.Hidden;
+				Info.CreateNoWindow = true;
+				Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				Info.FileName = "cmd.exe";
+				Process.Start(Info);
+				Process.GetCurrentProcess().Kill();
+			}
 
 			if (response.StatusCode == HttpStatusCode.NotFound)
 			{
@@ -384,7 +358,11 @@ namespace LauncherWPF
 		{
 			ApplicationShutdownCheck = true;
 			try { SaveSettings(); }
-			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to save settings");
+			}
 		}
 
 		private void LogoImage_Loaded(object sender, RoutedEventArgs e)
@@ -445,7 +423,11 @@ namespace LauncherWPF
 			MainForm.Visibility = Visibility.Hidden;
 			ApplicationShutdownCheck = true;
 			try { SaveSettings(); }
-			catch (Exception Ex) { ExLogFile(Ex.ToString()); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to save settings.");
+			}
 		}
 
 		private void StatusButton_Click(object sender, RoutedEventArgs e)
@@ -476,7 +458,13 @@ namespace LauncherWPF
 								PanelAnimation("sbHideLoginMenu", LoginPanel);
 								LoginPanelCheck = false;
 								SaveSettingsCheck = true;
-								SaveSettings();
+
+								try { SaveSettings(); }
+								catch (Exception Ex)
+								{
+									ExLogFile(Ex.ToString());
+									Debug("Failed to save settings.");
+								}
 							}
 						}
 					}
@@ -485,7 +473,13 @@ namespace LauncherWPF
 						PanelAnimation("sbHideSettingsMenu", SettingPanel);
 						SettingsPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
 					{
@@ -512,13 +506,26 @@ namespace LauncherWPF
 							PanelAnimation("sbHideLoginMenu", LoginPanel);
 							LoginPanelCheck = false;
 							SaveSettingsCheck = true;
-							SaveSettings();
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
 						}
 					}
 					if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY")
 					{
 						PlayCheck = true;
-						LoginVerification();
+
+						try { LoginVerification(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to get login token.");
+						}
+
 					}
 				}
 			}
@@ -540,7 +547,13 @@ namespace LauncherWPF
 						PanelAnimation("sbHideSettingsMenu", SettingPanel);
 						SettingsPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 				}
 				if (LoginPanelCheck)
@@ -550,7 +563,13 @@ namespace LauncherWPF
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 					if (SettingPanel.Margin.Right == -220)
 					{
@@ -583,7 +602,13 @@ namespace LauncherWPF
 					if (UpdatePanel.Margin.Bottom == -250)
 					{
 						usTextBox.Clear();
-						CheckUpdates();
+
+						try { CheckUpdates(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to begin update process.");
+						}
 						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 						UpdatePanelCheck = true;
 					}
@@ -600,12 +625,24 @@ namespace LauncherWPF
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 					if (UpdatePanel.Margin.Bottom == -250)
 					{
 						usTextBox.Clear();
-						CheckUpdates();
+
+						try { CheckUpdates(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to begin update process.");
+						}
 						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 						UpdatePanelCheck = true;
 					}
@@ -617,12 +654,24 @@ namespace LauncherWPF
 						PanelAnimation("sbHideSettingsMenu", SettingPanel);
 						SettingsPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 					if (UpdatePanel.Margin.Bottom == -250)
 					{
 						usTextBox.Clear();
-						CheckUpdates();
+
+						try { CheckUpdates(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to begin update process.");
+						}
 						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 						UpdatePanelCheck = true;
 					}
@@ -646,7 +695,13 @@ namespace LauncherWPF
 						PanelAnimation("sbHideSettingsMenu", SettingPanel);
 						SettingsPanelCheck = false;
 						SaveSettingsCheck = true;
-						SaveSettings();
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 				}
 				if (UpdatePanelCheck)
@@ -665,8 +720,20 @@ namespace LauncherWPF
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
 						SaveSettingsCheck = true;
-						LoginTokenCheck();
-						SaveSettings();
+
+						try { LoginTokenCheck(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to verify login token.");
+						}
+
+						try { SaveSettings(); }
+						catch (Exception Ex)
+						{
+							ExLogFile(Ex.ToString());
+							Debug("Failed to save settings.");
+						}
 					}
 				}
 			}
@@ -678,7 +745,13 @@ namespace LauncherWPF
 		{
 			string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]" + Environment.NewLine;
 			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GameDirectory + "halo2.exe").FileVersion;
-			AddToDetails(string.Format(DateStamp + "Halo 2 Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version + Environment.NewLine));
+
+			try { AddToDetails(string.Format(DateStamp + "Halo 2 Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version + Environment.NewLine)); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to get current version of Halo 2");
+			}
 
 			if (_Halo2Version != CurrentHalo2Version)
 			{
@@ -1122,14 +1195,14 @@ namespace LauncherWPF
 			//
 			//FOV
 			//
-			psFOV.IsChecked = false;
-			//psFOVSetting.Foreground = MenuItemSelect;
+			psFOV.IsChecked = true;
+			psFOVSetting.Foreground = MenuItemSelect;
 			psFOVSetting.Text = ProjectSettings.FOV.ToString();
 			//
 			//Crosshair
 			//
-			psCrosshair.IsChecked = false;
-			//psCrosshairSetting.Foreground = MenuItemSelect;
+			psCrosshair.IsChecked = true;
+			psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
 		}
 
