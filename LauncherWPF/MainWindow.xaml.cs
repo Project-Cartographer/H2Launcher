@@ -181,29 +181,9 @@ namespace LauncherWPF
 			catch (WebException wex)
 			{
 				response = wex.Response as HttpWebResponse;
-				Task.Delay(1000);
-				ProcessStartInfo Info = new ProcessStartInfo();
-				Info.Arguments = "/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"";
-				Info.WindowStyle = ProcessWindowStyle.Hidden;
-				Info.CreateNoWindow = true;
-				Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				Info.FileName = "cmd.exe";
-				Process.Start(Info);
-				Process.GetCurrentProcess().Kill();
+				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
 			}
-
-			if (response.StatusCode == HttpStatusCode.NotFound)
-			{
-				Task.Delay(1000);
-				ProcessStartInfo Info = new ProcessStartInfo();
-				Info.Arguments = "/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"";
-				Info.WindowStyle = ProcessWindowStyle.Hidden;
-				Info.CreateNoWindow = true;
-				Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				Info.FileName = "cmd.exe";
-				Process.Start(Info);
-				Process.GetCurrentProcess().Kill();
-			}
+			if (response.StatusCode == HttpStatusCode.NotFound) LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
 		}
 
 		public void CheckInstallPath()
@@ -339,6 +319,18 @@ namespace LauncherWPF
 			});
 		}
 
+		private void LauncherDelete(string Arguments)
+		{
+			Task.Delay(1000);
+			ProcessStartInfo Info = new ProcessStartInfo();
+			Info.Arguments = Arguments;
+			Info.WindowStyle = ProcessWindowStyle.Hidden;
+			Info.CreateNoWindow = true;
+			Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			Info.FileName = "cmd.exe";
+			Process.Start(Info);
+			Process.GetCurrentProcess().Kill();
+		}
 		#endregion
 
 		#region Form Event Methods
@@ -1004,16 +996,8 @@ namespace LauncherWPF
 			if (_LauncherUpdated)
 			{
 				AddToDetails("The launcher needs to restart to complete the update.");
-				Task.Delay(5000);
-				ProcessStartInfo p = new ProcessStartInfo();
-				p.CreateNoWindow = true;
-				p.UseShellExecute = false;
-				p.FileName = "cmd.exe";
-				p.WindowStyle = ProcessWindowStyle.Hidden;
-				p.Arguments = "/c ping 127.0.0.1 -n 3 -w 2000 > Nul & Del " + "\"" + CurrentName + "\"" + "& ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 1000 > Nul & start H2Launcher.exe";
-				p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				Process.Start(p);
-				Process.GetCurrentProcess().Kill();
+				Task.Delay(4000);
+				LauncherDelete("/c ping 127.0.0.1 -n 3 -w 2000 > Nul & Del " + "\"" + CurrentName + "\"" + "& ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 1000 > Nul & start H2Launcher.exe");
 			}
 			else UpdaterFinished();
 		}
@@ -1195,12 +1179,14 @@ namespace LauncherWPF
 			//
 			//FOV
 			//
+			//psFOV.IsChecked = false;
 			psFOV.IsChecked = true;
 			psFOVSetting.Foreground = MenuItemSelect;
 			psFOVSetting.Text = ProjectSettings.FOV.ToString();
 			//
 			//Crosshair
 			//
+			//psCrosshair.IsChecked = false;
 			psCrosshair.IsChecked = true;
 			psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
@@ -1261,17 +1247,8 @@ namespace LauncherWPF
 		private void psForceUpdate_Checked(object sender, RoutedEventArgs e)
 		{
 			File.Delete(Globals.Files + "LocalUpdate.xml");
-			Task.Delay(5000);
-			ProcessStartInfo p = new ProcessStartInfo();
-			p.UseShellExecute = false;
-			p.Arguments = "/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe";
-			p.WindowStyle = ProcessWindowStyle.Hidden;
-			p.CreateNoWindow = true;
-			p.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-			p.FileName = "cmd.exe";
-			Process.Start(p);
-			Process.GetCurrentProcess().Kill();
-
+			Task.Delay(4000);
+			LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
 			psForceUpdate.IsChecked = false;
 		}
 
@@ -1400,7 +1377,7 @@ namespace LauncherWPF
 
 		private void psPortNumber_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Game base port changed to " + psPortNumber.Text.ToString());
+			LogFile("Project Cartographer: Game base port set to " + psPortNumber.Text.ToString());
 		}
 
 		private void psFPS_Checked(object sender, RoutedEventArgs e)
@@ -1420,7 +1397,7 @@ namespace LauncherWPF
 
 		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Maximum frames allowed changed to " + psFPSLimit.Text.ToString());
+			LogFile("Project Cartographer: Maximum frames set to " + psFPSLimit.Text.ToString());
 		}
 
 		private void psVoice_Checked(object sender, RoutedEventArgs e)
@@ -1455,7 +1432,7 @@ namespace LauncherWPF
 		private void psFOVSetting_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (psFOVSetting.Text == "" || int.Parse(psFOVSetting.Text) <= 0 || int.Parse(psFOVSetting.Text) >= 115) psFOVSetting.Text = "";
-			LogFile("Project Cartographer: Game FOV changed to " + psFOVSetting.Text.ToString());
+			LogFile("Project Cartographer: Game FOV changed to " + psFOVSetting.Text);
 		}
 
 		private void psCrosshair_Unchecked(object sender, RoutedEventArgs e)
@@ -1465,7 +1442,7 @@ namespace LauncherWPF
 
 		private void psCrosshairSetting_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Game reticle position changed to " + psFOVSetting.Text);
+			LogFile("Project Cartographer: Game reticle position changed to " + psCrosshairSetting.Text);
 		}
 		#endregion
 	}
