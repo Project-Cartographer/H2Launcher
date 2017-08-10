@@ -12,6 +12,7 @@
 		<SolidColorBrush x:Key="ControlButtonHoverColor" Color="#213F84" />
 		<SolidColorBrush x:Key="ControlButtonClickColor" Color="#2E53A6" />
 		<SolidColorBrush x:Key="PanelBackground" Color= "#000C2D" Opacity="0.75"/>
+		<SolidColorBrush x:Key="mbPanelBackground" Color= "#000C2D" Opacity="0.95"/>
 
 		<Style TargetType="Label" x:Key="LabelTemplate">
 			<Setter Property="FontWeight" Value="Regular"/>
@@ -104,6 +105,13 @@
 		</Style>
 
 		<Style TargetType="TextBox" x:Key="TextBoxStyle">
+			<Style.Resources>
+				<Style TargetType="{x:Type ScrollBar}">
+					<Setter Property="Background" Value="{StaticResource mbPanelBackground}"/>
+				</Style>
+			</Style.Resources>
+			<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+			<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
 			<Setter Property="TextWrapping" Value="Wrap"/>
 			<Setter Property="TextElement.FontFamily" Value="Resources/Fonts/#Conduit ITC"/>
 			<Setter Property="FontSize" Value="20"/>

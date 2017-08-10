@@ -1,6 +1,6 @@
 ﻿using Cartographer_Launcher.Includes.Dependencies;
-using H2Shield.Includes;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -9,150 +9,106 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class Launcher
 	{
-		Encryption Encrypt = new Encryption();
-		private string _GameDirectory = Globals.GameDirectory;
-		private string _PlayerTag = "Player_1";
-		private string _PlayerLoginToken = "";
-		private Globals.SettingsDisplayMode _DisplayMode = GameRegistrySettings.GetDisplayMode();
-		private int _NoGameSound = 0;
-		private int _VerticalSync = 1;
-		private int _DefaultDisplay = 0;
-		private int _RememberMe = 0;
-
-		public Globals.SettingsDisplayMode DisplayMode
-		{
-			get { return _DisplayMode; }
-			set { _DisplayMode = value; }
-		}
-
-		public int NoGameSound
-		{
-			get { return _NoGameSound; }
-			set { _NoGameSound = value; }
-		}
-
-		public int VerticalSync
-		{
-			get { return _VerticalSync; }
-			set { _VerticalSync = value; }
-		}
-
-		public int DefaultDisplay
-		{
-			get { return _DefaultDisplay; }
-			set { _DefaultDisplay = value; }
-		}
-
-		public int RememberMe
-		{
-			get { return _RememberMe; }
-			set { _RememberMe = value; }
-		}
-
-		public string PlayerLoginToken
-		{
-			get { return _PlayerLoginToken; }
-			set { _PlayerLoginToken = value; }
-		}
+		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
 		public string GameDirectory
 		{
-			get { return _GameDirectory; }
-			set { _GameDirectory = value; }
+			get { return keyValues["GameDirectory"]; }
+			set { keyValues["GameDirectory"] = value; }
+		}
+
+		public string LauncherRunPath
+		{
+			get { return keyValues["LauncherRunPath"]; }
+			set { keyValues["LauncherRunPath"] = value; }
 		}
 
 		public string PlayerTag
 		{
-			get { return _PlayerTag; }
-			set { _PlayerTag = value; }
+			get { return keyValues["PlayerTag"]; }
+			set { keyValues["PlayerTag"] = "" + value; }
+		}
+
+		public Globals.SettingsDisplayMode DisplayMode
+		{
+			get { return Enum.TryParse(keyValues["DisplayMode"], out ); }
+			set { Enum.TryParse(keyValues["DisplayMode"], out ) = value; }
+		}
+
+		public int NoGameSound
+		{
+			get { return int.Parse(keyValues["GameSound"]); }
+			set { keyValues["GameSound"] = "" + value; }
+		}
+
+		public int VerticalSync
+		{
+			get { return int.Parse(keyValues["VerticalSync"]); }
+			set { keyValues["VerticalSync"] = "" + value; }
+		}
+
+		public int DefaultDisplay
+		{
+			get { return int.Parse(keyValues["DefaultDisplay"]); }
+			set { keyValues["DefaultDisplay"] = "" + value; }
+		}
+
+		public int RememberMe
+		{
+			get { return int.Parse(keyValues["GameSound"]); }
+			set { keyValues["RememberMe"] = "" + value; }
 		}
 
 		private int GetDefaultDisplay()
 		{
-			for (int i = 0; i < Screen.AllScreens.Length; i++)
-				if (Screen.AllScreens[i].Primary)
-					return i;
+			for (int i = 0; i < Screen.AllScreens.Length; i++) if (Screen.AllScreens[i].Primary) return i;
 			return 0;
+		}
+
+		private void setDefaults()
+		{
+			GameDirectory = Globals.GameDirectory;
+			LauncherRunPath = AppDomain.CurrentDomain.BaseDirectory;
+			PlayerTag = "Player_1";
+			DisplayMode = GameRegistrySettings.GetDisplayMode();
+			NoGameSound = 0;
+			VerticalSync = 1;
+			DefaultDisplay = 0;
+			RememberMe = 0;
+		}
+
+
+		public void SaveSettings()
+		{
+			StringBuilder SB = new StringBuilder();
+
+			foreach (KeyValuePair<string, string> entry in keyValues)
+				SB.AppendLine(entry.Key + " = " + entry.Value);
+
+			File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
+
 		}
 
 		public void LoadSettings()
 		{
-			if (!File.Exists(Globals.Files + "Settings.ini")) SaveSettings();
+			if (!File.Exists(Globals.Files + "Settings.ini"))
+			{
+				setDefaults();
+				SaveSettings();
+			}
 			else
 			{
-				StreamReader SR = new StreamReader(Globals.Files + "Settings.ini");
-				string[] Lines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				SR.Close();
-				SR.Dispose();
-				foreach (string Line in Lines)
+				using (StreamReader streamreader = new StreamReader(Globals.Files + "Settings.ini"))
 				{
-					string[] Setting = Line.Split(':');
-					switch (Setting[0])
+					string[] xliveLines = streamreader.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string Line in xliveLines)
 					{
-						case "PlayerTag":
-							{
-								PlayerTag = Setting[1];
-								break;
-							}
-						case "GameDirectory":
-							{
-								GameDirectory = Setting[1];
-								break;
-							}
-						case "DisplayMode":
-							{
-								DisplayMode = (Globals.SettingsDisplayMode)Enum.Parse(typeof(Globals.SettingsDisplayMode), Setting[1]);
-								break;
-							}
-						case "GameSound":
-							{
-								NoGameSound = int.Parse(Setting[1]);
-								break;
-							}
-						case "VerticalSync":
-							{
-								VerticalSync = int.Parse(Setting[1]);
-								break;
-							}
-						case "DefaultDisplay":
-							{
-								DefaultDisplay = int.Parse(Setting[1]);
-								break;
-							}
-						case "RememberMe":
-							{
-								RememberMe = int.Parse(Setting[1]);
-								break;
-							}
-						case "PlayerLoginToken":
-							{
-								PlayerLoginToken = Encrypt.DecryptStringAES(Setting[1]);
-								break;
-							}
-
+						string[] Setting = Line.Split(new string[] { ":" }, StringSplitOptions.None);
+						keyValues.Add(Setting[0], Setting[1]);
 					}
+					setDefaults();
 				}
 			}
-		}
-
-		public void SaveSettings()
-		{
-			StreamWriter SW = new StreamWriter(Globals.Files + "Settings.ini");
-			StringBuilder SB = new StringBuilder();
-			SB.AppendLine("GameDirectory:" + Globals.GameDirectory);
-			SB.AppendLine("LauncherRunPath:" + AppDomain.CurrentDomain.BaseDirectory);
-			SB.AppendLine("PlayerTag:" + PlayerTag);
-			SB.AppendLine("DisplayMode:" + DisplayMode.ToString());
-			SB.AppendLine("GameSound:" + NoGameSound.ToString());
-			SB.AppendLine("VerticalSync:" + VerticalSync.ToString());
-			SB.AppendLine("DefaultDisplay:" + DefaultDisplay.ToString());
-			SB.AppendLine("RememberMe:" + RememberMe.ToString());
-			SB.AppendLine("PlayerLoginToken:" + Encrypt.EncryptStringAES(PlayerLoginToken));
-			SW.Write(SB.ToString());
-			SW.Flush();
-			SW.Close();
-			SW.Dispose();
-
 		}
 	}
 }

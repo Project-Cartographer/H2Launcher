@@ -8,30 +8,30 @@ namespace Cartographer_Launcher.Includes.Dependencies
 	{
 		private static List<string> _Nouns = new List<string>()
 		{
-			  "cheif", "man", "dude", "partner", "bro", "buddy" , "hombre"
+			  "CHIEF", "MAN", "DUDE", "PARTNER", "BRO", "BUDDY" , "HOMBRE"
 		};
 		private static List<string> _Pauses = new List<string>()
 		{
-			  "minute", "sec", "moment"
+			  "MINUTE", "SEC", "MOMENT"
 		};
 		private static List<string> _Fuck = new List<string>()
 		{
-			"Wait", "Stop", "Hold on", "Hang on", "Hold up"
+			"WAIT", "STOP", "HOLD ON", "HANG ON", "HOLD UP"
 		};
 		private static Dictionary<string, List<List<string>>> _PauseIdioms = new Dictionary<string, List<List<string>>>()
 		{
-			{ "{0} a {1} {2}!", new List<List<string>>(){_Fuck, _Pauses, _Nouns } },
-			{ "Hold on {0}!", new List<List<string>>(){ _Nouns } },
-			{ "Hold up {0}!", new List<List<string>>(){ _Nouns } },
-			{ "Stop right there {0}", new List<List<string>>(){ _Nouns } },
-			{ "Not today {0}", new List<List<string>>(){ _Nouns } }
+			{ "{0} A {1} {2}", new List<List<string>>(){_Fuck, _Pauses, _Nouns } },
+			{ "HOLD ON {0}", new List<List<string>>(){ _Nouns } },
+			{ "HOLD UP {0}", new List<List<string>>(){ _Nouns } },
+			{ "STOP RIGHT THERE {0}", new List<List<string>>(){ _Nouns } },
+			{ "NOT TODAY {0}", new List<List<string>>(){ _Nouns } }
 
 		};
 		private static Dictionary<string, List<List<string>>> _GoIdioms = new Dictionary<string, List<List<string>>>()
 		{
-			{ "Good job {0}!", new List<List<string>>(){ _Nouns } },
-			{ "Congratulations {0}!", new List<List<string>>(){ _Nouns } },
-			{ "You got it {0}!", new List<List<string>>(){ _Nouns } }
+			{ "GOOD JOB {0}", new List<List<string>>(){ _Nouns } },
+			{ "CONGRATULATIONS {0}", new List<List<string>>(){ _Nouns } },
+			{ "YOU GOT IT {0}", new List<List<string>>(){ _Nouns } }
 		};
 
 		public static string PauseIdiomGenerator

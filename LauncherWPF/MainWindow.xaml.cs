@@ -30,15 +30,13 @@ namespace LauncherWPF
 		BitmapImage TitleLogo = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/h2logo.png"));
 		SolidColorBrush MenuItemSelect = new SolidColorBrush(Color.FromRgb(178, 211, 246));
 		SolidColorBrush MenuItem = new SolidColorBrush(Color.FromRgb(94, 109, 139));
-		Launcher LauncherSettings = new Launcher();
-		ProjectCartographer ProjectSettings = new ProjectCartographer();
+		Launcher LauncherSettings = LauncherRuntime.LauncherSettings;
+		ProjectCartographer ProjectSettings = LauncherRuntime.ProjectSettings;
 		H2Startup H2StartupSettings = new H2Startup();
 
-		private string RegisterURL = @"http://www.cartographer.online/";
-		private string AppealURL = @"http://www.halo2vista.com/forums/viewforum.php?f=45";
+		private string RegisterURL = @"https://www.cartographer.online/";
+		private string AppealURL = @"https://www.halo2.online/forums/the-drama-spot.31/";
 		private string DateTimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
-		private string LogFilePath = Globals.LogFile;
-		private string ExLogFilePath = Globals.ExLogFile;
 		private string DisplayMode;
 		public bool PlayCheck;
 		private bool ApplicationShutdownCheck,
@@ -46,6 +44,7 @@ namespace LauncherWPF
 			LoginPanelCheck,
 			SettingsPanelCheck,
 			UpdatePanelCheck,
+			MessageBoxPanelCheck,
 			NoGameSound,
 			Vsync,
 			DebugLog,
@@ -83,6 +82,11 @@ namespace LauncherWPF
 				ExLogFile(Ex.ToString());
 				Debug("Failed to load components.");
 			}
+
+			MessageBoxPanelContent("","");
+
+			MessageBoxPanel.Visibility = Visibility.Hidden;
+			mbMessage.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
 			LogFile("Log file initialized.");
 			LogFile("Game install directory: " + Globals.GameDirectory);
@@ -128,6 +132,13 @@ namespace LauncherWPF
 		}
 
 		#region Main Methods
+		private void MessageBoxPanelContent(string Title, string Content)
+		{
+			mbTitle.Content = Title;
+			mbMessage.Text = Content;
+
+		}
+
 		public void Debug(string Error)
 		{
 			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -147,8 +158,8 @@ namespace LauncherWPF
 		public void LogFile(string Message)
 		{
 			StreamWriter log;
-			if (!File.Exists(LogFilePath)) log = new StreamWriter(LogFilePath);
-			else log = File.AppendText(LogFilePath);
+			if (!File.Exists(Globals.LogFile)) log = new StreamWriter(Globals.LogFile);
+			else log = File.AppendText(Globals.LogFile);
 
 			log.WriteLine("Date: " + DateTimeStamp + " - " + Message);
 
@@ -160,8 +171,8 @@ namespace LauncherWPF
 		public void ExLogFile(string Message)
 		{
 			StreamWriter exlog;
-			if (!File.Exists(LogFilePath)) exlog = new StreamWriter(ExLogFilePath);
-			else exlog = File.AppendText(ExLogFilePath);
+			if (!File.Exists(Globals.ExLogFile)) exlog = new StreamWriter(Globals.ExLogFile);
+			else exlog = File.AppendText(Globals.ExLogFile);
 
 			exlog.WriteLine("Date: " + DateTimeStamp);
 			exlog.WriteLine(Message);
@@ -181,9 +192,14 @@ namespace LauncherWPF
 			catch (WebException wex)
 			{
 				response = wex.Response as HttpWebResponse;
+				MessageBox.Show("There was an error connecting to Cartographer.online." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR" );
 				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
 			}
-			if (response.StatusCode == HttpStatusCode.NotFound) LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
+			if (response.StatusCode == HttpStatusCode.NotFound)
+			{
+				MessageBox.Show("There was an error connecting to Cartographer.online." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
+				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
+			}
 		}
 
 		public void CheckInstallPath()
@@ -226,13 +242,17 @@ namespace LauncherWPF
 				Dispatcher.Invoke(() =>
 				{
 					var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-					if (loginResult.LoginResultEnum != LoginResultEnum.Successfull) PlayButton.Content = "LOGIN";
+					if (loginResult.LoginResultEnum != LoginResultEnum.Successfull)
+					{
+						StatusButton.Content = Globals.VersionNumber;
+						PlayButton.Content = "LOGIN";
+					}
 					if (loginResult.LoginResultEnum == LoginResultEnum.Successfull)
 					{
 						ProjectSettings.LoginToken = loginResult.LoginToken;
 						StatusButton.Content = Globals.VersionNumber;
+						PlayButton.Content = "PLAY";
 					}
-					else PlayButton.Content = "PLAY";
 				});
 			});
 		}
@@ -336,8 +356,8 @@ namespace LauncherWPF
 		#region Form Event Methods
 		private void MainForm_Initialized(object sender, EventArgs e)
 		{
-			if (File.Exists(LogFilePath)) File.Delete(LogFilePath);
-			if (File.Exists(ExLogFilePath)) File.Delete(ExLogFilePath);
+			if (File.Exists(Globals.LogFile)) File.Delete(Globals.LogFile);
+			if (File.Exists(Globals.ExLogFile)) File.Delete(Globals.ExLogFile);
 		}
 
 		private void MainForm_MouseDown(object sender, MouseButtonEventArgs e)
@@ -424,262 +444,29 @@ namespace LauncherWPF
 
 		private void StatusButton_Click(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show("-Core developers of this launcher-" + Environment.NewLine + Environment.NewLine + "Kantanomo : code base from previous launcher" + Environment.NewLine + "supersniper : current launcher", "The Props", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+			PanelAnimation("sbShowMessageBox", MessageBoxPanel);
+			MessageBoxPanel.Visibility = Visibility.Visible;
+			MessageBoxPanelContent(Kantanomo.GoIdioms, "-Project Devs" + Environment.NewLine + Environment.NewLine + "Permanull" + Environment.NewLine + "Rude Yoshi" + Environment.NewLine + "Glitchy Scripts" + Environment.NewLine + "Himanshu" + Environment.NewLine + "supersniper" + Environment.NewLine + "Hootspa (left)" + Environment.NewLine + "Kantanomo (left)" + Environment.NewLine + "FishPHD (left)");
 			if (StatusButton.IsChecked == true) StatusButton.IsChecked = false;
 		}
-		#endregion
 
-		#region Menu Buttons
-		private void PlayButton_Click(object sender, RoutedEventArgs e)
+		private void mbpOK_Click(object sender, RoutedEventArgs e)
 		{
-			if (!SaveSettingsCheck)
-			{
-				if (!PlayCheck)
-				{
-					if (lsPass.Password == "")
-					{
-						if (!SettingsPanelCheck && !UpdatePanelCheck)
-						{
-							if (LoginPanel.Margin.Top == -140)
-							{
-								PanelAnimation("sbShowLoginMenu", LoginPanel);
-								LoginPanelCheck = true;
-							}
-							if (LoginPanel.Margin.Top == 0)
-							{
-								PanelAnimation("sbHideLoginMenu", LoginPanel);
-								LoginPanelCheck = false;
-								SaveSettingsCheck = true;
-
-								try { SaveSettings(); }
-								catch (Exception Ex)
-								{
-									ExLogFile(Ex.ToString());
-									Debug("Failed to save settings.");
-								}
-							}
-						}
-					}
-					if (SettingPanel.Margin.Right == 0)
-					{
-						PanelAnimation("sbHideSettingsMenu", SettingPanel);
-						SettingsPanelCheck = false;
-						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
-					}
-					if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
-					{
-						PanelAnimation("sbShowLoginMenu", LoginPanel);
-						LoginPanelCheck = true;
-					}
-					if (UpdatePanelCheck)
-					{
-						if (UpdatePanel.Margin.Bottom == 0)
-						{
-							PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-							UpdatePanelCheck = false;
-						}
-						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
-						{
-							PanelAnimation("sbShowLoginMenu", LoginPanel);
-							LoginPanelCheck = true;
-						}
-					}
-					if (LoginPanelCheck)
-					{
-						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
-						{
-							PanelAnimation("sbHideLoginMenu", LoginPanel);
-							LoginPanelCheck = false;
-							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
-						}
-					}
-					if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY")
-					{
-						PlayCheck = true;
-
-						try { LoginVerification(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to get login token.");
-						}
-
-					}
-				}
-			}
-		}
-
-		private void SettingsButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (!SaveSettingsCheck)
-			{
-				if (!LoginPanelCheck && !UpdatePanelCheck)
-				{
-					if (SettingPanel.Margin.Right == -220)
-					{
-						PanelAnimation("sbShowSettingsMenu", SettingPanel);
-						SettingsPanelCheck = true;
-					}
-					else if (SettingPanel.Margin.Right == 0)
-					{
-						PanelAnimation("sbHideSettingsMenu", SettingPanel);
-						SettingsPanelCheck = false;
-						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
-					}
-				}
-				if (LoginPanelCheck)
-				{
-					if (LoginPanel.Margin.Top == 0)
-					{
-						PanelAnimation("sbHideLoginMenu", LoginPanel);
-						LoginPanelCheck = false;
-						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
-					}
-					if (SettingPanel.Margin.Right == -220)
-					{
-						PanelAnimation("sbShowSettingsMenu", SettingPanel);
-						SettingsPanelCheck = true;
-					}
-				}
-				if (UpdatePanelCheck)
-				{
-					if (UpdatePanel.Margin.Bottom == 0)
-					{
-						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = false;
-					}
-					if (SettingPanel.Margin.Right == -220)
-					{
-						PanelAnimation("sbShowSettingsMenu", SettingPanel);
-						SettingsPanelCheck = true;
-					}
-				}
-			}
-		}
-
-		private void UpdateButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (!SaveSettingsCheck)
-			{
-				if (!LoginPanelCheck && !SettingsPanelCheck)
-				{
-					if (UpdatePanel.Margin.Bottom == -250)
-					{
-						usTextBox.Clear();
-
-						try { CheckUpdates(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to begin update process.");
-						}
-						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = true;
-					}
-					else if (UpdatePanel.Margin.Bottom == 0)
-					{
-						PanelAnimation("sbHideUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = false;
-					}
-				}
-				if (LoginPanelCheck)
-				{
-					if (LoginPanel.Margin.Top == 0)
-					{
-						PanelAnimation("sbHideLoginMenu", LoginPanel);
-						LoginPanelCheck = false;
-						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
-					}
-					if (UpdatePanel.Margin.Bottom == -250)
-					{
-						usTextBox.Clear();
-
-						try { CheckUpdates(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to begin update process.");
-						}
-						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = true;
-					}
-				}
-				if (SettingsPanelCheck)
-				{
-					if (SettingPanel.Margin.Right == 0)
-					{
-						PanelAnimation("sbHideSettingsMenu", SettingPanel);
-						SettingsPanelCheck = false;
-						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
-					}
-					if (UpdatePanel.Margin.Bottom == -250)
-					{
-						usTextBox.Clear();
-
-						try { CheckUpdates(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to begin update process.");
-						}
-						PanelAnimation("sbShowUpdateMenu", UpdatePanel);
-						UpdatePanelCheck = true;
-					}
-				}
-			}
-		}
-
-		private void RegisterButton_Click(object sender, RoutedEventArgs e)
-		{
-			Process.Start(RegisterURL);
+			PanelAnimation("sbHideMessageBox", MessageBoxPanel);
+			MessageBoxPanel.Visibility = Visibility.Hidden;
+			MessageBoxPanelCheck = false;
 		}
 
 		private void PanelClose_Click(object sender, RoutedEventArgs e)
 		{
 			if (!SaveSettingsCheck)
 			{
+				if (MessageBoxPanelCheck)
+				{
+					PanelAnimation("sbHideMessageBox", MessageBoxPanel);
+					MessageBoxPanel.Visibility = Visibility.Hidden;
+					MessageBoxPanelCheck = false;
+				}
 				if (SettingsPanelCheck)
 				{
 					if (SettingPanel.Margin.Right == 0)
@@ -729,6 +516,263 @@ namespace LauncherWPF
 					}
 				}
 			}
+		}
+		#endregion
+
+		#region Menu Buttons
+		private void PlayButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!SaveSettingsCheck)
+			{
+				if (!MessageBoxPanelCheck)
+				{
+					if (!PlayCheck)
+					{
+						if (lsPass.Password == "")
+						{
+							if (!SettingsPanelCheck && !UpdatePanelCheck)
+							{
+								if (LoginPanel.Margin.Top == -140)
+								{
+									PanelAnimation("sbShowLoginMenu", LoginPanel);
+									LoginPanelCheck = true;
+								}
+								if (LoginPanel.Margin.Top == 0)
+								{
+									PanelAnimation("sbHideLoginMenu", LoginPanel);
+									LoginPanelCheck = false;
+									SaveSettingsCheck = true;
+
+									try { SaveSettings(); }
+									catch (Exception Ex)
+									{
+										ExLogFile(Ex.ToString());
+										Debug("Failed to save settings.");
+									}
+								}
+							}
+						}
+						if (SettingPanel.Margin.Right == 0)
+						{
+							PanelAnimation("sbHideSettingsMenu", SettingPanel);
+							SettingsPanelCheck = false;
+							SaveSettingsCheck = true;
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
+						}
+						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+						{
+							PanelAnimation("sbShowLoginMenu", LoginPanel);
+							LoginPanelCheck = true;
+						}
+						if (UpdatePanelCheck)
+						{
+							if (UpdatePanel.Margin.Bottom == 0)
+							{
+								PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+								UpdatePanelCheck = false;
+							}
+							if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
+							{
+								PanelAnimation("sbShowLoginMenu", LoginPanel);
+								LoginPanelCheck = true;
+							}
+						}
+						if (LoginPanelCheck)
+						{
+							if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == 0)
+							{
+								PanelAnimation("sbHideLoginMenu", LoginPanel);
+								LoginPanelCheck = false;
+								SaveSettingsCheck = true;
+
+								try { SaveSettings(); }
+								catch (Exception Ex)
+								{
+									ExLogFile(Ex.ToString());
+									Debug("Failed to save settings.");
+								}
+							}
+						}
+						if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY")
+						{
+							PlayCheck = true;
+
+							try { LoginVerification(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to get login token.");
+							}
+
+						}
+					}
+				}
+			}
+		}
+
+		private void SettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!SaveSettingsCheck)
+			{
+				if (!MessageBoxPanelCheck)
+				{
+					if (!LoginPanelCheck && !UpdatePanelCheck)
+					{
+						if (SettingPanel.Margin.Right == -220)
+						{
+							PanelAnimation("sbShowSettingsMenu", SettingPanel);
+							SettingsPanelCheck = true;
+						}
+						else if (SettingPanel.Margin.Right == 0)
+						{
+							PanelAnimation("sbHideSettingsMenu", SettingPanel);
+							SettingsPanelCheck = false;
+							SaveSettingsCheck = true;
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
+						}
+					}
+					if (LoginPanelCheck)
+					{
+						if (LoginPanel.Margin.Top == 0)
+						{
+							PanelAnimation("sbHideLoginMenu", LoginPanel);
+							LoginPanelCheck = false;
+							SaveSettingsCheck = true;
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
+						}
+						if (SettingPanel.Margin.Right == -220)
+						{
+							PanelAnimation("sbShowSettingsMenu", SettingPanel);
+							SettingsPanelCheck = true;
+						}
+					}
+					if (UpdatePanelCheck)
+					{
+						if (UpdatePanel.Margin.Bottom == 0)
+						{
+							PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = false;
+						}
+						if (SettingPanel.Margin.Right == -220)
+						{
+							PanelAnimation("sbShowSettingsMenu", SettingPanel);
+							SettingsPanelCheck = true;
+						}
+					}
+				}
+			}
+		}
+
+		private void UpdateButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!SaveSettingsCheck)
+			{
+				if (!MessageBoxPanelCheck)
+				{
+					if (!LoginPanelCheck && !SettingsPanelCheck)
+					{
+						if (UpdatePanel.Margin.Bottom == -250)
+						{
+							usTextBox.Clear();
+
+							try { CheckUpdates(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to begin update process.");
+							}
+							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = true;
+						}
+						else if (UpdatePanel.Margin.Bottom == 0)
+						{
+							PanelAnimation("sbHideUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = false;
+						}
+					}
+					if (LoginPanelCheck)
+					{
+						if (LoginPanel.Margin.Top == 0)
+						{
+							PanelAnimation("sbHideLoginMenu", LoginPanel);
+							LoginPanelCheck = false;
+							SaveSettingsCheck = true;
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
+						}
+						if (UpdatePanel.Margin.Bottom == -250)
+						{
+							usTextBox.Clear();
+
+							try { CheckUpdates(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to begin update process.");
+							}
+							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = true;
+						}
+					}
+					if (SettingsPanelCheck)
+					{
+						if (SettingPanel.Margin.Right == 0)
+						{
+							PanelAnimation("sbHideSettingsMenu", SettingPanel);
+							SettingsPanelCheck = false;
+							SaveSettingsCheck = true;
+
+							try { SaveSettings(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to save settings.");
+							}
+						}
+						if (UpdatePanel.Margin.Bottom == -250)
+						{
+							usTextBox.Clear();
+
+							try { CheckUpdates(); }
+							catch (Exception Ex)
+							{
+								ExLogFile(Ex.ToString());
+								Debug("Failed to begin update process.");
+							}
+							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
+							UpdatePanelCheck = true;
+						}
+					}
+				}
+			}
+		}
+
+		private void RegisterButton_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start(RegisterURL);
 		}
 		#endregion
 
@@ -1179,14 +1223,12 @@ namespace LauncherWPF
 			//
 			//FOV
 			//
-			//psFOV.IsChecked = false;
 			psFOV.IsChecked = true;
 			psFOVSetting.Foreground = MenuItemSelect;
 			psFOVSetting.Text = ProjectSettings.FOV.ToString();
 			//
 			//Crosshair
 			//
-			//psCrosshair.IsChecked = false;
 			psCrosshair.IsChecked = true;
 			psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
@@ -1211,7 +1253,7 @@ namespace LauncherWPF
 			if (psFPSLimit.Text == "") ProjectSettings.FPSLimit = int.Parse("60");
 			else ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
 			ProjectSettings.VoiceChat = (VoiceChat) ? 1 : 0;
-			ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
+			LauncherRuntime.ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
 			if (psFOVSetting.Text == "") ProjectSettings.FOV = int.Parse("72");
 			else ProjectSettings.FOV = int.Parse(psFOVSetting.Text);
 			if (psCrosshairSetting.Text == "") ProjectSettings.Reticle = "0.165";

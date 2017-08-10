@@ -5,8 +5,8 @@ namespace Cartographer_Launcher.Includes.Dependencies
 {
 	public class GameLaunch
 	{
-		Launcher LauncherSettings = new Launcher();
-		ProjectCartographer ProjectSettings = new ProjectCartographer();
+		Launcher LauncherSettings = LauncherRuntime.LauncherSettings;
+		ProjectCartographer ProjectSettings = LauncherRuntime.ProjectSettings;
 
 		public void RunGame()
 		{

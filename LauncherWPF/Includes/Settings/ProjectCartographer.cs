@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -6,181 +7,126 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class ProjectCartographer
 	{
-		private string _LoginToken = "";
-		private int _DebugLog = 0;
-		private int _Ports = 1000;
-		private string _LANIP;
-		private string _WANIP;
-		private int _GunGame = 0;
-		private int _FPSCap = 1;
-		private int _FPSLimit = 60;
-		private int _VoiceChat = 0;
-		private int _MapDownload = 1;
-		private int _FOV = 72;
-		private string _Reticle = "0.165";
+		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
 		public int DebugLog
 		{
-			get { return _DebugLog; }
-			set { _DebugLog = value; }
+			get { return int.Parse(keyValues["debug_log"]); }
+			set { keyValues["base_port"] = "" + value; }
 		}
 
 		public string LoginToken
 		{
-			get { return _LoginToken; }
-			set { _LoginToken = value; }
+			get { return keyValues["login_token"]; }
+			set { keyValues["login_token"] = value; }
 		}
 
 		public int Ports
 		{
-			get { return _Ports; }
-			set { _Ports = value; }
+			get { return int.Parse(keyValues["base_port"]); }
+			set { keyValues["base_port"] = "" + value; }
 		}
 
 		public string LANIP
 		{
-			get { return _LANIP; }
-			set { _LANIP = value; }
+			get { return keyValues["LANIP"]; }
+			set { keyValues["LANIP"] = "" + value; }
 		}
 
 		public string WANIP
 		{
-			get { return _WANIP; }
-			set { _WANIP = value; }
+			get { return keyValues["WANIP"]; }
+			set { keyValues["WANIP"] = "" + value; }
 		}
 
 		public int GunGame
 		{
-			get { return _GunGame; }
-			set { _GunGame = value; }
+			get { return int.Parse(keyValues["gun_game"]); }
+			set { keyValues["gun_game"] = "" + value; }
 		}
 
 		public int FPSCap
 		{
-			get { return _FPSCap; }
-			set { _FPSCap = value; }
+			get { return int.Parse(keyValues["fps_enable"]); }
+			set { keyValues["fps_enable"] = "" + value; }
 		}
 
 		public int FPSLimit
 		{
-			get { return _FPSLimit; }
-			set { _FPSLimit = value; }
+			get { return int.Parse(keyValues["fps_limit"]); }
+			set { keyValues["fps_limit"] = "" + value; }
 		}
 
 		public int VoiceChat
 		{
-			get { return _VoiceChat; }
-			set { _VoiceChat = value; }
+			get { return int.Parse(keyValues["voice_chat"]); }
+			set { keyValues["voice_chat"] = "" + value; }
 		}
 
 		public int MapDownload
 		{
-			get { return _MapDownload; }
-			set { _MapDownload = value; }
+			get { return int.Parse(keyValues["map_downloading_enable"]); }
+			set { keyValues["map_downloading_enable"] = "" + value; }
 		}
 
 		public int FOV
 		{
-			get { return _FOV; }
-			set { _FOV = value; }
+			get { return int.Parse(keyValues["field_of_view"]); }
+			set { keyValues["field_of_view"] = "" + value; }
 		}
 
 		public string Reticle
 		{
-			get { return _Reticle; }
-			set { _Reticle = value; }
+			get { return keyValues["crosshair_offset"]; }
+			set { keyValues["crosshair_offset"] = "" + value; }
 		}
 
-		public void LoadSettings()
+		private void setDefaults()
 		{
-			if (!File.Exists(Globals.GameDirectory + "xlive.ini")) SaveSettings();
-			else
-			{
-				StreamReader SR = new StreamReader(Globals.GameDirectory + "xlive.ini");
-				string[] Lines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-				SR.Close();
-				SR.Dispose();
-				foreach (string Line in Lines)
-				{
-					string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
-					switch (Setting[0])
-					{
-						case "login_token":
-							{
-								LoginToken = Setting[1];
-								break;
-							}
-						case "debug_log":
-							{
-								DebugLog = int.Parse(Setting[1]);
-								break;
-							}
-						case "port":
-							{
-								Ports = int.Parse(Setting[1]);
-								break;
-							}
-						case "LANIP":
-							{
-								LANIP = Setting[1];
-								break;
-							}
-						case "WANIP":
-							{
-								WANIP = Setting[1];
-								break;
-							}
-						case "fps_enable":
-							{
-								FPSCap = int.Parse(Setting[1]);
-								break;
-							}
-						case "fps_limit":
-							{
-								FPSLimit = int.Parse(Setting[1]);
-								break;
-							}
-						case "voice_chat":
-							{
-								VoiceChat = int.Parse(Setting[1]);
-								break;
-							}
-						case "map_downloading_enable":
-							{
-								MapDownload = int.Parse(Setting[1]);
-								break;
-							}
-						case "field_of_view":
-							{
-								FOV = int.Parse(Setting[1]);
-								break;
-							}
-						case "crosshair_offset":
-							{
-								Reticle = Setting[1];
-								break;
-							}
-					}
-				}
-			}
+			LoginToken = "";
+			DebugLog = 0;
+			Ports = 1000;
+			LANIP = "";
+			WANIP = "";
+			GunGame = 0;
+			FPSCap = 1;
+			FPSLimit = 60;
+			VoiceChat = 0;
+			MapDownload = 0;
+			FOV = 57;
+			Reticle = "0.165";
 		}
 
 		public void SaveSettings()
 		{
 			StringBuilder SB = new StringBuilder();
-			SB.AppendLine("login_token = " + LoginToken);
-			SB.AppendLine("debug_log = " + DebugLog);
-			SB.AppendLine("port = " + Ports);
-			SB.AppendLine("LANIP = " + Globals.LANIP);
-			SB.AppendLine("WANIP = " + Globals.WANIP);
-			SB.AppendLine("gungame = " + GunGame);
-			SB.AppendLine("fps_enable = " + FPSCap);
-			SB.AppendLine("fps_limit = " + FPSLimit);
-			SB.AppendLine("voice_chat = " + VoiceChat);
-			SB.AppendLine("map_downloading_enable = " + MapDownload);
-			SB.AppendLine("field_of_view = " + FOV);
-			SB.AppendLine("crosshair_offset = " + Reticle);
+			foreach (KeyValuePair<string, string> entry in keyValues)
+			{
+				SB.AppendLine(entry.Key + " = " + entry.Value);
+			}
 			File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
+		}
+
+		public void LoadSettings()
+		{
+			if (!File.Exists(Globals.GameDirectory + "xlive.ini"))
+			{
+				setDefaults();
+				SaveSettings();
+			}
+			else
+			{
+				using (StreamReader streamreader = new StreamReader(Globals.GameDirectory + "xlive.ini"))
+				{
+					string[] xliveLines = streamreader.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string Line in xliveLines)
+					{
+						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+						keyValues.Add(Setting[0], Setting[1]);
+					}
+					setDefaults();
+				}
+			}
 		}
 	}
 }

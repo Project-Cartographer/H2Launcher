@@ -18,6 +18,20 @@
 		Closed="MainForm_Closed">
 
 	<Window.Resources>
+		<Storyboard x:Key="sbShowMessageBox" >
+			<ThicknessAnimation Storyboard.TargetProperty="Margin" 
+								From="0,0,0,0" 
+								To="0,0,0,0" 
+								DecelerationRatio=".9" 
+								Duration="0:0:1"/>
+		</Storyboard>
+		<Storyboard x:Key="sbHideMessageBox">
+			<ThicknessAnimation Storyboard.TargetProperty="Margin" 
+								From="0,0,0,0" 
+								To="0,0,0,0" 
+								AccelerationRatio=".9" 
+								Duration="0:0:1"/>
+		</Storyboard>
 		<Storyboard x:Key="sbShowLoginMenu" >
 			<ThicknessAnimation Storyboard.TargetProperty="Margin" 
 								From="0,-140,0,0" 
@@ -153,6 +167,51 @@
 						  HorizontalAlignment="Right"
 						  Click="ControlMinimize_Click"/>
 		</Grid>
+
+		<StackPanel x:Name="MessageBoxPanel"
+					Panel.ZIndex="2" 
+					Orientation="Vertical"
+					Background="{StaticResource mbPanelBackground}" 
+					Height="220" 
+					Width="300">
+
+			<Grid x:Name="MessageBoxGrid"
+				  Height="220" 
+				  Width="300">
+
+				<ToggleButton x:Name="mbp_close" 
+							  Content="X" 
+							  Style ="{StaticResource ControlButtonStyle}" 
+							  Click="PanelClose_Click" 
+							  Height="22" 
+							  Width="21"
+							  FontSize="22" 
+							  Margin="269,10,10,188"/>
+
+				<Label x:Name="mbTitle" 
+					   Content="" 
+					   Style ="{StaticResource PanelTitleStyle}" 
+					   HorizontalAlignment="Left" 
+					   VerticalAlignment="Top" 
+					   FontSize="18"/>
+
+				<TextBox x:Name="mbMessage" 
+						 Style="{StaticResource TextBoxStyle}"
+						 Margin="10,52,10,58" 
+						 VerticalAlignment="Stretch" 
+						 HorizontalAlignment="Stretch" 
+						 FontSize="16"/>
+
+				<ToggleButton x:Name="mbpOK" 
+							  Content="OK" 
+							  Style ="{StaticResource ControlButtonStyle}" 
+							  Click="mbpOK_Click" 
+							  Height="Auto" 
+							  Width="Auto"
+							  FontSize="22" 
+							  Margin="129,0,129,10" VerticalAlignment="Bottom"/>
+			</Grid>
+		</StackPanel>
 
 		<StackPanel x:Name="LoginPanel"
 					Panel.ZIndex="2" 
@@ -351,8 +410,7 @@
 							  Content="Field of View :" 
 							  Style="{StaticResource sPanelButtonStyle}"
 							  Margin="30,255,0,0"
-							  Unchecked="psFOV_Unchecked"
-							  IsEnabled="False"/>
+							  Unchecked="psFOV_Unchecked"/>
 
 				<TextBox x:Name="psFOVSetting" 
 						 Style="{StaticResource TextBoxStyle}" 
@@ -360,15 +418,13 @@
 						 PreviewTextInput="Numeric_PreviewTextInput" 
 						 DataObject.Pasting ="NumericPasteCheck" 
 						 TextChanged="psFOVSetting_TextChanged" 
-						 Margin="140,255,0,0"
-						 IsEnabled="False"/>
+						 Margin="140,255,0,0"/>
 
 				<ToggleButton x:Name="psCrosshair" 
 							  Content="Reticle Place :" 
 							  Style="{StaticResource sPanelButtonStyle}" 
 							  Margin="30,279,0,0" 
-							  Unchecked="psCrosshair_Unchecked"
-							  IsEnabled="False"/>
+							  Unchecked="psCrosshair_Unchecked"/>
 
 				<TextBox x:Name="psCrosshairSetting" 
 						 Style="{StaticResource TextBoxStyle}" 
@@ -376,8 +432,7 @@
 						 PreviewTextInput="Numeric_PreviewTextInput" 
 						 DataObject.Pasting ="NumericPasteCheck" 
 						 TextChanged="psCrosshairSetting_TextChanged" 
-						 Margin="144,279,0,0"
-						 IsEnabled="False"/>
+						 Margin="144,279,0,0"/>
 
 				<ToggleButton x:Name="psGameDirectory" 
 							  Content="Open Game Folder" 
@@ -415,7 +470,7 @@
 
 				<Label x:Name="pUpdate" 
 					   Content="UPDATES" 
-					   Style ="{StaticResource PanelTitleStyle}" 
+					   Style="{StaticResource PanelTitleStyle}" 
 					   Height="34" 
 					   Width="118"/>
 
@@ -434,7 +489,7 @@
 							 Foreground="{DynamicResource menuItemClickColor}"/>
 
 				<Label x:Name="usProgressLabel" 
-					   Style ="{StaticResource PanelTitleStyle}"
+					   Style="{StaticResource PanelTitleStyle}"
 					   Width="69" 
 					   Margin="250,15,31,206" 
 					   HorizontalAlignment="Center" 

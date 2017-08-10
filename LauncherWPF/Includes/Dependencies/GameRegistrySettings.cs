@@ -7,8 +7,14 @@ namespace Cartographer_Launcher.Includes.Dependencies
 	{
 		public static Globals.SettingsDisplayMode GetDisplayMode()
 		{
-			try { return (((int)GetVideoSetting("DisplayMode") == 1) ? Globals.SettingsDisplayMode.Windowed : Globals.SettingsDisplayMode.Fullscreen); }
-			catch (Exception) { return Globals.SettingsDisplayMode.Windowed; }
+			try
+			{
+				return (((int)GetVideoSetting("DisplayMode") == 1) ? Globals.SettingsDisplayMode.Windowed : Globals.SettingsDisplayMode.Fullscreen);
+			}
+			catch (Exception)
+			{
+				return Globals.SettingsDisplayMode.Windowed;
+			}
 		}
 
 		public static void SetDisplayMode(bool FullScreen)

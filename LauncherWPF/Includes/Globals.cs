@@ -117,7 +117,7 @@ namespace Cartographer_Launcher.Includes
 
 		public static string WebHost
 		{
-			get { return @"http://www.cartographer.online/H2Cartographer/"; }
+			get { return @"https://www.cartographer.online/H2Cartographer/"; }
 		}
 
 		public enum SettingsDisplayMode : int
@@ -143,7 +143,7 @@ namespace Cartographer_Launcher.Includes
 				try
 				{
 					WebClient wc = new WebClient();
-					string url = @"http://www.cartographer.online/wanip.php";
+					string url = @"https://www.cartographer.online/wanip.php";
 					byte[] response = wc.DownloadData(url);
 					UTF8Encoding utf = new UTF8Encoding();
 					string wanip = utf.GetString(response);
@@ -170,7 +170,7 @@ namespace Cartographer_Launcher.Includes
 
 		public static string VersionNumber
 		{
-			get { return "Version: 2.1.0"; }
+			get { return "Version: 2.1.2"; }
 		}
 	}
 }
