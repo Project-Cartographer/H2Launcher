@@ -9,79 +9,94 @@ namespace Cartographer_Launcher.Includes.Settings
 	{
 		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
+		private const string DEBUG_LOG = "debug_log";
+		private const string LOGIN_TOKEN = "login_token";
+		private const string BASE_PORT = "base_port";
+		private const string LAN_IP = "LANIP";
+		private const string WAN_IP = "WANIP";
+		private const string GUN_GAME = "gun_game";
+		private const string FPS_ENABLE = "fps_enable";
+		private const string FPS_LIMIT = "fps_limit";
+		private const string VOICE_CHAT = "voice_chat";
+		private const string MAP_DOWNLOADING_ENABLE = "map_downloading_enable";
+		private const string FIELD_OF_VIEW = "field_of_view";
+		private const string CROSSHAIR_OFFSET = "crosshair_offset";
+
+
+
 		public int DebugLog
 		{
-			get { return int.Parse(keyValues["debug_log"]); }
-			set { keyValues["base_port"] = "" + value; }
+			get { return int.Parse(keyValues[DEBUG_LOG]); }
+			set { keyValues[DEBUG_LOG] = "" + value; }
 		}
 
 		public string LoginToken
 		{
-			get { return keyValues["login_token"]; }
-			set { keyValues["login_token"] = value; }
+			get { return keyValues[LOGIN_TOKEN]; }
+			set { keyValues[LOGIN_TOKEN] = "" + value; }
 		}
 
 		public int Ports
 		{
-			get { return int.Parse(keyValues["base_port"]); }
-			set { keyValues["base_port"] = "" + value; }
+			get { return int.Parse(keyValues[BASE_PORT]); }
+			set { keyValues[BASE_PORT] = "" + value; }
 		}
 
 		public string LANIP
 		{
-			get { return keyValues["LANIP"]; }
-			set { keyValues["LANIP"] = "" + value; }
+			get { return keyValues[LAN_IP]; }
+			set { keyValues[LAN_IP] = "" + value; }
 		}
 
 		public string WANIP
 		{
-			get { return keyValues["WANIP"]; }
-			set { keyValues["WANIP"] = "" + value; }
+			get { return keyValues[WAN_IP]; }
+			set { keyValues[WAN_IP] = "" + value; }
 		}
 
 		public int GunGame
 		{
-			get { return int.Parse(keyValues["gun_game"]); }
-			set { keyValues["gun_game"] = "" + value; }
+			get { return int.Parse(keyValues[GUN_GAME]); }
+			set { keyValues[GUN_GAME] = "" + value; }
 		}
 
 		public int FPSCap
 		{
-			get { return int.Parse(keyValues["fps_enable"]); }
-			set { keyValues["fps_enable"] = "" + value; }
+			get { return int.Parse(keyValues[FPS_ENABLE]); }
+			set { keyValues[FPS_ENABLE] = "" + value; }
 		}
 
 		public int FPSLimit
 		{
-			get { return int.Parse(keyValues["fps_limit"]); }
-			set { keyValues["fps_limit"] = "" + value; }
+			get { return int.Parse(keyValues[FPS_LIMIT]); }
+			set { keyValues[FPS_LIMIT]] = "" + value; }
 		}
 
 		public int VoiceChat
 		{
-			get { return int.Parse(keyValues["voice_chat"]); }
-			set { keyValues["voice_chat"] = "" + value; }
+			get { return int.Parse(keyValues[VOICE_CHAT]); }
+			set { keyValues[VOICE_CHAT] = "" + value; }
 		}
 
 		public int MapDownload
 		{
-			get { return int.Parse(keyValues["map_downloading_enable"]); }
-			set { keyValues["map_downloading_enable"] = "" + value; }
+			get { return int.Parse(keyValues[MAP_DOWNLOADING_ENABLE]); }
+			set { keyValues[MAP_DOWNLOADING_ENABLE] = "" + value; }
 		}
 
 		public int FOV
 		{
-			get { return int.Parse(keyValues["field_of_view"]); }
-			set { keyValues["field_of_view"] = "" + value; }
+			get { return int.Parse(keyValues[FIELD_OF_VIEW]); }
+			set { keyValues[FIELD_OF_VIEW] = "" + value; }
 		}
 
 		public string Reticle
 		{
-			get { return keyValues["crosshair_offset"]; }
-			set { keyValues["crosshair_offset"] = "" + value; }
+			get { return keyValues[CROSSHAIR_OFFSET]; }
+			set { keyValues[CROSSHAIR_OFFSET] = "" + value; }
 		}
 
-		private void setDefaults()
+		private void SetDefaults()
 		{
 			LoginToken = "";
 			DebugLog = 0;
@@ -111,20 +126,20 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			if (!File.Exists(Globals.GameDirectory + "xlive.ini"))
 			{
-				setDefaults();
+				SetDefaults();
 				SaveSettings();
 			}
 			else
 			{
-				using (StreamReader streamreader = new StreamReader(Globals.GameDirectory + "xlive.ini"))
+				using (StreamReader SR = new StreamReader(Globals.GameDirectory + "xlive.ini"))
 				{
-					string[] xliveLines = streamreader.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-					foreach (string Line in xliveLines)
+					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string Line in SettingLines)
 					{
 						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
 						keyValues.Add(Setting[0], Setting[1]);
 					}
-					setDefaults();
+					SetDefaults();
 				}
 			}
 		}

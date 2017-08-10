@@ -11,52 +11,61 @@ namespace Cartographer_Launcher.Includes.Settings
 	{
 		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
+		private const string GAME_DIRECTORY = "GameDirectory";
+		private const string LAUNCHER_RUN_PATH = "LauncherRunPath";
+		private const string PLAYER_TAG = "PlayerTag";
+		private const string DISPLAY_MODE = "DisplayMode";
+		private const string GAME_SOUND = "GameSound";
+		private const string VERTICAL_SYNC = "VerticalSync";
+		private const string DEFAULT_DISPLAY = "DefaultDisplay";
+		private const string REMEMBER_ME = "RememberMe";
+
 		public string GameDirectory
 		{
-			get { return keyValues["GameDirectory"]; }
-			set { keyValues["GameDirectory"] = value; }
+			get { return keyValues[GAME_DIRECTORY]; }
+			set { keyValues[GAME_DIRECTORY] = "" + value; }
 		}
 
 		public string LauncherRunPath
 		{
-			get { return keyValues["LauncherRunPath"]; }
-			set { keyValues["LauncherRunPath"] = value; }
+			get { return keyValues[LAUNCHER_RUN_PATH]; }
+			set { keyValues[LAUNCHER_RUN_PATH] = "" + value; }
 		}
 
 		public string PlayerTag
 		{
-			get { return keyValues["PlayerTag"]; }
-			set { keyValues["PlayerTag"] = "" + value; }
+			get { return keyValues[PLAYER_TAG]; }
+			set { keyValues[PLAYER_TAG] = "" + value; }
 		}
 
 		public Globals.SettingsDisplayMode DisplayMode
 		{
-			get { return Enum.TryParse(keyValues["DisplayMode"], out ); }
-			set { Enum.TryParse(keyValues["DisplayMode"], out ) = value; }
+			get { return Enum.TryParse(keyValues[DISPLAY_MODE], out ); }
+			set { Enum.TryParse(keyValues[DISPLAY_MODE], out ) = "" + value; }
 		}
 
 		public int NoGameSound
 		{
-			get { return int.Parse(keyValues["GameSound"]); }
-			set { keyValues["GameSound"] = "" + value; }
+			get { return int.Parse(keyValues[GAME_SOUND]); }
+			set { keyValues[GAME_SOUND] = "" + value; }
 		}
 
 		public int VerticalSync
 		{
-			get { return int.Parse(keyValues["VerticalSync"]); }
-			set { keyValues["VerticalSync"] = "" + value; }
+			get { return int.Parse(keyValues[VERTICAL_SYNC]); }
+			set { keyValues[VERTICAL_SYNC] = "" + value; }
 		}
 
 		public int DefaultDisplay
 		{
-			get { return int.Parse(keyValues["DefaultDisplay"]); }
-			set { keyValues["DefaultDisplay"] = "" + value; }
+			get { return int.Parse(keyValues[DEFAULT_DISPLAY]); }
+			set { keyValues[DEFAULT_DISPLAY] = "" + value; }
 		}
 
 		public int RememberMe
 		{
-			get { return int.Parse(keyValues["GameSound"]); }
-			set { keyValues["RememberMe"] = "" + value; }
+			get { return int.Parse(keyValues[REMEMBER_ME]); }
+			set { keyValues[REMEMBER_ME] = "" + value; }
 		}
 
 		private int GetDefaultDisplay()
@@ -65,7 +74,7 @@ namespace Cartographer_Launcher.Includes.Settings
 			return 0;
 		}
 
-		private void setDefaults()
+		private void SetDefaults()
 		{
 			GameDirectory = Globals.GameDirectory;
 			LauncherRunPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -93,20 +102,20 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			if (!File.Exists(Globals.Files + "Settings.ini"))
 			{
-				setDefaults();
+				SetDefaults();
 				SaveSettings();
 			}
 			else
 			{
-				using (StreamReader streamreader = new StreamReader(Globals.Files + "Settings.ini"))
+				using (StreamReader SR = new StreamReader(Globals.Files + "Settings.ini"))
 				{
-					string[] xliveLines = streamreader.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-					foreach (string Line in xliveLines)
+					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string Line in SettingLines)
 					{
 						string[] Setting = Line.Split(new string[] { ":" }, StringSplitOptions.None);
 						keyValues.Add(Setting[0], Setting[1]);
 					}
-					setDefaults();
+					SetDefaults();
 				}
 			}
 		}

@@ -132,29 +132,6 @@ namespace LauncherWPF
 		}
 
 		#region Main Methods
-		private void MessageBoxPanelContent(string Title, string Content)
-		{
-			mbTitle.Content = Title;
-			mbMessage.Text = Content;
-
-		}
-
-		public void Debug(string Error)
-		{
-			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-			switch (mr)
-			{
-				case MessageBoxResult.OK:
-					Process.Start(Globals.ExLogFile);
-					Application.Current.Shutdown();
-					break;
-
-				case MessageBoxResult.None:
-					Application.Current.Shutdown();
-					break;
-			}
-		}
-
 		public void LogFile(string Message)
 		{
 			StreamWriter log;
@@ -181,6 +158,43 @@ namespace LauncherWPF
 			exlog.Flush();
 			exlog.Dispose();
 			exlog.Close();
+		}
+
+		private void MessageBoxPanelContent(string Title, string Content)
+		{
+			mbTitle.Content = Title;
+			mbMessage.Text = Content;
+
+		}
+
+		public void Debug(string Error)
+		{
+			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+			switch (mr)
+			{
+				case MessageBoxResult.OK:
+					Process.Start(Globals.ExLogFile);
+					Application.Current.Shutdown();
+					break;
+
+				case MessageBoxResult.None:
+					Application.Current.Shutdown();
+					break;
+			}
+		}
+
+
+		private void LauncherDelete(string Arguments)
+		{
+			Task.Delay(1000);
+			ProcessStartInfo Info = new ProcessStartInfo();
+			Info.Arguments = Arguments;
+			Info.WindowStyle = ProcessWindowStyle.Hidden;
+			Info.CreateNoWindow = true;
+			Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			Info.FileName = "cmd.exe";
+			Process.Start(Info);
+			Process.GetCurrentProcess().Kill();
 		}
 
 		private void LauncherCheck()
@@ -337,19 +351,6 @@ namespace LauncherWPF
 					}
 				});
 			});
-		}
-
-		private void LauncherDelete(string Arguments)
-		{
-			Task.Delay(1000);
-			ProcessStartInfo Info = new ProcessStartInfo();
-			Info.Arguments = Arguments;
-			Info.WindowStyle = ProcessWindowStyle.Hidden;
-			Info.CreateNoWindow = true;
-			Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-			Info.FileName = "cmd.exe";
-			Process.Start(Info);
-			Process.GetCurrentProcess().Kill();
 		}
 		#endregion
 
