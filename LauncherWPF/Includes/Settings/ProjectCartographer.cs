@@ -69,7 +69,7 @@ namespace Cartographer_Launcher.Includes.Settings
 		public int FPSLimit
 		{
 			get { return int.Parse(keyValues[FPS_LIMIT]); }
-			set { keyValues[FPS_LIMIT]] = "" + value; }
+			set { keyValues[FPS_LIMIT] = "" + value; }
 		}
 
 		public int VoiceChat
