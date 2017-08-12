@@ -22,8 +22,6 @@ namespace Cartographer_Launcher.Includes.Settings
 		private const string FIELD_OF_VIEW = "field_of_view";
 		private const string CROSSHAIR_OFFSET = "crosshair_offset";
 
-
-
 		public int DebugLog
 		{
 			get { return int.Parse(keyValues[DEBUG_LOG]); }
@@ -137,9 +135,8 @@ namespace Cartographer_Launcher.Includes.Settings
 					foreach (string Line in SettingLines)
 					{
 						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
-						keyValues.Add(Setting[0], Setting[1]);
+						if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
 					}
-					SetDefaults();
 				}
 			}
 		}

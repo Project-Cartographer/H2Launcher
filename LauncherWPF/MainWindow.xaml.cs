@@ -34,8 +34,8 @@ namespace LauncherWPF
 		ProjectCartographer ProjectSettings = LauncherRuntime.ProjectSettings;
 		H2Startup H2StartupSettings = new H2Startup();
 
-		private string RegisterURL = @"https://www.cartographer.online/";
-		private string AppealURL = @"https://www.halo2.online/forums/the-drama-spot.31/";
+		private const string RegisterURL = @"https://www.cartographer.online/";
+		private const string AppealURL = @"https://www.halo2.online/forums/the-drama-spot.31/";
 		private string DateTimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
 		private string DisplayMode;
 		public bool PlayCheck;
@@ -82,53 +82,6 @@ namespace LauncherWPF
 				ExLogFile(Ex.ToString());
 				Debug("Failed to load components.");
 			}
-
-			MessageBoxPanelContent("","");
-
-			MessageBoxPanel.Visibility = Visibility.Hidden;
-			mbMessage.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
-
-			LogFile("Log file initialized.");
-			LogFile("Game install directory: " + Globals.GameDirectory);
-			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
-
-			try { LauncherCheck(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to check launcher.");
-			}
-
-			try { CheckInstallPath(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to open Windows Explorer.");
-			}
-
-			try { LoadSettings(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to load setting files.");
-			}
-
-			try { LoginTokenCheck(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to verify login token.");
-			}
-
-			try { CheckUpdates(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to begin update process");
-			}
-
-			usProgressLabel.Tag = "{0}/100";
-			usProgressLabel.Content = "--/100";
 		}
 
 		#region Main Methods
@@ -197,7 +150,7 @@ namespace LauncherWPF
 			Process.GetCurrentProcess().Kill();
 		}
 
-		private void LauncherCheck()
+		private void WebServerCheck()
 		{
 			HttpWebRequest request = WebRequest.Create(Globals.LauncherCheck) as HttpWebRequest;
 			request.Method = "HEAD";
@@ -206,12 +159,12 @@ namespace LauncherWPF
 			catch (WebException wex)
 			{
 				response = wex.Response as HttpWebResponse;
-				MessageBox.Show("There was an error connecting to Cartographer.online." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR" );
+				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
 				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
 			}
 			if (response.StatusCode == HttpStatusCode.NotFound)
 			{
-				MessageBox.Show("There was an error connecting to Cartographer.online." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
+				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
 				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
 			}
 		}
@@ -248,29 +201,6 @@ namespace LauncherWPF
 			}
 		}
 
-		private async void LoginTokenCheck()
-		{
-			StatusButton.Content = "Currently verifying login...";
-			await Task.Delay(1000).ContinueWith(_ =>
-			{
-				Dispatcher.Invoke(() =>
-				{
-					var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-					if (loginResult.LoginResultEnum != LoginResultEnum.Successfull)
-					{
-						StatusButton.Content = Globals.VersionNumber;
-						PlayButton.Content = "LOGIN";
-					}
-					if (loginResult.LoginResultEnum == LoginResultEnum.Successfull)
-					{
-						ProjectSettings.LoginToken = loginResult.LoginToken;
-						StatusButton.Content = Globals.VersionNumber;
-						PlayButton.Content = "PLAY";
-					}
-				});
-			});
-		}
-
 		private async void LoginVerification()
 		{
 			await Task.Delay(500).ContinueWith(_ =>
@@ -284,36 +214,35 @@ namespace LauncherWPF
 					}
 				});
 			});
+			StatusButton.Content = "Currently verifying login...";
 			await Task.Delay(1000).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
 				{
 					var loginResult = LauncherRuntime.WebControl.Login(lsUser.Text, lsPass.Password, ProjectSettings.LoginToken);
-					if (loginResult.LoginResultEnum != LoginResultEnum.Successfull)
-					{
-						lsUser.Text = "";
-						lsPass.Password = "";
-						ProjectSettings.LoginToken = "";
-						PlayButton.Content = "LOGIN";
-					}
 
 					switch (loginResult.LoginResultEnum)
 					{
 						case LoginResultEnum.Successfull:
 							{
+								StatusButton.Content = Globals.VersionNumber;
 								LauncherSettings.PlayerTag = lsUser.Text;
 								ProjectSettings.LoginToken = loginResult.LoginToken;
-								ProjectSettings.SaveSettings();
-								LauncherSettings.SaveSettings();
-								LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
-								LogFile("Login successful, game starting...");
+								if (PlayCheck)
+								{
+									LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
+									LogFile("Login successful, game starting...");
+									PlayCheck = false;
+								}
 								PlayCheck = false;
 								break;
 							}
 						case LoginResultEnum.InvalidLoginToken:
 							{
-								MessageBox.Show(this, "This login token is no longer valid." + Environment.NewLine + "Please re -enter your login information and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
+								StatusButton.Content = Globals.VersionNumber;
+								MessageBox.Show(this, "This login token is no longer valid." + Environment.NewLine + "Please enter your login credentials and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 								ProjectSettings.LoginToken = "";
+								lsPass.Password = "";
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Login token invalid");
 								PlayCheck = false;
@@ -321,7 +250,11 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.InvalidUsernameOrPassword:
 							{
+								StatusButton.Content = Globals.VersionNumber;
 								MessageBox.Show(this, "The playertag or password entered is invalid." + Environment.NewLine + "Please try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
+								lsUser.Text = "";
+								lsPass.Password = "";
+								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Player credentials invalid");
 								PlayCheck = false;
@@ -329,8 +262,10 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.Banned:
 							{
+								StatusButton.Content = Globals.VersionNumber;
 								if (MessageBox.Show(this, "You have been banned, please visit the forum to appeal your ban." + Environment.NewLine + "Would you like us to open the forums for you?.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.Yes)
 									Process.Start(AppealURL);
+								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Machine is banned");
 								PlayCheck = false;
@@ -359,6 +294,54 @@ namespace LauncherWPF
 		{
 			if (File.Exists(Globals.LogFile)) File.Delete(Globals.LogFile);
 			if (File.Exists(Globals.ExLogFile)) File.Delete(Globals.ExLogFile);
+
+			MessageBoxPanelContent("", "");
+			MessageBoxPanel.Visibility = Visibility.Hidden;
+			mbMessage.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+
+			LogFile("Log file initialized.");
+			LogFile("Game install directory: " + Globals.GameDirectory);
+			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
+
+			try { WebServerCheck(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to check launcher.");
+			}
+
+			try { CheckInstallPath(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to open Windows Explorer.");
+			}
+
+			try { LoadSettings(); }
+			catch (Exception Ex)
+			{
+				if (File.Exists(Globals.Files + "Settings.ini")) File.Delete(Globals.Files + "Settings.ini");
+				if (File.Exists(Globals.GameDirectory + "xlive.ini")) File.Delete(Globals.GameDirectory + "xlive.ini");
+				ExLogFile(Ex.ToString());
+				Debug("Failed to load setting files.");
+			}
+
+			try { LoginVerification(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to verify login token.");
+			}
+
+			try { CheckUpdates(); }
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Failed to begin update process");
+			}
+
+			usProgressLabel.Tag = "{0}/100";
+			usProgressLabel.Content = "--/100";
 		}
 
 		private void MainForm_MouseDown(object sender, MouseButtonEventArgs e)
@@ -393,7 +376,6 @@ namespace LauncherWPF
 
 		private void BackgroundImage_Loaded(object sender, RoutedEventArgs e)
 		{
-
 			BitmapImage bg = new BitmapImage();
 			bg.BeginInit();
 			bg.UriSource = new Uri("pack://application:,,,/Resources/Images/launcher_background.png");
@@ -501,7 +483,7 @@ namespace LauncherWPF
 						LoginPanelCheck = false;
 						SaveSettingsCheck = true;
 
-						try { LoginTokenCheck(); }
+						try { LoginVerification(); }
 						catch (Exception Ex)
 						{
 							ExLogFile(Ex.ToString());
@@ -1126,151 +1108,7 @@ namespace LauncherWPF
 		}
 		#endregion
 
-		#region Settings
-		private void LoadSettings()
-		{
-			LauncherSettings.LoadSettings();
-			ProjectSettings.LoadSettings();
-			//
-			//Playertag
-			//
-			if (lsUser.Text != "") lsUsername.IsChecked = true;
-			if (lsPass.Password != "") lsPassword.Foreground = MenuItemSelect;
-			//
-			//Display Mode
-			//
-			switch (LauncherSettings.DisplayMode)
-			{
-				case Globals.SettingsDisplayMode.Fullscreen:
-					{
-						psWindow.IsChecked = false;
-						DisplayMode = "Fullscreen";
-						break;
-					}
-				case Globals.SettingsDisplayMode.Windowed:
-					{
-						psWindow.IsChecked = true;
-						DisplayMode = "Windowed";
-						break;
-					}
-			}
-			//
-			//Game Sound
-			//
-			if (LauncherSettings.NoGameSound == 1) psNoSound.IsChecked = true;
-			else psNoSound.IsChecked = false;
-			//
-			//Vertical Sync
-			//
-			if (LauncherSettings.VerticalSync == 1) psVsync.IsChecked = true;
-			else psVsync.IsChecked = false;
-			//
-			//Default Display
-			//
-			for (int s = 0; s < System.Windows.Forms.Screen.AllScreens.Length; s++)
-			{
-				psMonitorSelect.Items.Add((s + 1).ToString() + ((System.Windows.Forms.Screen.AllScreens[s].Primary) ? "*" : ""));
-				if (s == LauncherSettings.DefaultDisplay) psMonitorSelect.SelectedIndex = s;
-			}
-			//
-			//Remember Me
-			//
-			if (LauncherSettings.RememberMe == 1)
-			{
-				lsRememberMe.IsChecked = true;
-				lsUser.Text = LauncherSettings.PlayerTag;
-			}
-			else
-			{
-				lsRememberMe.IsChecked = false;
-				lsUser.Text = "";
-				ProjectSettings.LoginToken = "";
-			}
-			psMonitor.IsChecked = true;
-			//
-			//Login Token
-			//
-			if (ProjectSettings.LoginToken != "")
-			{
-				if (LauncherSettings.PlayerTag != "") lsPass.Password = "PASSWORDHOLDER";
-				else ProjectSettings.LoginToken = "";
-			}
-			//
-			//Debug Log
-			//
-			if (ProjectSettings.DebugLog == 1) psDebug.IsChecked = true;
-			else psDebug.IsChecked = false;
-			//
-			//Ports
-			//
-			psPorts.IsChecked = true;
-			psPortNumber.Foreground = MenuItemSelect;
-			psPortNumber.Text = ProjectSettings.Ports.ToString();
-			//
-			//FPS
-			//
-			if (ProjectSettings.FPSCap == 1) psFPS.IsChecked = true;
-			psFPSLimit.Text = ProjectSettings.FPSLimit.ToString();
-			//
-			//Voice Chat
-			//
-			if (ProjectSettings.VoiceChat == 1) psVoice.IsChecked = true;
-			else psVoice.IsChecked = false;
-			//
-			//Map Downloading
-			//
-			if (ProjectSettings.MapDownload == 1) psMaps.IsChecked = true;
-			else psMaps.IsChecked = false;
-			//
-			//FOV
-			//
-			psFOV.IsChecked = true;
-			psFOVSetting.Foreground = MenuItemSelect;
-			psFOVSetting.Text = ProjectSettings.FOV.ToString();
-			//
-			//Crosshair
-			//
-			psCrosshair.IsChecked = true;
-			psCrosshairSetting.Foreground = MenuItemSelect;
-			psCrosshairSetting.Text = ProjectSettings.Reticle;
-		}
-
-		public async void SaveSettings()
-		{
-			StatusButton.Content = "Currently saving configuration files...";
-			await Task.Delay(1000);
-			if (lsUser.Text == "") LauncherSettings.RememberMe = 0;
-			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
-
-			LauncherSettings.PlayerTag = lsUser.Text;
-			LauncherSettings.DisplayMode = (Globals.SettingsDisplayMode)Enum.Parse(typeof(Globals.SettingsDisplayMode), DisplayMode.ToString());
-			LauncherSettings.NoGameSound = (NoGameSound) ? 1 : 0;
-			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
-			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
-			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
-			if (psPortNumber.Text == "") ProjectSettings.Ports = int.Parse("1000");
-			else ProjectSettings.Ports = int.Parse(psPortNumber.Text);
-			ProjectSettings.FPSCap = (fpsEnable) ? 1 : 0;
-			if (psFPSLimit.Text == "") ProjectSettings.FPSLimit = int.Parse("60");
-			else ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
-			ProjectSettings.VoiceChat = (VoiceChat) ? 1 : 0;
-			LauncherRuntime.ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
-			if (psFOVSetting.Text == "") ProjectSettings.FOV = int.Parse("72");
-			else ProjectSettings.FOV = int.Parse(psFOVSetting.Text);
-			if (psCrosshairSetting.Text == "") ProjectSettings.Reticle = "0.165";
-			else ProjectSettings.Reticle = psCrosshairSetting.Text;
-
-			LauncherSettings.SaveSettings();
-			ProjectSettings.SaveSettings();
-
-			LogFile("Settings saved");
-			SaveSettingsCheck = false;
-			StatusButton.Content = Globals.VersionNumber;
-			if (ApplicationShutdownCheck) Application.Current.Shutdown();
-		}
-		#endregion
-
-		#region Other Setting Events
+		#region Setting Events
 		private void lsUser_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (lsUser.Text != LauncherSettings.PlayerTag)
@@ -1289,9 +1127,16 @@ namespace LauncherWPF
 
 		private void psForceUpdate_Checked(object sender, RoutedEventArgs e)
 		{
-			File.Delete(Globals.Files + "LocalUpdate.xml");
-			Task.Delay(4000);
-			LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
+			try
+			{
+				File.Delete(Globals.Files + "LocalUpdate.xml");
+				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
+			}
+			catch (Exception Ex)
+			{
+				ExLogFile(Ex.ToString());
+				Debug("Local update file not found.");
+			}
 			psForceUpdate.IsChecked = false;
 		}
 
@@ -1390,13 +1235,13 @@ namespace LauncherWPF
 		private void lsRememberMe_Checked(object sender, RoutedEventArgs e)
 		{
 			RememberMe = true;
-			LogFile("Autologin enabled.");
+			LogFile("H2Launcher Setting: Autologin enabled.");
 		}
 
 		private void lsRememberMe_Unchecked(object sender, RoutedEventArgs e)
 		{
 			RememberMe = false;
-			LogFile("Autologin disabled.");
+			LogFile("H2Launcher Setting: Autologin disabled.");
 		}
 		#endregion
 
@@ -1486,6 +1331,162 @@ namespace LauncherWPF
 		private void psCrosshairSetting_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			LogFile("Project Cartographer: Game reticle position changed to " + psCrosshairSetting.Text);
+		}
+		#endregion
+
+		#region Settings: Load/Save
+		private void LoadSettings()
+		{
+			LauncherSettings.LoadSettings();
+			ProjectSettings.LoadSettings();
+
+			//Playertag
+			if (lsUser.Text != "") lsUsername.IsChecked = true;
+			if (lsPass.Password != "") lsPassword.Foreground = MenuItemSelect;
+
+			//Display Mode
+			switch (LauncherSettings.DisplayMode)
+			{
+				case Globals.SettingsDisplayMode.Fullscreen:
+					{
+						psWindow.IsChecked = false;
+						DisplayMode = "Fullscreen";
+						break;
+					}
+				case Globals.SettingsDisplayMode.Windowed:
+					{
+						psWindow.IsChecked = true;
+
+						DisplayMode = "Windowed";
+						break;
+					}
+			}
+
+			//Game Sound
+			if (LauncherSettings.NoGameSound == 1) psNoSound.IsChecked = true;
+			else psNoSound.IsChecked = false;
+
+			//Vertical Sync
+			if (LauncherSettings.VerticalSync == 1) psVsync.IsChecked = true;
+			else psVsync.IsChecked = false;
+
+			//Default Display
+			psMonitor.IsChecked = true;
+			for (int s = 0; s < System.Windows.Forms.Screen.AllScreens.Length; s++)
+			{
+				psMonitorSelect.Items.Add((s + 1).ToString() + ((System.Windows.Forms.Screen.AllScreens[s].Primary) ? "*" : ""));
+				if (s == LauncherSettings.DefaultDisplay) psMonitorSelect.SelectedIndex = s;
+			}
+
+			//Remember Me
+			if (LauncherSettings.RememberMe == 1)
+			{
+				lsRememberMe.IsChecked = true;
+				lsUser.Text = LauncherSettings.PlayerTag;
+			}
+			else
+			{
+				lsRememberMe.IsChecked = false;
+				lsUser.Text = "";
+				ProjectSettings.LoginToken = "";
+			}
+
+			//Login Token
+			if (ProjectSettings.LoginToken != "")
+			{
+				if (LauncherSettings.PlayerTag != "") lsPass.Password = "PASSWORDHOLDER";
+				else ProjectSettings.LoginToken = "";
+			}
+
+			//Debug Log
+			if (ProjectSettings.DebugLog == 1) psDebug.IsChecked = true;
+			else psDebug.IsChecked = false;
+
+			//Ports
+			psPorts.IsChecked = true;
+			psPortNumber.Foreground = MenuItemSelect;
+			psPortNumber.Text = ProjectSettings.Ports.ToString();
+
+			//FPS
+			if (ProjectSettings.FPSCap == 1) psFPS.IsChecked = true;
+			psFPSLimit.Text = ProjectSettings.FPSLimit.ToString();
+
+			//Voice Chat
+			if (ProjectSettings.VoiceChat == 1) psVoice.IsChecked = true;
+			else psVoice.IsChecked = false;
+
+			//Map Downloading
+			if (ProjectSettings.MapDownload == 1) psMaps.IsChecked = true;
+			else psMaps.IsChecked = false;
+
+			//FOV
+			psFOV.IsChecked = true;
+			psFOVSetting.Foreground = MenuItemSelect;
+			psFOVSetting.Text = ProjectSettings.FOV.ToString();
+
+			//Crosshair
+			psCrosshair.IsChecked = true;
+			psCrosshairSetting.Foreground = MenuItemSelect;
+			psCrosshairSetting.Text = ProjectSettings.Reticle;
+		}
+
+		public async void SaveSettings()
+		{
+			StatusButton.Content = "Currently saving configuration files...";
+			await Task.Delay(1000);
+
+			//Remember Me
+			if (lsUser.Text == "") LauncherSettings.RememberMe = 0;
+			else LauncherSettings.RememberMe = (RememberMe) ? 1 : 0;
+
+			//Playertag
+			LauncherSettings.PlayerTag = lsUser.Text;
+
+			//DisplayMode
+			LauncherSettings.DisplayMode = (Globals.SettingsDisplayMode)Enum.Parse(typeof(Globals.SettingsDisplayMode), DisplayMode.ToString());
+
+			//Game Sound
+			LauncherSettings.NoGameSound = (NoGameSound) ? 1 : 0;
+
+			// Vertical Sync
+			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
+
+			// Default Display
+			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
+
+			// Debug Log
+			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
+
+			// Ports
+			if (psPortNumber.Text == "") ProjectSettings.Ports = int.Parse("1000");
+			else ProjectSettings.Ports = int.Parse(psPortNumber.Text);
+
+			// FPS Enable
+			ProjectSettings.FPSCap = (fpsEnable) ? 1 : 0;
+			if (psFPSLimit.Text == "") ProjectSettings.FPSLimit = int.Parse("60");
+			else ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
+
+			// Voice Chat
+			ProjectSettings.VoiceChat = (VoiceChat) ? 1 : 0;
+
+			// Map Downloading
+			LauncherRuntime.ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
+
+			// Field of View
+			if (psFOVSetting.Text == "") ProjectSettings.FOV = int.Parse("57");
+			else ProjectSettings.FOV = int.Parse(psFOVSetting.Text);
+
+			// Reticle
+			if (psCrosshairSetting.Text == "") ProjectSettings.Reticle = "0.165";
+			else ProjectSettings.Reticle = psCrosshairSetting.Text;
+
+			LauncherSettings.SaveSettings();
+			ProjectSettings.SaveSettings();
+
+			LogFile("Settings saved");
+			SaveSettingsCheck = false;
+			StatusButton.Content = Globals.VersionNumber;
+			if (ApplicationShutdownCheck) Application.Current.Shutdown();
 		}
 		#endregion
 	}

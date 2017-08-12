@@ -15,7 +15,7 @@ namespace Cartographer_Launcher.Includes.Settings
 		private const string LAUNCHER_RUN_PATH = "LauncherRunPath";
 		private const string PLAYER_TAG = "PlayerTag";
 		private const string DISPLAY_MODE = "DisplayMode";
-		private const string GAME_SOUND = "GameSound";
+		private const string NO_GAME_SOUND = "NoGameSound";
 		private const string VERTICAL_SYNC = "VerticalSync";
 		private const string DEFAULT_DISPLAY = "DefaultDisplay";
 		private const string REMEMBER_ME = "RememberMe";
@@ -40,14 +40,19 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		public Globals.SettingsDisplayMode DisplayMode
 		{
-			get { return Enum.TryParse(keyValues[DISPLAY_MODE], out ); }
-			set { Enum.TryParse(keyValues[DISPLAY_MODE], out ) = "" + value; }
+			get
+			{
+				Globals.SettingsDisplayMode DisplayValue;
+				Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
+				return DisplayValue;
+			}
+			set { keyValues[DISPLAY_MODE] = value.ToString(); }
 		}
 
 		public int NoGameSound
 		{
-			get { return int.Parse(keyValues[GAME_SOUND]); }
-			set { keyValues[GAME_SOUND] = "" + value; }
+			get { return int.Parse(keyValues[NO_GAME_SOUND]); }
+			set { keyValues[NO_GAME_SOUND] = "" + value; }
 		}
 
 		public int VerticalSync
@@ -86,7 +91,6 @@ namespace Cartographer_Launcher.Includes.Settings
 			RememberMe = 0;
 		}
 
-
 		public void SaveSettings()
 		{
 			StringBuilder SB = new StringBuilder();
@@ -94,7 +98,7 @@ namespace Cartographer_Launcher.Includes.Settings
 			foreach (KeyValuePair<string, string> entry in keyValues)
 				SB.AppendLine(entry.Key + " = " + entry.Value);
 
-			File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
+			File.WriteAllText(Globals.Files + "Settings.ini", SB.ToString());
 
 		}
 
@@ -112,10 +116,9 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						string[] Setting = Line.Split(new string[] { ":" }, StringSplitOptions.None);
-						keyValues.Add(Setting[0], Setting[1]);
+						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+						if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
 					}
-					SetDefaults();
 				}
 			}
 		}

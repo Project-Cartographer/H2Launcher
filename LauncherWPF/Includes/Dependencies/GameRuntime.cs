@@ -27,6 +27,7 @@ namespace Cartographer_Launcher.Includes.Dependencies
 				case Globals.SettingsDisplayMode.Windowed:
 					{
 						ProcInfo.Arguments += " -windowed";
+						ProcInfo.Arguments += " -monitor:" + LauncherSettings.DefaultDisplay.ToString();
 						break;
 					}
 			}
