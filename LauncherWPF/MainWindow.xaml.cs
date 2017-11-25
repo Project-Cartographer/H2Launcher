@@ -34,8 +34,8 @@ namespace LauncherWPF
 		ProjectCartographer ProjectSettings = LauncherRuntime.ProjectSettings;
 		H2Startup H2StartupSettings = new H2Startup();
 
-		private const string RegisterURL = @"https://www.cartographer.online/";
-		private const string AppealURL = @"https://www.halo2.online/forums/the-drama-spot.31/";
+		private const string REGISTER_URL = @"https://www.cartographer.online/";
+		private const string APPEAL_URL = @"https://www.halo2.online/forums/the-drama-spot.31/";
 		private string DateTimeStamp = DateTime.Now.ToString("M/dd/yyyy (HH:mm)");
 		private string DisplayMode;
 		public bool PlayCheck;
@@ -51,7 +51,10 @@ namespace LauncherWPF
 			VoiceChat,
 			MapDownloading,
 			fpsEnable,
-			RememberMe;
+			RememberMe,
+			SkipIntro,
+			RawMouseInput,
+			DiscordRichPresence;
 		private static bool NumbericInputOnly(string NumericText) { Regex r = new Regex("[^0-9.]+"); return !r.IsMatch(NumericText); }
 
 		#region Update
@@ -88,8 +91,8 @@ namespace LauncherWPF
 		public void LogFile(string Message)
 		{
 			StreamWriter log;
-			if (!File.Exists(Globals.LogFile)) log = new StreamWriter(Globals.LogFile);
-			else log = File.AppendText(Globals.LogFile);
+			if (!File.Exists(Globals.LAUNCHER_LOG_FILE)) log = new StreamWriter(Globals.LAUNCHER_LOG_FILE);
+			else log = File.AppendText(Globals.LAUNCHER_LOG_FILE);
 
 			log.WriteLine("Date: " + DateTimeStamp + " - " + Message);
 
@@ -101,8 +104,8 @@ namespace LauncherWPF
 		public void ExLogFile(string Message)
 		{
 			StreamWriter exlog;
-			if (!File.Exists(Globals.ExLogFile)) exlog = new StreamWriter(Globals.ExLogFile);
-			else exlog = File.AppendText(Globals.ExLogFile);
+			if (!File.Exists(Globals.LAUNCHER_EXCEPTION_LOG_FILE)) exlog = new StreamWriter(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
+			else exlog = File.AppendText(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
 
 			exlog.WriteLine("Date: " + DateTimeStamp);
 			exlog.WriteLine(Message);
@@ -126,7 +129,7 @@ namespace LauncherWPF
 			switch (mr)
 			{
 				case MessageBoxResult.OK:
-					Process.Start(Globals.ExLogFile);
+					Process.Start(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
 					Application.Current.Shutdown();
 					break;
 
@@ -152,7 +155,7 @@ namespace LauncherWPF
 
 		private void WebServerCheck()
 		{
-			HttpWebRequest request = WebRequest.Create(Globals.LauncherCheck) as HttpWebRequest;
+			HttpWebRequest request = WebRequest.Create(Globals.LAUNCHER_CHECK) as HttpWebRequest;
 			request.Method = "HEAD";
 			HttpWebResponse response;
 			try { response = request.GetResponse() as HttpWebResponse; }
@@ -171,7 +174,7 @@ namespace LauncherWPF
 
 		public void CheckInstallPath()
 		{
-			if (Globals.GameDirectory == "")
+			if (Globals.GAME_DIRECTORY == "")
 			{
 				string BaseFolder;
 				if (Environment.Is64BitOperatingSystem) BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
@@ -184,18 +187,18 @@ namespace LauncherWPF
 					ofd.FilterIndex = 1;
 					if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 					{
-						Globals.GameDirectory = ofd.FileName.Replace(ofd.SafeFileName, "");
-						LauncherSettings.SaveSettings();
+						Globals.GAME_DIRECTORY = ofd.FileName.Replace(ofd.SafeFileName, "");
+						//LauncherSettings.SaveSettings();
 					}
 					else Application.Current.Shutdown();
 				}
 			}
 			else
 			{
-				if (!Directory.Exists(Globals.GameDirectory))
+				if (!Directory.Exists(Globals.GAME_DIRECTORY))
 				{
 					MessageBox.Show("Halo 2 game directory was not found, please relocate the executable.", Kantanomo.GoIdioms, MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
-					Globals.GameDirectory = "";
+					Globals.GAME_DIRECTORY = "";
 					CheckInstallPath();
 				}
 			}
@@ -203,7 +206,7 @@ namespace LauncherWPF
 
 		private async void LoginVerification()
 		{
-			await Task.Delay(500).ContinueWith(_ =>
+			await Task.Delay(1000).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
 				{
@@ -215,7 +218,7 @@ namespace LauncherWPF
 				});
 			});
 			StatusButton.Content = "Currently verifying login...";
-			await Task.Delay(1000).ContinueWith(_ =>
+			await Task.Delay(1200).ContinueWith(_ =>
 			{
 				Dispatcher.Invoke(() =>
 				{
@@ -225,7 +228,7 @@ namespace LauncherWPF
 					{
 						case LoginResultEnum.Successfull:
 							{
-								StatusButton.Content = Globals.VersionNumber;
+								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								LauncherSettings.PlayerTag = lsUser.Text;
 								ProjectSettings.LoginToken = loginResult.LoginToken;
 								if (PlayCheck)
@@ -239,7 +242,7 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.InvalidLoginToken:
 							{
-								StatusButton.Content = Globals.VersionNumber;
+								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								MessageBox.Show(this, "This login token is no longer valid." + Environment.NewLine + "Please enter your login credentials and try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 								ProjectSettings.LoginToken = "";
 								lsPass.Password = "";
@@ -250,7 +253,7 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.InvalidUsernameOrPassword:
 							{
-								StatusButton.Content = Globals.VersionNumber;
+								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								MessageBox.Show(this, "The playertag or password entered is invalid." + Environment.NewLine + "Please try again.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning);
 								lsUser.Text = "";
 								lsPass.Password = "";
@@ -262,9 +265,9 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.Banned:
 							{
-								StatusButton.Content = Globals.VersionNumber;
+								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								if (MessageBox.Show(this, "You have been banned, please visit the forum to appeal your ban." + Environment.NewLine + "Would you like us to open the forums for you?.", Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-									Process.Start(AppealURL);
+									Process.Start(APPEAL_URL);
 								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
 								LogFile("Project Cartographer: Machine is banned");
@@ -273,7 +276,8 @@ namespace LauncherWPF
 							}
 						case LoginResultEnum.GenericFailure:
 							{
-								if (LoginPanel.Margin.Top == -140)
+								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
+								if (PlayCheck && LoginPanel.Margin.Top == -140)
 								{
 									PanelAnimation("sbShowLoginMenu", LoginPanel);
 									LoginPanelCheck = true;
@@ -292,16 +296,16 @@ namespace LauncherWPF
 		#region Form Event Methods
 		private void MainForm_Initialized(object sender, EventArgs e)
 		{
-			if (File.Exists(Globals.LogFile)) File.Delete(Globals.LogFile);
-			if (File.Exists(Globals.ExLogFile)) File.Delete(Globals.ExLogFile);
+			if (File.Exists(Globals.LAUNCHER_LOG_FILE)) File.Delete(Globals.LAUNCHER_LOG_FILE);
+			if (File.Exists(Globals.LAUNCHER_EXCEPTION_LOG_FILE)) File.Delete(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
 
 			MessageBoxPanelContent("", "");
 			MessageBoxPanel.Visibility = Visibility.Hidden;
 			mbMessage.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
 			LogFile("Log file initialized.");
-			LogFile("Game install directory: " + Globals.GameDirectory);
-			LogFile("Launcher file directory: " + Globals.H2vHubDirectory);
+			LogFile("Game install directory: " + Globals.GAME_DIRECTORY);
+			LogFile("Launcher file directory: " + Globals.H2V_HUB_DIRECTORY);
 
 			try { WebServerCheck(); }
 			catch (Exception Ex)
@@ -320,8 +324,8 @@ namespace LauncherWPF
 			try { LoadSettings(); }
 			catch (Exception Ex)
 			{
-				if (File.Exists(Globals.Files + "Settings.ini")) File.Delete(Globals.Files + "Settings.ini");
-				if (File.Exists(Globals.GameDirectory + "xlive.ini")) File.Delete(Globals.GameDirectory + "xlive.ini");
+				if (File.Exists(Globals.FILES_DIRECTORY + "Settings.ini")) File.Delete(Globals.FILES_DIRECTORY + "Settings.ini");
+				if (File.Exists(Globals.GAME_DIRECTORY + "xlive.ini")) File.Delete(Globals.GAME_DIRECTORY + "xlive.ini");
 				ExLogFile(Ex.ToString());
 				Debug("Failed to load setting files.");
 			}
@@ -755,7 +759,7 @@ namespace LauncherWPF
 
 		private void RegisterButton_Click(object sender, RoutedEventArgs e)
 		{
-			Process.Start(RegisterURL);
+			Process.Start(REGISTER_URL);
 		}
 		#endregion
 
@@ -763,7 +767,7 @@ namespace LauncherWPF
 		private bool UpdateGameToLatest()
 		{
 			string DateStamp = "[" + DateTime.Now.ToShortDateString() + " - " + DateTime.Now.ToLongTimeString() + "]" + Environment.NewLine;
-			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GameDirectory + "halo2.exe").FileVersion;
+			string CurrentHalo2Version = FileVersionInfo.GetVersionInfo(Globals.GAME_DIRECTORY + "halo2.exe").FileVersion;
 
 			try { AddToDetails(string.Format(DateStamp + "Halo 2 Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version + Environment.NewLine)); }
 			catch (Exception Ex)
@@ -790,7 +794,7 @@ namespace LauncherWPF
 
 				try
 				{
-					Client.DownloadFileAsync(new Uri(Globals.RemoteUpdate + "halo2/Update.exe"), Globals.Downloads + "\\Update.exe");
+					Client.DownloadFileAsync(new Uri(Globals.REMOTE_UPDATE_DIRECTORY + "halo2/Update.exe"), Globals.DOWNLOADS_DIRECTORY + "\\Update.exe");
 					_isDownloading = true;
 				}
 				catch (Exception) { throw new Exception("Error"); }
@@ -799,11 +803,11 @@ namespace LauncherWPF
 				AddToDetails("Waiting for updates to finish installing." + Environment.NewLine);
 
 				bool _isUpdating = true;
-				Process.Start(Globals.Downloads + "\\Update.exe");
+				Process.Start(Globals.DOWNLOADS_DIRECTORY + "\\Update.exe");
 
 				while (_isUpdating) if (Process.GetProcessesByName("Update").Length == 0) _isUpdating = false;
 
-				File.Delete(Globals.Downloads + "\\Update.exe");
+				File.Delete(Globals.DOWNLOADS_DIRECTORY + "\\Update.exe");
 				return true;
 			}
 			return true;
@@ -813,9 +817,9 @@ namespace LauncherWPF
 		{
 			try
 			{
-				if (File.Exists(Globals.Files + "LocalUpdate.xml"))
+				if (File.Exists(Globals.FILES_DIRECTORY + "LocalUpdate.xml"))
 				{
-					XDocument RemoteXML = XDocument.Load(Globals.Files + "LocalUpdate.xml");
+					XDocument RemoteXML = XDocument.Load(Globals.FILES_DIRECTORY + "LocalUpdate.xml");
 					UpdateCollection tUpdateColleciton = new UpdateCollection();
 					foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
 										   select
@@ -847,7 +851,7 @@ namespace LauncherWPF
 				AddToDetails("Downloading remote update XML file....");
 				WebClient Client = new WebClient();
 				bool _isDownloading = false;
-				if (File.Exists(Globals.Files + "RemoteUpdate.xml")) File.Delete(Globals.Files + "RemoteUpdate.xml");
+				if (File.Exists(Globals.FILES_DIRECTORY + "RemoteUpdate.xml")) File.Delete(Globals.FILES_DIRECTORY + "RemoteUpdate.xml");
 
 				Client.DownloadFileCompleted += (s, e) =>
 				{
@@ -860,10 +864,10 @@ namespace LauncherWPF
 				};
 
 				Client.DownloadProgressChanged += (s, e) => { UpdateProgress(e.ProgressPercentage); };
-				Client.DownloadFileAsync(new Uri(Globals.RemoteUpdateXML), Globals.Files + "RemoteUpdate.xml");
+				Client.DownloadFileAsync(new Uri(Globals.REMOTE_UPDATE_XML_FILE), Globals.FILES_DIRECTORY + "RemoteUpdate.xml");
 				_isDownloading = true;
 				while (_isDownloading) { }
-				XDocument RemoteXML = XDocument.Load(Globals.Files + "RemoteUpdate.xml");
+				XDocument RemoteXML = XDocument.Load(Globals.FILES_DIRECTORY + "RemoteUpdate.xml");
 				UpdateCollection tUpdateColleciton = new UpdateCollection();
 				foreach (object UO in (from XmlRoot in RemoteXML.Element("update").Elements("file")
 									   select
@@ -1017,8 +1021,8 @@ namespace LauncherWPF
 		public void Finished()
 		{
 			string CurrentName = Assembly.GetExecutingAssembly().Location.ToString();
-			if (File.Exists(Globals.Files + "LocalUpdate.xml")) File.Delete(Globals.Files + "LocalUpdate.xml");
-			File.Move(Globals.Files + "RemoteUpdate.xml", Globals.Files + "LocalUpdate.xml");
+			if (File.Exists(Globals.FILES_DIRECTORY + "LocalUpdate.xml")) File.Delete(Globals.FILES_DIRECTORY + "LocalUpdate.xml");
+			File.Move(Globals.FILES_DIRECTORY + "RemoteUpdate.xml", Globals.FILES_DIRECTORY + "LocalUpdate.xml");
 
 			if (_LauncherUpdated)
 			{
@@ -1129,7 +1133,7 @@ namespace LauncherWPF
 		{
 			try
 			{
-				File.Delete(Globals.Files + "LocalUpdate.xml");
+				File.Delete(Globals.FILES_DIRECTORY + "LocalUpdate.xml");
 				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
 			}
 			catch (Exception Ex)
@@ -1171,7 +1175,7 @@ namespace LauncherWPF
 
 		private void psGameDirectory_Checked(object sender, RoutedEventArgs e)
 		{
-			Process.Start(Globals.GameDirectory);
+			Process.Start(Globals.GAME_DIRECTORY);
 			psGameDirectory.IsChecked = false;
 		}
 
@@ -1283,6 +1287,30 @@ namespace LauncherWPF
 			LogFile("Project Cartographer: FPS limiter disabled.");
 		}
 
+		private void psRawMouseInput_Checked(object sender, RoutedEventArgs e)
+		{
+			RawMouseInput = true;
+			LogFile("Project Cartographer: Raw mouse input enabled.");
+		}
+
+		private void psRawMouseInput_Unchecked(object sender, RoutedEventArgs e)
+		{
+			RawMouseInput = false;
+			LogFile("Project Cartographer: Raw mouse input disabled.");
+		}
+
+		private void psDiscordRichPresence_Checked(object sender, RoutedEventArgs e)
+		{
+			DiscordRichPresence = true;
+			LogFile("Project Cartographer: Discord rich presence is enabled.");
+		}
+
+		private void psDiscordRichPresence_Unchecked(object sender, RoutedEventArgs e)
+		{
+			DiscordRichPresence = false;
+			LogFile("Project Cartographer: Discord rich presence is disabled.");
+		}
+
 		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			LogFile("Project Cartographer: Maximum frames set to " + psFPSLimit.Text.ToString());
@@ -1334,11 +1362,26 @@ namespace LauncherWPF
 		}
 		#endregion
 
+		#region Settings: H2Startup
+		private void psSkipIntro_Checked(object sender, RoutedEventArgs e)
+		{
+			SkipIntro = true;
+			LogFile("Project Cartographer: Startup credits enabled.");
+		}
+
+		private void psSkipIntro_Unchecked(object sender, RoutedEventArgs e)
+		{
+			SkipIntro = false;
+			LogFile("Project Cartographer: Startup credits disabled.");
+		}
+		#endregion
+
 		#region Settings: Load/Save
 		private void LoadSettings()
 		{
 			LauncherSettings.LoadSettings();
 			ProjectSettings.LoadSettings();
+			H2StartupSettings.LoadSettings();
 
 			//Playertag
 			if (lsUser.Text != "") lsUsername.IsChecked = true;
@@ -1428,6 +1471,18 @@ namespace LauncherWPF
 			psCrosshair.IsChecked = true;
 			psCrosshairSetting.Foreground = MenuItemSelect;
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
+
+			//Startup Credit Videos
+			if (H2StartupSettings.SkipIntro == 1) psSkipIntro.IsChecked = true;
+			else psSkipIntro.IsChecked = false;
+
+			//Raw Mouse Input
+			if (ProjectSettings.RawMouseInput == 1) psRawMouseInput.IsChecked = true;
+			else psRawMouseInput.IsChecked = false;
+
+			//Discord Rich Presence
+			if (ProjectSettings.DiscordRichPresence == 1) psDiscordRichPresence.IsChecked = true;
+			else psDiscordRichPresence.IsChecked = false;
 		}
 
 		public async void SaveSettings()
@@ -1448,31 +1503,31 @@ namespace LauncherWPF
 			//Game Sound
 			LauncherSettings.NoGameSound = (NoGameSound) ? 1 : 0;
 
-			// Vertical Sync
+			//Vertical Sync
 			LauncherSettings.VerticalSync = (Vsync) ? 1 : 0;
 
-			// Default Display
+			//Default Display
 			LauncherSettings.DefaultDisplay = psMonitorSelect.SelectedIndex;
 
-			// Debug Log
+			//Debug Log
 			ProjectSettings.DebugLog = (DebugLog) ? 1 : 0;
 
-			// Ports
+			//Ports
 			if (psPortNumber.Text == "") ProjectSettings.Ports = int.Parse("1000");
 			else ProjectSettings.Ports = int.Parse(psPortNumber.Text);
 
-			// FPS Enable
+			//FPS Enable
 			ProjectSettings.FPSCap = (fpsEnable) ? 1 : 0;
 			if (psFPSLimit.Text == "") ProjectSettings.FPSLimit = int.Parse("60");
 			else ProjectSettings.FPSLimit = int.Parse(psFPSLimit.Text);
 
-			// Voice Chat
+			//Voice Chat
 			ProjectSettings.VoiceChat = (VoiceChat) ? 1 : 0;
 
-			// Map Downloading
-			LauncherRuntime.ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
+			//Map Downloading
+			ProjectSettings.MapDownload = (MapDownloading) ? 1 : 0;
 
-			// Field of View
+			//Field of View
 			if (psFOVSetting.Text == "") ProjectSettings.FOV = int.Parse("57");
 			else ProjectSettings.FOV = int.Parse(psFOVSetting.Text);
 
@@ -1480,12 +1535,22 @@ namespace LauncherWPF
 			if (psCrosshairSetting.Text == "") ProjectSettings.Reticle = "0.165";
 			else ProjectSettings.Reticle = psCrosshairSetting.Text;
 
+			//Skip Startup Credit Videos
+			H2StartupSettings.SkipIntro = (SkipIntro) ? 1 : 0;
+
+			//Raw Mouse Input
+			ProjectSettings.RawMouseInput = (RawMouseInput) ? 1 : 0;
+
+			//Discord Rich Presence
+			ProjectSettings.DiscordRichPresence = (DiscordRichPresence) ? 1 : 0;
+
 			LauncherSettings.SaveSettings();
 			ProjectSettings.SaveSettings();
+			H2StartupSettings.SaveSettings();
 
 			LogFile("Settings saved");
 			SaveSettingsCheck = false;
-			StatusButton.Content = Globals.VersionNumber;
+			StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 			if (ApplicationShutdownCheck) Application.Current.Shutdown();
 		}
 		#endregion

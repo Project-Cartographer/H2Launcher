@@ -9,7 +9,7 @@ namespace Cartographer_Launcher.Includes
 {
 	public static class Globals
 	{
-		public static string GameDirectory
+		public static string GAME_DIRECTORY
 		{
 			get
 			{
@@ -54,17 +54,17 @@ namespace Cartographer_Launcher.Includes
 			}
 		}
 
-		public static string GameExecutable
+		public static string GAME_EXECUTABLE
 		{
-			get { return GameDirectory + "\\halo2.exe"; }
+			get { return GAME_DIRECTORY + "\\halo2.exe"; }
 		}
 
-		public static string GameStartupExecutable
+		public static string GAME_STARTUP_EXECUTABLE
 		{
-			get { return GameDirectory + "\\startup.exe"; }
+			get { return GAME_DIRECTORY + "\\startup.exe"; }
 		}
 
-		public static string LocalAppData
+		public static string LOCAL_APPDATA
 		{
 			get
 			{
@@ -80,42 +80,42 @@ namespace Cartographer_Launcher.Includes
 			}
 		}
 
-		public static string H2vHubDirectory
+		public static string H2V_HUB_DIRECTORY
 		{
-			get { return LocalAppData; }
+			get { return LOCAL_APPDATA; }
 		}
 
-		public static string LogFile
+		public static string LAUNCHER_LOG_FILE
 		{
-			get { return LocalAppData + "\\H2Launcher.log"; }
+			get { return LOCAL_APPDATA + "\\H2Launcher.log"; }
 		}
 
-		public static string ExLogFile
+		public static string LAUNCHER_EXCEPTION_LOG_FILE
 		{
-			get { return LocalAppData + "\\Error.log"; }
+			get { return LOCAL_APPDATA + "\\Error.log"; }
 		}
 
-		public static string Downloads
+		public static string DOWNLOADS_DIRECTORY
 		{
-			get { return LocalAppData + "\\Download\\"; }
+			get { return LOCAL_APPDATA + "\\Download\\"; }
 		}
 
-		public static string Files
+		public static string FILES_DIRECTORY
 		{
-			get { return LocalAppData + "\\Files\\"; }
+			get { return LOCAL_APPDATA + "\\Files\\"; }
 		}
 
-		public static string Content
+		public static string CONTENT_DIRECTORY
 		{
-			get { return LocalAppData + "\\Files\\Content\\"; }
+			get { return LOCAL_APPDATA + "\\Files\\Content\\"; }
 		}
 
-		public static string H2RegistryBase
+		public static string REGISTRY_BASE
 		{
 			get { return @"HKEY_CURRENT_USER\Software\Microsoft\Halo 2\"; }
 		}
 
-		public static string WebHost
+		public static string WEBHOST
 		{
 			get { return @"https://www.cartographer.online/H2Cartographer/"; }
 		}
@@ -126,7 +126,20 @@ namespace Cartographer_Launcher.Includes
 			Windowed = 1,
 		}
 
-		public static string LANIP
+		public enum SettingsLanguageSelect : int
+		{
+			Default = -1,
+			Chinese = 0,
+			German = 1,
+			Spanish = 2,
+			French = 3,
+			Italian = 4,
+			Japanese = 5,
+			Korean = 6,
+			English = 7,
+		}
+
+		public static string LAN_IP
 		{
 			get
 			{
@@ -136,7 +149,7 @@ namespace Cartographer_Launcher.Includes
 			}
 		}
 		
-		public static string WANIP
+		public static string WAN_IP
 		{
 			get
 			{
@@ -153,22 +166,22 @@ namespace Cartographer_Launcher.Includes
 			}
 		}
 
-		public static string LauncherCheck
+		public static string LAUNCHER_CHECK
 		{
-			get { return WebHost + "v2.txt"; }
+			get { return WEBHOST + "v2.txt"; }
 		}
 
-		public static string RemoteUpdate
+		public static string REMOTE_UPDATE_DIRECTORY
 		{
-			get { return WebHost + "update/"; }
+			get { return WEBHOST + "update/"; }
 		}
 
-		public static string RemoteUpdateXML
+		public static string REMOTE_UPDATE_XML_FILE
 		{
-			get { return WebHost + "update3.xml"; }
+			get { return WEBHOST + "update3.xml"; }
 		}
 
-		public static string VersionNumber
+		public static string LAUNCHER_RELEASE_VERSION
 		{
 			get { return "Version: 2.1.2"; }
 		}

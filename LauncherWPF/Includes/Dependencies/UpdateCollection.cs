@@ -63,10 +63,10 @@ namespace Cartographer_Launcher.Includes.Dependencies
 		{
 			string tString = str;
 			tString = tString.Replace("{Version}", version);
-			tString = tString.Replace("{InstallDir}", Globals.GameDirectory);
-			tString = tString.Replace("{Files}", Globals.Files);
-			tString = tString.Replace("{LauncherDir}", Globals.H2vHubDirectory);
-			tString = tString.Replace("{RemoteDir}", Globals.RemoteUpdate);
+			tString = tString.Replace("{InstallDir}", Globals.GAME_DIRECTORY);
+			tString = tString.Replace("{Files}", Globals.FILES_DIRECTORY);
+			tString = tString.Replace("{LauncherDir}", Globals.H2V_HUB_DIRECTORY);
+			tString = tString.Replace("{RemoteDir}", Globals.REMOTE_UPDATE_DIRECTORY);
 			tString = tString.Replace("{AppDir}", AppDomain.CurrentDomain.BaseDirectory);
 			return tString;
 		}

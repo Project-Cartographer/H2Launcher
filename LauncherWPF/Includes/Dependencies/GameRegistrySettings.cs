@@ -24,12 +24,12 @@ namespace Cartographer_Launcher.Includes.Dependencies
 
 		private static object GetVideoSetting(string Setting)
 		{
-			return Registry.GetValue(Globals.H2RegistryBase + "Video Settings", Setting, null);
+			return Registry.GetValue(Globals.REGISTRY_BASE + "Video Settings", Setting, null);
 		}
 
 		private static void SetVideoSetting(string Setting, object Value)
 		{
-			Registry.SetValue(Globals.H2RegistryBase + "Video Settings", Setting, Value);
+			Registry.SetValue(Globals.REGISTRY_BASE + "Video Settings", Setting, Value);
 		}
 	}
 }

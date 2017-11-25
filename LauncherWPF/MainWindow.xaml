@@ -441,6 +441,24 @@
 							  Margin="10,411,0,0" 
 							  Checked="psGameDirectory_Checked" 
 							  Unchecked="psGameDirectory_Unchecked"/>
+				<ToggleButton x:Name="psSkipIntro" 
+							  Content="Skip Startup Video" 
+							  Style="{StaticResource sPanelButtonStyle}" 
+							  Margin="30,303,0,0" 
+							  Checked="psSkipIntro_Checked"
+							  Unchecked="psSkipIntro_Unchecked"/>
+				<ToggleButton x:Name="psRawMouseInput"
+							  Content="Raw Mouse Input" 
+							  Style="{StaticResource sPanelButtonStyle}" 
+							  Margin="30,327,0,0" 
+							  Checked="psRawMouseInput_Checked"
+							  Unchecked="psRawMouseInput_Unchecked"/>
+				<ToggleButton x:Name="psDiscordRichPresence"
+							  Content="Discord Rich Presence" 
+							  Style="{StaticResource sPanelButtonStyle}" 
+							  Margin="30,351,0,0" 
+							  Checked="psDiscordRichPresence_Checked"
+							  Unchecked="psDiscordRichPresence_Unchecked"/>
 			</Grid>
 		</StackPanel>
 

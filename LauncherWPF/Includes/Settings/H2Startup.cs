@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cartographer_Launcher.Includes.Dependencies;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,58 +10,132 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class H2Startup
 	{
-		private int _LanguageCode = -1;
-		private int _SkipIntro = 0;
-		private int _DisableKeyboard = 0;
-		private string _ServerName = "";
-		private string _HotKeyDebug = "114 #0x72 - VK_F3";
-		private string _HotKeyAlign = "118 #0x76 - VK_F7";
-		private string _HotKeyBorderless = "119 #0x77 - VK_F8";
-		private string _HotKeyHideChat = "120 #0x78 - VK_F9";
+		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
-		public int LanguageCode
+		private const string LANGUAGE_SELECT = "language_code";
+		private const string SKIP_INTRO_TOGGLE = "skip_intro";
+		private const string DISABLE_KEYBOARD_TOGGLE = "disable_ingame_keyboard";
+		private const string SERVER_NAME = "server_name";
+		private const string SERVER_PLAYLIST = "server_playlist";
+		private const string HELP_HOTKEY = "hotkey_help";
+		private const string DEBUG_TOGGLE_HOTKEY = "hotkey_toggle_debug";
+		private const string WINDOW_ALIGN_HOTKEY = "hotkey_align_window";
+		private const string BORDERLESS_WINDOW_TOGGLE_HOTKEY = "hotkey_window_mode";
+		private const string HIDE_TEXT_CHAT_TOGGLE_HOTKEY = "hotkey_hide_ingame_chat";
+
+		public Globals.SettingsLanguageSelect LanguageSelect
 		{
-			get { return _LanguageCode; }
-			set { _LanguageCode = value; }
+			get
+			{
+				Globals.SettingsLanguageSelect LanguageValue;
+				Enum.TryParse(keyValues[LANGUAGE_SELECT], out LanguageValue);
+				return LanguageValue;
+			}
+			set { keyValues[LANGUAGE_SELECT] = "" + value.ToString(); }
 		}
 
 		public int SkipIntro
 		{
-			get { return _SkipIntro; }
-			set { _SkipIntro = value; }
+			get { return int.Parse(keyValues[SKIP_INTRO_TOGGLE]); }
+			set { keyValues[SKIP_INTRO_TOGGLE] = "" + value; }
 		}
 
 		public int DisableKeyboard
 		{
-			get { return _DisableKeyboard; }
-			set { _DisableKeyboard = value; }
+			get { return int.Parse(keyValues[DISABLE_KEYBOARD_TOGGLE]); }
+			set { keyValues[DISABLE_KEYBOARD_TOGGLE] = "" + value; }
 		}
 
-		private string GetLine(string fileName, int line)
+		public string DediServerName
 		{
-			using (var sr = new StreamReader(Globals.GameDirectory + "h2startup1.ini"))
+			get { return keyValues[SERVER_NAME]; }
+			set { keyValues[SERVER_NAME] = "" + value; }
+		}
+
+		public string DediServerPlaylist
+		{
+			get { return keyValues[SERVER_PLAYLIST]; }
+			set { keyValues[SERVER_PLAYLIST] = "" + value; }
+		}
+
+		public VirtualKeyValues.VirtualKeyStates HotKeyHelp
+		{
+			get
 			{
-				for (int i = 1; i < line; i++)
-					sr.ReadLine();
-				return sr.ReadLine();
+				VirtualKeyValues.VirtualKeyStates HotKeyHelpValue;
+				Enum.TryParse(keyValues[HELP_HOTKEY], out HotKeyHelpValue);
+				return HotKeyHelpValue;
 			}
+			set { keyValues[HELP_HOTKEY] = "" + value.ToString(); }
+		}
+
+		public string HotKeyDebug
+		{
+			get { return keyValues[DEBUG_TOGGLE_HOTKEY]; }
+			set { keyValues[DEBUG_TOGGLE_HOTKEY] = "" + value; }
+		}
+
+		public string HotKeyWindowAlign
+		{
+			get { return keyValues[WINDOW_ALIGN_HOTKEY]; }
+			set { keyValues[WINDOW_ALIGN_HOTKEY] = "" + value; }
+		}
+
+		public string HotKeyBorderless
+		{
+			get { return keyValues[BORDERLESS_WINDOW_TOGGLE_HOTKEY]; }
+			set { keyValues[BORDERLESS_WINDOW_TOGGLE_HOTKEY] = "" + value; }
+		}
+
+		public string HotKeyInGameTextChat
+		{
+			get { return keyValues[HIDE_TEXT_CHAT_TOGGLE_HOTKEY]; }
+			set { keyValues[HIDE_TEXT_CHAT_TOGGLE_HOTKEY] = "" + value; }
+		}
+
+		private void SetDefaults()
+		{
+
+			LanguageSelect = Globals.SettingsLanguageSelect.Default;
+			SkipIntro = 1;
+			DisableKeyboard = 0;
+			DediServerName = "";
+			DediServerPlaylist = "";
+			System.Windows.MessageBox.Show(HotKeyHelp.ToString());
+			HotKeyHelp = VirtualKeyValues.VirtualKeyStates.VK_F3;
+			HotKeyDebug = "113";
+			HotKeyWindowAlign = "118";
+			HotKeyBorderless = "119";
+			HotKeyInGameTextChat = "120";
+		}
+		
+
+		public void SaveSettings()
+		{
+			StringBuilder SB = new StringBuilder();
+			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
+			File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString());
 		}
 
 		public void LoadSettings()
 		{
-			if (!File.Exists(Globals.GameDirectory = "h2startup1.ini")) SaveSettings();
-
-		}
-
-		public void SaveSettings()
-		{
-			StreamWriter sw = new StreamWriter(Globals.Files + "Settings.ini");
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("GameDirectory:" + Globals.GameDirectory);
-			sw.Write(sb.ToString());
-			sw.Flush();
-			sw.Close();
-			sw.Dispose();
+			if (!File.Exists(Globals.GAME_DIRECTORY + "h2startup1.ini"))
+			{
+				SetDefaults();
+				SaveSettings();
+			}
+			else
+			{
+				using (StreamReader SR = new StreamReader(Globals.GAME_DIRECTORY + "h2startup1.ini"))
+				{
+					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+					foreach (string Line in SettingLines)
+					{
+						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+						if (!Line.Contains("#") && !keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+					}
+				}
+			}
 		}
 	}
 }

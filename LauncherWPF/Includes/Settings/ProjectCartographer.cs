@@ -21,6 +21,8 @@ namespace Cartographer_Launcher.Includes.Settings
 		private const string MAP_DOWNLOADING_ENABLE = "map_downloading_enable";
 		private const string FIELD_OF_VIEW = "field_of_view";
 		private const string CROSSHAIR_OFFSET = "crosshair_offset";
+		private const string RAW_MOUSE_INPUT = "raw_input";
+		private const string DISCORD_RICH_PRESENCE = "discord_enable";
 
 		public int DebugLog
 		{
@@ -43,13 +45,13 @@ namespace Cartographer_Launcher.Includes.Settings
 		public string LANIP
 		{
 			get { return keyValues[LAN_IP]; }
-			set { keyValues[LAN_IP] = "" + value; }
+			set { keyValues[LAN_IP] = "" + Globals.LAN_IP; }
 		}
 
 		public string WANIP
 		{
 			get { return keyValues[WAN_IP]; }
-			set { keyValues[WAN_IP] = "" + value; }
+			set { keyValues[WAN_IP] = "" + Globals.WAN_IP; }
 		}
 
 		public int GunGame
@@ -94,6 +96,18 @@ namespace Cartographer_Launcher.Includes.Settings
 			set { keyValues[CROSSHAIR_OFFSET] = "" + value; }
 		}
 
+		public int RawMouseInput
+		{
+			get { return int.Parse(keyValues[RAW_MOUSE_INPUT]); }
+			set { keyValues[RAW_MOUSE_INPUT] = "" + value; }
+		}
+
+		public int DiscordRichPresence
+		{
+			get { return int.Parse(keyValues[DISCORD_RICH_PRESENCE]); }
+			set { keyValues[DISCORD_RICH_PRESENCE] = "" + value; }
+		}
+
 		private void SetDefaults()
 		{
 			LoginToken = "";
@@ -108,6 +122,8 @@ namespace Cartographer_Launcher.Includes.Settings
 			MapDownload = 0;
 			FOV = 57;
 			Reticle = "0.165";
+			RawMouseInput = 0;
+			DiscordRichPresence = 1;
 		}
 
 		public void SaveSettings()
@@ -117,19 +133,19 @@ namespace Cartographer_Launcher.Includes.Settings
 			{
 				SB.AppendLine(entry.Key + " = " + entry.Value);
 			}
-			File.WriteAllText(Globals.GameDirectory + "xlive.ini", SB.ToString());
+			File.WriteAllText(Globals.GAME_DIRECTORY + "xlive.ini", SB.ToString());
 		}
 
 		public void LoadSettings()
 		{
-			if (!File.Exists(Globals.GameDirectory + "xlive.ini"))
+			if (!File.Exists(Globals.GAME_DIRECTORY + "xlive.ini"))
 			{
 				SetDefaults();
 				SaveSettings();
 			}
 			else
 			{
-				using (StreamReader SR = new StreamReader(Globals.GameDirectory + "xlive.ini"))
+				using (StreamReader SR = new StreamReader(Globals.GAME_DIRECTORY + "xlive.ini"))
 				{
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)

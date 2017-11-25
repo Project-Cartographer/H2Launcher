@@ -14,7 +14,7 @@ namespace Cartographer_Launcher.Includes.Dependencies
 			ProjectSettings.LoadSettings();
 
 			ProcessStartInfo ProcInfo = new ProcessStartInfo();
-			ProcInfo.WorkingDirectory = Globals.GameDirectory;
+			ProcInfo.WorkingDirectory = Globals.GAME_DIRECTORY;
 			ProcInfo.FileName = "halo2.exe";
 
 			switch (LauncherSettings.DisplayMode)

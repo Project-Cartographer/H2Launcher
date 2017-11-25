@@ -96,6 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Includes\Dependencies\VirtualKeyValues.cs" />
     <Compile Include="Includes\LauncherRuntime.cs" />
     <Compile Include="Includes\Dependencies\GameRuntime.cs" />
     <Compile Include="Includes\Dependencies\Kantanomo.cs" />

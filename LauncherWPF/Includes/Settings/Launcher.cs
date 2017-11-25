@@ -46,7 +46,7 @@ namespace Cartographer_Launcher.Includes.Settings
 				Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
 				return DisplayValue;
 			}
-			set { keyValues[DISPLAY_MODE] = value.ToString(); }
+			set { keyValues[DISPLAY_MODE] = "" + value.ToString(); }
 		}
 
 		public int NoGameSound
@@ -81,7 +81,7 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		private void SetDefaults()
 		{
-			GameDirectory = Globals.GameDirectory;
+			GameDirectory = Globals.GAME_DIRECTORY;
 			LauncherRunPath = AppDomain.CurrentDomain.BaseDirectory;
 			PlayerTag = "Player_1";
 			DisplayMode = GameRegistrySettings.GetDisplayMode();
@@ -94,24 +94,21 @@ namespace Cartographer_Launcher.Includes.Settings
 		public void SaveSettings()
 		{
 			StringBuilder SB = new StringBuilder();
-
-			foreach (KeyValuePair<string, string> entry in keyValues)
-				SB.AppendLine(entry.Key + " = " + entry.Value);
-
-			File.WriteAllText(Globals.Files + "Settings.ini", SB.ToString());
+			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
+			File.WriteAllText(Globals.FILES_DIRECTORY + "Settings.ini", SB.ToString());
 
 		}
 
 		public void LoadSettings()
 		{
-			if (!File.Exists(Globals.Files + "Settings.ini"))
+			if (!File.Exists(Globals.FILES_DIRECTORY + "Settings.ini"))
 			{
 				SetDefaults();
 				SaveSettings();
 			}
 			else
 			{
-				using (StreamReader SR = new StreamReader(Globals.Files + "Settings.ini"))
+				using (StreamReader SR = new StreamReader(Globals.FILES_DIRECTORY + "Settings.ini"))
 				{
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
