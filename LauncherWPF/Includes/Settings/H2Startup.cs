@@ -138,10 +138,36 @@ namespace Cartographer_Launcher.Includes.Settings
 			HotKeyBorderless = "119";
 			HotKeyInGameTextChat = "120";
 		}
-		
+
 		public void SaveSettings()
 		{
 			StringBuilder SB = new StringBuilder();
+			SB.AppendLine("# language_code Options (Client):" + Environment.NewLine +
+				"# -1 - System Default" + Environment.NewLine +
+				"# 0  - Chinese" + Environment.NewLine +
+				"# 1  - German" + Environment.NewLine +
+				"# 2  - Spanish" + Environment.NewLine +
+				"# 3  - French" + Environment.NewLine +
+				"# 4  - Italian" + Environment.NewLine +
+				"# 5  - Japanese" + Environment.NewLine +
+				"# 6  - Korean" + Environment.NewLine +
+				"# 7  - English" + Environment.NewLine + Environment.NewLine +
+				"# skip_intro Options (Client):" + Environment.NewLine +
+				"# 0 - Normal Intro" + Environment.NewLine +
+				"# 1 - No Intro" + Environment.NewLine + Environment.NewLine +
+				"# disable_ingame_keyboard Options (Client):" + Environment.NewLine +
+				"# 0 - Normal Game Controls" + Environment.NewLine +
+				"# 1 - Disables ONLY Keyboard when in-game & allows controllers when game is not in focus" + Environment.NewLine + Environment.NewLine +
+				"# server_name Options (Server):" + Environment.NewLine +
+				"# Sets the name of the server up to 31 characters long." + Environment.NewLine +
+				"# Leave blank/empty for no effect." + Environment.NewLine + Environment.NewLine +
+				"# server_playlist Options (Server):" + Environment.NewLine +
+				"# Sets the playlist of the server up to 255 characters long." + Environment.NewLine +
+				"# Leave blank/empty for no effect." + Environment.NewLine + Environment.NewLine +
+				"# hotkey_... Options (Client):" + Environment.NewLine +
+				"# The number used is the keyboard Virtual-Key (VK) Code in base-10 integer form." + Environment.NewLine +
+				"# The codes in hexadecimal (base-16) form can be found here:" + Environment.NewLine +
+				"# https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx" + Environment.NewLine + Environment.NewLine);
 			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
 			File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString());
 		}
@@ -160,7 +186,7 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						if (!Line.Contains("#"))
+						if (!Line.StartsWith("#"))
 						{
 							string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
 							if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
