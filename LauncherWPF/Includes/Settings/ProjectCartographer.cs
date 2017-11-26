@@ -26,85 +26,141 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		public int DebugLog
 		{
-			get { return int.Parse(keyValues[DEBUG_LOG]); }
+			get
+			{
+				if (!keyValues.ContainsKey(DEBUG_LOG)) return 0;
+				else return int.Parse(keyValues[DEBUG_LOG]);
+			}
 			set { keyValues[DEBUG_LOG] = "" + value; }
 		}
 
 		public string LoginToken
 		{
-			get { return keyValues[LOGIN_TOKEN]; }
+			get
+			{
+				if (!keyValues.ContainsKey(LOGIN_TOKEN)) return "";
+				else return keyValues[LOGIN_TOKEN];
+			}
 			set { keyValues[LOGIN_TOKEN] = "" + value; }
 		}
 
 		public int Ports
 		{
-			get { return int.Parse(keyValues[BASE_PORT]); }
+			get
+			{
+				if (!keyValues.ContainsKey(BASE_PORT)) return 1000;
+				else return int.Parse(keyValues[BASE_PORT]);
+			}
 			set { keyValues[BASE_PORT] = "" + value; }
 		}
 
 		public string LANIP
 		{
-			get { return keyValues[LAN_IP]; }
+			get
+			{
+				if (!keyValues.ContainsKey(LAN_IP)) return "";
+				else return keyValues[LAN_IP];
+			}
 			set { keyValues[LAN_IP] = "" + Globals.LAN_IP; }
 		}
 
 		public string WANIP
 		{
-			get { return keyValues[WAN_IP]; }
+			get
+			{
+				if (!keyValues.ContainsKey(WAN_IP)) return "";
+				else return keyValues[WAN_IP];
+			}
 			set { keyValues[WAN_IP] = "" + Globals.WAN_IP; }
 		}
 
 		public int GunGame
 		{
-			get { return int.Parse(keyValues[GUN_GAME]); }
+			get
+			{
+				if (!keyValues.ContainsKey(GUN_GAME)) return 0;
+				else return int.Parse(keyValues[GUN_GAME]);
+			}
 			set { keyValues[GUN_GAME] = "" + value; }
 		}
 
 		public int FPSCap
 		{
-			get { return int.Parse(keyValues[FPS_ENABLE]); }
+			get
+			{
+				if (!keyValues.ContainsKey(FPS_ENABLE)) return 1;
+				else return int.Parse(keyValues[FPS_ENABLE]);
+			}
 			set { keyValues[FPS_ENABLE] = "" + value; }
 		}
 
 		public int FPSLimit
 		{
-			get { return int.Parse(keyValues[FPS_LIMIT]); }
+			get
+			{
+				if (!keyValues.ContainsKey(FPS_LIMIT)) return 60;
+				else return int.Parse(keyValues[FPS_LIMIT]);
+			}
 			set { keyValues[FPS_LIMIT] = "" + value; }
 		}
 
 		public int VoiceChat
 		{
-			get { return int.Parse(keyValues[VOICE_CHAT]); }
+			get
+			{
+				if (!keyValues.ContainsKey(VOICE_CHAT)) return 0;
+				else return int.Parse(keyValues[VOICE_CHAT]);
+			}
 			set { keyValues[VOICE_CHAT] = "" + value; }
 		}
 
 		public int MapDownload
 		{
-			get { return int.Parse(keyValues[MAP_DOWNLOADING_ENABLE]); }
+			get
+			{
+				if (!keyValues.ContainsKey(MAP_DOWNLOADING_ENABLE)) return 0;
+				else return int.Parse(keyValues[MAP_DOWNLOADING_ENABLE]);
+			}
 			set { keyValues[MAP_DOWNLOADING_ENABLE] = "" + value; }
 		}
 
 		public int FOV
 		{
-			get { return int.Parse(keyValues[FIELD_OF_VIEW]); }
+			get
+			{
+				if (!keyValues.ContainsKey(FIELD_OF_VIEW)) return 57;
+				else return int.Parse(keyValues[FIELD_OF_VIEW]);
+			}
 			set { keyValues[FIELD_OF_VIEW] = "" + value; }
 		}
 
 		public string Reticle
 		{
-			get { return keyValues[CROSSHAIR_OFFSET]; }
+			get
+			{
+				if (!keyValues.ContainsKey(CROSSHAIR_OFFSET)) return "0.165";
+				else return keyValues[CROSSHAIR_OFFSET];
+			}
 			set { keyValues[CROSSHAIR_OFFSET] = "" + value; }
 		}
 
 		public int RawMouseInput
 		{
-			get { return int.Parse(keyValues[RAW_MOUSE_INPUT]); }
+			get
+			{
+				if (!keyValues.ContainsKey(RAW_MOUSE_INPUT)) return 0;
+				else return int.Parse(keyValues[RAW_MOUSE_INPUT]);
+			}
 			set { keyValues[RAW_MOUSE_INPUT] = "" + value; }
 		}
 
 		public int DiscordRichPresence
 		{
-			get { return int.Parse(keyValues[DISCORD_RICH_PRESENCE]); }
+			get
+			{
+				if (!keyValues.ContainsKey(DISCORD_RICH_PRESENCE)) return 1;
+				else return int.Parse(keyValues[DISCORD_RICH_PRESENCE]);
+			}
 			set { keyValues[DISCORD_RICH_PRESENCE] = "" + value; }
 		}
 

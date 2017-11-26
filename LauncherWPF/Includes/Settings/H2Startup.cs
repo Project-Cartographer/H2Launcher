@@ -36,60 +36,91 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		public int SkipIntro
 		{
-			get { return int.Parse(keyValues[SKIP_INTRO_TOGGLE]); }
+			get
+			{
+				if (!keyValues.ContainsKey(SKIP_INTRO_TOGGLE)) return 1;
+				else return int.Parse(keyValues[SKIP_INTRO_TOGGLE]);
+			}
 			set { keyValues[SKIP_INTRO_TOGGLE] = "" + value; }
 		}
 
 		public int DisableKeyboard
 		{
-			get { return int.Parse(keyValues[DISABLE_KEYBOARD_TOGGLE]); }
+			get
+			{
+				if (!keyValues.ContainsKey(DISABLE_KEYBOARD_TOGGLE)) return 0;
+				else return int.Parse(keyValues[DISABLE_KEYBOARD_TOGGLE]);
+			}
 			set { keyValues[DISABLE_KEYBOARD_TOGGLE] = "" + value; }
 		}
 
 		public string DediServerName
 		{
-			get { return keyValues[SERVER_NAME]; }
+			get
+			{
+				if (!keyValues.ContainsKey(SERVER_NAME)) return "";
+				else return keyValues[SERVER_NAME];
+			}
 			set { keyValues[SERVER_NAME] = "" + value; }
 		}
 
 		public string DediServerPlaylist
 		{
-			get { return keyValues[SERVER_PLAYLIST]; }
+			get
+			{
+				if (!keyValues.ContainsKey(SERVER_PLAYLIST)) return "";
+				else return keyValues[SERVER_PLAYLIST];
+			}
 			set { keyValues[SERVER_PLAYLIST] = "" + value; }
 		}
 
-		public VirtualKeyValues.VirtualKeyStates HotKeyHelp
+		public string HotKeyHelp
 		{
 			get
 			{
-				VirtualKeyValues.VirtualKeyStates HotKeyHelpValue;
-				Enum.TryParse(keyValues[HELP_HOTKEY], out HotKeyHelpValue);
-				return HotKeyHelpValue;
+				if (!keyValues.ContainsKey(HELP_HOTKEY)) return "114";
+				else return keyValues[HELP_HOTKEY];
 			}
 			set { keyValues[HELP_HOTKEY] = "" + value.ToString(); }
 		}
 
 		public string HotKeyDebug
 		{
-			get { return keyValues[DEBUG_TOGGLE_HOTKEY]; }
+			get
+			{
+				if (!keyValues.ContainsKey(DEBUG_TOGGLE_HOTKEY)) return "113";
+				else return keyValues[DEBUG_TOGGLE_HOTKEY];
+			}
 			set { keyValues[DEBUG_TOGGLE_HOTKEY] = "" + value; }
 		}
 
 		public string HotKeyWindowAlign
 		{
-			get { return keyValues[WINDOW_ALIGN_HOTKEY]; }
+			get
+			{
+				if (!keyValues.ContainsKey(WINDOW_ALIGN_HOTKEY)) return "118";
+				else return keyValues[WINDOW_ALIGN_HOTKEY];
+			}
 			set { keyValues[WINDOW_ALIGN_HOTKEY] = "" + value; }
 		}
 
 		public string HotKeyBorderless
 		{
-			get { return keyValues[BORDERLESS_WINDOW_TOGGLE_HOTKEY]; }
+			get
+			{
+				if (!keyValues.ContainsKey(BORDERLESS_WINDOW_TOGGLE_HOTKEY)) return "119";
+				else return keyValues[BORDERLESS_WINDOW_TOGGLE_HOTKEY];
+			}
 			set { keyValues[BORDERLESS_WINDOW_TOGGLE_HOTKEY] = "" + value; }
 		}
 
 		public string HotKeyInGameTextChat
 		{
-			get { return keyValues[HIDE_TEXT_CHAT_TOGGLE_HOTKEY]; }
+			get
+			{
+				if (!keyValues.ContainsKey(HIDE_TEXT_CHAT_TOGGLE_HOTKEY)) return "120";
+				else return keyValues[HIDE_TEXT_CHAT_TOGGLE_HOTKEY];
+			}
 			set { keyValues[HIDE_TEXT_CHAT_TOGGLE_HOTKEY] = "" + value; }
 		}
 
@@ -101,15 +132,13 @@ namespace Cartographer_Launcher.Includes.Settings
 			DisableKeyboard = 0;
 			DediServerName = "";
 			DediServerPlaylist = "";
-			System.Windows.MessageBox.Show(HotKeyHelp.ToString());
-			HotKeyHelp = VirtualKeyValues.VirtualKeyStates.VK_F3;
+			HotKeyHelp = "114";
 			HotKeyDebug = "113";
 			HotKeyWindowAlign = "118";
 			HotKeyBorderless = "119";
 			HotKeyInGameTextChat = "120";
 		}
 		
-
 		public void SaveSettings()
 		{
 			StringBuilder SB = new StringBuilder();
@@ -131,8 +160,11 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
-						if (!Line.Contains("#") && !keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						if (!Line.Contains("#"))
+						{
+							string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+							if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						}
 					}
 				}
 			}

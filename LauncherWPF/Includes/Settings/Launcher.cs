@@ -22,19 +22,31 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		public string GameDirectory
 		{
-			get { return keyValues[GAME_DIRECTORY]; }
+			get
+			{
+				if (!keyValues.ContainsKey(GAME_DIRECTORY)) return Globals.GAME_DIRECTORY;
+				else return keyValues[GAME_DIRECTORY];
+			}
 			set { keyValues[GAME_DIRECTORY] = "" + value; }
 		}
 
 		public string LauncherRunPath
 		{
-			get { return keyValues[LAUNCHER_RUN_PATH]; }
+			get
+			{
+				if (!keyValues.ContainsKey(LAUNCHER_RUN_PATH)) return AppDomain.CurrentDomain.BaseDirectory;
+				else return keyValues[LAUNCHER_RUN_PATH];
+			}
 			set { keyValues[LAUNCHER_RUN_PATH] = "" + value; }
 		}
 
 		public string PlayerTag
 		{
-			get { return keyValues[PLAYER_TAG]; }
+			get
+			{
+				if (!keyValues.ContainsKey(PLAYER_TAG)) return "Player_1";
+				else return keyValues[PLAYER_TAG];
+			}
 			set { keyValues[PLAYER_TAG] = "" + value; }
 		}
 
@@ -43,33 +55,53 @@ namespace Cartographer_Launcher.Includes.Settings
 			get
 			{
 				Globals.SettingsDisplayMode DisplayValue;
-				Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
-				return DisplayValue;
+				if (!keyValues.ContainsKey(DISPLAY_MODE)) return 0;
+				else
+				{
+					Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
+					return DisplayValue;
+				}
 			}
 			set { keyValues[DISPLAY_MODE] = "" + value.ToString(); }
 		}
 
 		public int NoGameSound
 		{
-			get { return int.Parse(keyValues[NO_GAME_SOUND]); }
+			get
+			{
+				if (!keyValues.ContainsKey(NO_GAME_SOUND)) return 0;
+				else return int.Parse(keyValues[NO_GAME_SOUND]);
+			}
 			set { keyValues[NO_GAME_SOUND] = "" + value; }
 		}
 
 		public int VerticalSync
 		{
-			get { return int.Parse(keyValues[VERTICAL_SYNC]); }
+			get
+			{
+				if (!keyValues.ContainsKey(VERTICAL_SYNC)) return 1;
+				else return int.Parse(keyValues[VERTICAL_SYNC]);
+			}
 			set { keyValues[VERTICAL_SYNC] = "" + value; }
 		}
 
 		public int DefaultDisplay
 		{
-			get { return int.Parse(keyValues[DEFAULT_DISPLAY]); }
+			get
+			{
+				if (!keyValues.ContainsKey(DEFAULT_DISPLAY)) return 0;
+				else return int.Parse(keyValues[DEFAULT_DISPLAY]);
+			}
 			set { keyValues[DEFAULT_DISPLAY] = "" + value; }
 		}
 
 		public int RememberMe
 		{
-			get { return int.Parse(keyValues[REMEMBER_ME]); }
+			get
+			{
+				if (!keyValues.ContainsKey(REMEMBER_ME)) return 0;
+				else return int.Parse(keyValues[REMEMBER_ME]);
+			}
 			set { keyValues[REMEMBER_ME] = "" + value; }
 		}
 
