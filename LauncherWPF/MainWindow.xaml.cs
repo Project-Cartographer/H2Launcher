@@ -139,7 +139,6 @@ namespace LauncherWPF
 			}
 		}
 
-
 		private void LauncherDelete(string Arguments)
 		{
 			Task.Delay(1000);
@@ -231,6 +230,12 @@ namespace LauncherWPF
 								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								LauncherSettings.PlayerTag = lsUser.Text;
 								ProjectSettings.LoginToken = loginResult.LoginToken;
+								try { SaveSettings(); }
+								catch (Exception Ex)
+								{
+									ExLogFile(Ex.ToString());
+									Debug("Failed to save settings.");
+								}
 								if (PlayCheck)
 								{
 									LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
@@ -596,7 +601,6 @@ namespace LauncherWPF
 								ExLogFile(Ex.ToString());
 								Debug("Failed to get login token.");
 							}
-
 						}
 					}
 				}
