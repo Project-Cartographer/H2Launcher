@@ -9,6 +9,7 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class Launcher
 	{
+		Methods Methods = LauncherRuntime.Methods;
 		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
 		private const string GAME_DIRECTORY = "GameDirectory";
@@ -55,7 +56,7 @@ namespace Cartographer_Launcher.Includes.Settings
 			get
 			{
 				Globals.SettingsDisplayMode DisplayValue;
-				if (!keyValues.ContainsKey(DISPLAY_MODE)) return 0;
+				if (!keyValues.ContainsKey(DISPLAY_MODE)) return Globals.SettingsDisplayMode.Fullscreen;
 				else
 				{
 					Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
@@ -127,7 +128,12 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			StringBuilder SB = new StringBuilder();
 			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
-			File.WriteAllText(Globals.FILES_DIRECTORY + "Settings.ini", SB.ToString());
+			try { File.WriteAllText(Globals.FILES_DIRECTORY + "Settings.ini", SB.ToString()); }
+			catch (Exception Ex)
+			{
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("The launcher failed to save settings to the specified file: Settings.ini");
+			}
 
 		}
 
@@ -145,8 +151,11 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
-						if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						if (Line.Contains("="))
+						{
+							string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+							if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						}
 					}
 				}
 			}

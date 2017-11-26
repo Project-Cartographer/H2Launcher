@@ -10,6 +10,7 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class H2Startup
 	{
+		Methods Methods = LauncherRuntime.Methods;
 		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
 		private const string LANGUAGE_SELECT = "language_code";
@@ -23,15 +24,14 @@ namespace Cartographer_Launcher.Includes.Settings
 		private const string BORDERLESS_WINDOW_TOGGLE_HOTKEY = "hotkey_window_mode";
 		private const string HIDE_TEXT_CHAT_TOGGLE_HOTKEY = "hotkey_hide_ingame_chat";
 
-		public Globals.SettingsLanguageSelect LanguageSelect
+		public int LanguageSelect
 		{
 			get
 			{
-				Globals.SettingsLanguageSelect LanguageValue;
-				Enum.TryParse(keyValues[LANGUAGE_SELECT], out LanguageValue);
-				return LanguageValue;
+				if (!keyValues.ContainsKey(LANGUAGE_SELECT)) return -1;
+				else return int.Parse(keyValues[LANGUAGE_SELECT]);
 			}
-			set { keyValues[LANGUAGE_SELECT] = "" + value.ToString(); }
+			set { keyValues[LANGUAGE_SELECT] = "" + value; }
 		}
 
 		public int SkipIntro
@@ -126,8 +126,7 @@ namespace Cartographer_Launcher.Includes.Settings
 
 		private void SetDefaults()
 		{
-
-			LanguageSelect = Globals.SettingsLanguageSelect.Default;
+			LanguageSelect = -1;
 			SkipIntro = 1;
 			DisableKeyboard = 0;
 			DediServerName = "";
@@ -169,7 +168,12 @@ namespace Cartographer_Launcher.Includes.Settings
 				"# The codes in hexadecimal (base-16) form can be found here:" + Environment.NewLine +
 				"# https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx" + Environment.NewLine + Environment.NewLine);
 			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
-			File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString());
+			try { File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString()); }
+			catch (Exception Ex)
+			{
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("The launcher failed to save settings to the specified file: h2startup1.ini");
+			}
 		}
 
 		public void LoadSettings()
@@ -186,7 +190,7 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						if (!Line.StartsWith("#"))
+						if (!Line.StartsWith("#") && Line.Contains("="))
 						{
 							string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
 							if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);

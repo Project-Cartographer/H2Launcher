@@ -126,19 +126,6 @@ namespace Cartographer_Launcher.Includes
 			Windowed = 1,
 		}
 
-		public enum SettingsLanguageSelect : int
-		{
-			Default = -1,
-			Chinese = 0,
-			German = 1,
-			Spanish = 2,
-			French = 3,
-			Italian = 4,
-			Japanese = 5,
-			Korean = 6,
-			English = 7,
-		}
-
 		public static string LAN_IP
 		{
 			get

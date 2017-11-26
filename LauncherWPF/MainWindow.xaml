@@ -459,6 +459,25 @@
 							  Margin="30,351,0,0" 
 							  Checked="psDiscordRichPresence_Checked"
 							  Unchecked="psDiscordRichPresence_Unchecked"/>
+				<ToggleButton x:Name="psLanguage" 
+							  Content="Language : " 
+							  Style="{StaticResource sPanelButtonStyle}" 
+							  Margin="30,375,0,0" 
+							  Unchecked="psLanguage_Unchecked"/>
+				<ComboBox x:Name="psLanguageSelect"
+						  Style="{StaticResource ComboBoxStyle}" 
+						  Margin="125,375,0,0" Width="80" Height="24" 
+						  SelectionChanged="psLanguageSelect_SelectionChanged">
+					<ComboBoxItem Content="Default" Height="25" Width="80"/>
+					<ComboBoxItem Content="Chinese" Height="25" Width="80"/>
+					<ComboBoxItem Content="German" Height="25" Width="80"/>
+					<ComboBoxItem Content="Spanish" Height="25" Width="80"/>
+					<ComboBoxItem Content="French" Height="25" Width="80"/>
+					<ComboBoxItem Content="Italian" Height="25" Width="80"/>
+					<ComboBoxItem Content="Japanese" Height="25" Width="80"/>
+					<ComboBoxItem Content="Korean" Height="25" Width="80"/>
+					<ComboBoxItem Content="English" Height="25" Width="80"/>
+				</ComboBox>
 			</Grid>
 		</StackPanel>
 

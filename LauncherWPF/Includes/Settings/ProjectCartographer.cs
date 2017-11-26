@@ -7,6 +7,7 @@ namespace Cartographer_Launcher.Includes.Settings
 {
 	public class ProjectCartographer
 	{
+		Methods Methods = LauncherRuntime.Methods;
 		private Dictionary<String, String> keyValues = new Dictionary<string, string>();
 
 		private const string DEBUG_LOG = "debug_log";
@@ -189,7 +190,12 @@ namespace Cartographer_Launcher.Includes.Settings
 			{
 				SB.AppendLine(entry.Key + " = " + entry.Value);
 			}
-			File.WriteAllText(Globals.GAME_DIRECTORY + "xlive.ini", SB.ToString());
+			try { File.WriteAllText(Globals.GAME_DIRECTORY + "xlive.ini", SB.ToString()); }
+			catch (Exception Ex)
+			{
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("The launcher failed to save settings to the specified file: xlive.ini");
+			}
 		}
 
 		public void LoadSettings()
@@ -206,8 +212,11 @@ namespace Cartographer_Launcher.Includes.Settings
 					string[] SettingLines = SR.ReadToEnd().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 					foreach (string Line in SettingLines)
 					{
-						string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
-						if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						if (Line.Contains("="))
+						{
+							string[] Setting = Line.Split(new string[] { " = " }, StringSplitOptions.None);
+							if (!keyValues.ContainsKey(Setting[0])) keyValues.Add(Setting[0], Setting[1]);
+						}
 					}
 				}
 			}

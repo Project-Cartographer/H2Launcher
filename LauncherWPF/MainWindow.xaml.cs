@@ -32,7 +32,8 @@ namespace LauncherWPF
 		SolidColorBrush MenuItem = new SolidColorBrush(Color.FromRgb(94, 109, 139));
 		Launcher LauncherSettings = LauncherRuntime.LauncherSettings;
 		ProjectCartographer ProjectSettings = LauncherRuntime.ProjectSettings;
-		H2Startup H2StartupSettings = new H2Startup();
+		H2Startup GSSettings = LauncherRuntime.GSSettings;
+		Methods Methods = LauncherRuntime.Methods;
 
 		private const string REGISTER_URL = @"https://www.cartographer.online/";
 		private const string APPEAL_URL = @"https://www.halo2.online/forums/the-drama-spot.31/";
@@ -82,125 +83,17 @@ namespace LauncherWPF
 			try { InitializeComponent(); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to load components.");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to load components.");
 			}
 		}
 
 		#region Main Methods
-		public void LogFile(string Message)
-		{
-			StreamWriter log;
-			if (!File.Exists(Globals.LAUNCHER_LOG_FILE)) log = new StreamWriter(Globals.LAUNCHER_LOG_FILE);
-			else log = File.AppendText(Globals.LAUNCHER_LOG_FILE);
-
-			log.WriteLine("Date: " + DateTimeStamp + " - " + Message);
-
-			log.Flush();
-			log.Dispose();
-			log.Close();
-		}
-
-		public void ExLogFile(string Message)
-		{
-			StreamWriter exlog;
-			if (!File.Exists(Globals.LAUNCHER_EXCEPTION_LOG_FILE)) exlog = new StreamWriter(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
-			else exlog = File.AppendText(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
-
-			exlog.WriteLine("Date: " + DateTimeStamp);
-			exlog.WriteLine(Message);
-			exlog.WriteLine(Environment.NewLine);
-
-			exlog.Flush();
-			exlog.Dispose();
-			exlog.Close();
-		}
-
 		private void MessageBoxPanelContent(string Title, string Content)
 		{
 			mbTitle.Content = Title;
 			mbMessage.Text = Content;
 
-		}
-
-		public void Debug(string Error)
-		{
-			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-			switch (mr)
-			{
-				case MessageBoxResult.OK:
-					Process.Start(Globals.LAUNCHER_EXCEPTION_LOG_FILE);
-					Application.Current.Shutdown();
-					break;
-
-				case MessageBoxResult.None:
-					Application.Current.Shutdown();
-					break;
-			}
-		}
-
-		private void LauncherDelete(string Arguments)
-		{
-			Task.Delay(1000);
-			ProcessStartInfo Info = new ProcessStartInfo();
-			Info.Arguments = Arguments;
-			Info.WindowStyle = ProcessWindowStyle.Hidden;
-			Info.CreateNoWindow = true;
-			Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-			Info.FileName = "cmd.exe";
-			Process.Start(Info);
-			Process.GetCurrentProcess().Kill();
-		}
-
-		private void WebServerCheck()
-		{
-			HttpWebRequest request = WebRequest.Create(Globals.LAUNCHER_CHECK) as HttpWebRequest;
-			request.Method = "HEAD";
-			HttpWebResponse response;
-			try { response = request.GetResponse() as HttpWebResponse; }
-			catch (WebException wex)
-			{
-				response = wex.Response as HttpWebResponse;
-				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
-				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
-			}
-			if (response.StatusCode == HttpStatusCode.NotFound)
-			{
-				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
-				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
-			}
-		}
-
-		public void CheckInstallPath()
-		{
-			if (Globals.GAME_DIRECTORY == "")
-			{
-				string BaseFolder;
-				if (Environment.Is64BitOperatingSystem) BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-				else BaseFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-				using (System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog())
-				{
-					ofd.InitialDirectory = BaseFolder;
-					ofd.Title = "Navigate to Halo 2 Install Path";
-					ofd.Filter = "Halo 2 Executable|halo2.exe";
-					ofd.FilterIndex = 1;
-					if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-					{
-						Globals.GAME_DIRECTORY = ofd.FileName.Replace(ofd.SafeFileName, "");
-						//LauncherSettings.SaveSettings();
-					}
-					else Application.Current.Shutdown();
-				}
-			}
-			else
-			{
-				if (!Directory.Exists(Globals.GAME_DIRECTORY))
-				{
-					MessageBox.Show("Halo 2 game directory was not found, please relocate the executable.", Kantanomo.GoIdioms, MessageBoxButton.OK, MessageBoxImage.Question, MessageBoxResult.OK);
-					Globals.GAME_DIRECTORY = "";
-					CheckInstallPath();
-				}
-			}
 		}
 
 		private async void LoginVerification()
@@ -230,16 +123,12 @@ namespace LauncherWPF
 								StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 								LauncherSettings.PlayerTag = lsUser.Text;
 								ProjectSettings.LoginToken = loginResult.LoginToken;
-								try { SaveSettings(); }
-								catch (Exception Ex)
-								{
-									ExLogFile(Ex.ToString());
-									Debug("Failed to save settings.");
-								}
+								SaveSettings();
+
 								if (PlayCheck)
 								{
 									LauncherRuntime.StartHalo(lsUser.Text, loginResult.LoginToken, this);
-									LogFile("Login successful, game starting...");
+									Methods.LogFile("Login successful, game starting...");
 									PlayCheck = false;
 								}
 								PlayCheck = false;
@@ -252,7 +141,7 @@ namespace LauncherWPF
 								ProjectSettings.LoginToken = "";
 								lsPass.Password = "";
 								PlayButton.Content = "LOGIN";
-								LogFile("Project Cartographer: Login token invalid");
+								Methods.LogFile("Project Cartographer: Login token invalid");
 								PlayCheck = false;
 								break;
 							}
@@ -264,7 +153,7 @@ namespace LauncherWPF
 								lsPass.Password = "";
 								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
-								LogFile("Project Cartographer: Player credentials invalid");
+								Methods.LogFile("Project Cartographer: Player credentials invalid");
 								PlayCheck = false;
 								break;
 							}
@@ -275,7 +164,7 @@ namespace LauncherWPF
 									Process.Start(APPEAL_URL);
 								ProjectSettings.LoginToken = "";
 								PlayButton.Content = "LOGIN";
-								LogFile("Project Cartographer: Machine is banned");
+								Methods.LogFile("Project Cartographer: Machine is banned");
 								PlayCheck = false;
 								break;
 							}
@@ -288,7 +177,7 @@ namespace LauncherWPF
 									LoginPanelCheck = true;
 								}
 								PlayButton.Content = "LOGIN";
-								LogFile("Project Cartographer: General login failure");
+								Methods.LogFile("Project Cartographer: General login failure");
 								PlayCheck = false;
 								break;
 							}
@@ -308,22 +197,22 @@ namespace LauncherWPF
 			MessageBoxPanel.Visibility = Visibility.Hidden;
 			mbMessage.CaretBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
 
-			LogFile("Log file initialized.");
-			LogFile("Game install directory: " + Globals.GAME_DIRECTORY);
-			LogFile("Launcher file directory: " + Globals.H2V_HUB_DIRECTORY);
+			Methods.LogFile("Log file initialized.");
+			Methods.LogFile("Game install directory: " + Globals.GAME_DIRECTORY);
+			Methods.LogFile("Launcher file directory: " + Globals.H2V_HUB_DIRECTORY);
 
-			try { WebServerCheck(); }
+			try { Methods.WebServerCheck(); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to check launcher.");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to check launcher.");
 			}
 
-			try { CheckInstallPath(); }
+			try { Methods.CheckInstallPath(); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to open Windows Explorer.");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to open Windows Explorer.");
 			}
 
 			try { LoadSettings(); }
@@ -331,22 +220,23 @@ namespace LauncherWPF
 			{
 				if (File.Exists(Globals.FILES_DIRECTORY + "Settings.ini")) File.Delete(Globals.FILES_DIRECTORY + "Settings.ini");
 				if (File.Exists(Globals.GAME_DIRECTORY + "xlive.ini")) File.Delete(Globals.GAME_DIRECTORY + "xlive.ini");
-				ExLogFile(Ex.ToString());
-				Debug("Failed to load setting files.");
+				if (File.Exists(Globals.GAME_DIRECTORY + "h2startup1.ini")) File.Delete(Globals.GAME_DIRECTORY + "h2startup1.ini");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to load setting files.");
 			}
 
 			try { LoginVerification(); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to verify login token.");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to verify login token.");
 			}
 
 			try { CheckUpdates(); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to begin update process");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to begin update process");
 			}
 
 			usProgressLabel.Tag = "{0}/100";
@@ -362,12 +252,7 @@ namespace LauncherWPF
 		private void MainForm_Closed(object sender, EventArgs e)
 		{
 			ApplicationShutdownCheck = true;
-			try { SaveSettings(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to save settings");
-			}
+			SaveSettings();
 		}
 
 		private void LogoImage_Loaded(object sender, RoutedEventArgs e)
@@ -426,12 +311,7 @@ namespace LauncherWPF
 		{
 			MainForm.Visibility = Visibility.Hidden;
 			ApplicationShutdownCheck = true;
-			try { SaveSettings(); }
-			catch (Exception Ex)
-			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to save settings.");
-			}
+			SaveSettings();
 		}
 
 		private void StatusButton_Click(object sender, RoutedEventArgs e)
@@ -466,13 +346,7 @@ namespace LauncherWPF
 						PanelAnimation("sbHideSettingsMenu", SettingPanel);
 						SettingsPanelCheck = false;
 						SaveSettingsCheck = true;
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
-						}
+						SaveSettings();
 					}
 				}
 				if (UpdatePanelCheck)
@@ -490,20 +364,12 @@ namespace LauncherWPF
 						if (lsPass.Password != "") PlayButton.Content = "PLAY";
 						PanelAnimation("sbHideLoginMenu", LoginPanel);
 						LoginPanelCheck = false;
-						SaveSettingsCheck = true;
 
 						try { LoginVerification(); }
 						catch (Exception Ex)
 						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to verify login token.");
-						}
-
-						try { SaveSettings(); }
-						catch (Exception Ex)
-						{
-							ExLogFile(Ex.ToString());
-							Debug("Failed to save settings.");
+							Methods.ExLogFile(Ex.ToString());
+							Methods.Debug("Failed to verify login token.");
 						}
 					}
 				}
@@ -534,13 +400,7 @@ namespace LauncherWPF
 									PanelAnimation("sbHideLoginMenu", LoginPanel);
 									LoginPanelCheck = false;
 									SaveSettingsCheck = true;
-
-									try { SaveSettings(); }
-									catch (Exception Ex)
-									{
-										ExLogFile(Ex.ToString());
-										Debug("Failed to save settings.");
-									}
+									SaveSettings();
 								}
 							}
 						}
@@ -549,13 +409,7 @@ namespace LauncherWPF
 							PanelAnimation("sbHideSettingsMenu", SettingPanel);
 							SettingsPanelCheck = false;
 							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
+							SaveSettings();
 						}
 						if (PlayButton.Content.ToString() != "PLAY" && LoginPanel.Margin.Top == -140)
 						{
@@ -582,13 +436,7 @@ namespace LauncherWPF
 								PanelAnimation("sbHideLoginMenu", LoginPanel);
 								LoginPanelCheck = false;
 								SaveSettingsCheck = true;
-
-								try { SaveSettings(); }
-								catch (Exception Ex)
-								{
-									ExLogFile(Ex.ToString());
-									Debug("Failed to save settings.");
-								}
+								SaveSettings();
 							}
 						}
 						if (!SettingsPanelCheck && !UpdatePanelCheck && !LoginPanelCheck && PlayButton.Content.ToString() != "LOGIN" || PlayButton.Content.ToString() == "PLAY")
@@ -598,8 +446,8 @@ namespace LauncherWPF
 							try { LoginVerification(); }
 							catch (Exception Ex)
 							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to get login token.");
+								Methods.ExLogFile(Ex.ToString());
+								Methods.Debug("Failed to get login token.");
 							}
 						}
 					}
@@ -625,13 +473,7 @@ namespace LauncherWPF
 							PanelAnimation("sbHideSettingsMenu", SettingPanel);
 							SettingsPanelCheck = false;
 							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
+							SaveSettings();
 						}
 					}
 					if (LoginPanelCheck)
@@ -641,13 +483,7 @@ namespace LauncherWPF
 							PanelAnimation("sbHideLoginMenu", LoginPanel);
 							LoginPanelCheck = false;
 							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
+							SaveSettings();
 						}
 						if (SettingPanel.Margin.Right == -220)
 						{
@@ -687,8 +523,8 @@ namespace LauncherWPF
 							try { CheckUpdates(); }
 							catch (Exception Ex)
 							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to begin update process.");
+								Methods.ExLogFile(Ex.ToString());
+								Methods.Debug("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -706,13 +542,7 @@ namespace LauncherWPF
 							PanelAnimation("sbHideLoginMenu", LoginPanel);
 							LoginPanelCheck = false;
 							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
+							SaveSettings();
 						}
 						if (UpdatePanel.Margin.Bottom == -250)
 						{
@@ -721,8 +551,8 @@ namespace LauncherWPF
 							try { CheckUpdates(); }
 							catch (Exception Ex)
 							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to begin update process.");
+								Methods.ExLogFile(Ex.ToString());
+								Methods.Debug("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -735,13 +565,7 @@ namespace LauncherWPF
 							PanelAnimation("sbHideSettingsMenu", SettingPanel);
 							SettingsPanelCheck = false;
 							SaveSettingsCheck = true;
-
-							try { SaveSettings(); }
-							catch (Exception Ex)
-							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to save settings.");
-							}
+							SaveSettings();
 						}
 						if (UpdatePanel.Margin.Bottom == -250)
 						{
@@ -750,8 +574,8 @@ namespace LauncherWPF
 							try { CheckUpdates(); }
 							catch (Exception Ex)
 							{
-								ExLogFile(Ex.ToString());
-								Debug("Failed to begin update process.");
+								Methods.ExLogFile(Ex.ToString());
+								Methods.Debug("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -776,8 +600,8 @@ namespace LauncherWPF
 			try { AddToDetails(string.Format(DateStamp + "Halo 2 Current Version: {0}" + Environment.NewLine + "Halo 2 Expected Version: {1}", CurrentHalo2Version, _Halo2Version + Environment.NewLine)); }
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Failed to get current version of Halo 2");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Failed to get current version of Halo 2");
 			}
 
 			if (_Halo2Version != CurrentHalo2Version)
@@ -1032,7 +856,7 @@ namespace LauncherWPF
 			{
 				AddToDetails("The launcher needs to restart to complete the update.");
 				Task.Delay(4000);
-				LauncherDelete("/c ping 127.0.0.1 -n 3 -w 2000 > Nul & Del " + "\"" + CurrentName + "\"" + "& ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 1000 > Nul & start H2Launcher.exe");
+				Methods.LauncherDelete("/c ping 127.0.0.1 -n 3 -w 2000 > Nul & Del " + "\"" + CurrentName + "\"" + "& ping 127.0.0.1 -n 1 -w 2000 > Nul & rename H2Launcher_temp.exe H2Launcher.exe & ping 127.0.0.1 -n 1 -w 1000 > Nul & start H2Launcher.exe");
 			}
 			else UpdaterFinished();
 		}
@@ -1116,7 +940,7 @@ namespace LauncherWPF
 		}
 		#endregion
 
-		#region Setting Events
+		#region Settings: Misc. Events
 		private void lsUser_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (lsUser.Text != LauncherSettings.PlayerTag)
@@ -1138,12 +962,12 @@ namespace LauncherWPF
 			try
 			{
 				File.Delete(Globals.FILES_DIRECTORY + "LocalUpdate.xml");
-				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
+				Methods.LauncherDelete("/C ping 127.0.0.1 -n 1 -w 2000 > Nul & start H2Launcher.exe");
 			}
 			catch (Exception Ex)
 			{
-				ExLogFile(Ex.ToString());
-				Debug("Local update file not found.");
+				Methods.ExLogFile(Ex.ToString());
+				Methods.Debug("Local update file not found.");
 			}
 			psForceUpdate.IsChecked = false;
 		}
@@ -1189,13 +1013,13 @@ namespace LauncherWPF
 		}
 		#endregion
 
-		#region Launcher Settings
+		#region Settings: Launcher
 		private void psWindow_Checked(object sender, RoutedEventArgs e)
 		{
 			psWindow.IsChecked = true;
 			DisplayMode = "Windowed";
 			GameRegistrySettings.SetDisplayMode(false);
-			LogFile("Display Mode: Window mode enabled.");
+			Methods.LogFile("Display Mode: Window mode enabled.");
 		}
 
 		private void psWindow_Unchecked(object sender, RoutedEventArgs e)
@@ -1203,36 +1027,36 @@ namespace LauncherWPF
 			psWindow.IsChecked = false;
 			DisplayMode = "Fullscreen";
 			GameRegistrySettings.SetDisplayMode(true);
-			LogFile("Display Mode: Window mode disabled.");
+			Methods.LogFile("Display Mode: Window mode disabled.");
 		}
 
 		private void psNoSound_Checked(object sender, RoutedEventArgs e)
 		{
 			NoGameSound = true;
-			LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
+			Methods.LogFile("Halo 2 Launch Parameter: -nosound added to game launch.");
 		}
 
 		private void psNoSound_Unchecked(object sender, RoutedEventArgs e)
 		{
 			NoGameSound = false;
-			LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
+			Methods.LogFile("Halo 2 Launch Parameter: -nosound removed from game launch.");
 		}
 
 		private void psVsync_Checked(object sender, RoutedEventArgs e)
 		{
 			Vsync = true;
-			LogFile("Halo 2 Launch Parameter: -novsync removed from game launch.");
+			Methods.LogFile("Halo 2 Launch Parameter: -novsync removed from game launch.");
 		}
 
 		private void psVsync_Unchecked(object sender, RoutedEventArgs e)
 		{
 			Vsync = false;
-			LogFile("Halo 2 Launch Parameter: -novsync added to game launch.");
+			Methods.LogFile("Halo 2 Launch Parameter: -novsync added to game launch.");
 		}
 
 		private void psMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			LogFile("Halo 2 Launch Parameter: -monitor:" + psMonitorSelect.SelectedIndex.ToString());
+			Methods.LogFile("Halo 2 Launch Parameter: -monitor:" + psMonitorSelect.SelectedIndex.ToString());
 		}
 
 		private void psMonitor_Unchecked(object sender, RoutedEventArgs e)
@@ -1243,27 +1067,27 @@ namespace LauncherWPF
 		private void lsRememberMe_Checked(object sender, RoutedEventArgs e)
 		{
 			RememberMe = true;
-			LogFile("H2Launcher Setting: Autologin enabled.");
+			Methods.LogFile("H2Launcher Setting: Autologin enabled.");
 		}
 
 		private void lsRememberMe_Unchecked(object sender, RoutedEventArgs e)
 		{
 			RememberMe = false;
-			LogFile("H2Launcher Setting: Autologin disabled.");
+			Methods.LogFile("H2Launcher Setting: Autologin disabled.");
 		}
 		#endregion
 
-		#region Xlive Settings
+		#region Settings: Project Cartographer
 		private void psDebug_Checked(object sender, RoutedEventArgs e)
 		{
 			DebugLog = true;
-			LogFile("Project Cartographer: Trace logs enabled.");
+			Methods.LogFile("Project Cartographer: Trace logs enabled.");
 		}
 
 		private void psDebug_Unchecked(object sender, RoutedEventArgs e)
 		{
 			DebugLog = false;
-			LogFile("Project Cartographer: Trace logs disabled.");
+			Methods.LogFile("Project Cartographer: Trace logs disabled.");
 		}
 
 		private void psPorts_Unchecked(object sender, RoutedEventArgs e)
@@ -1273,7 +1097,7 @@ namespace LauncherWPF
 
 		private void psPortNumber_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Game base port set to " + psPortNumber.Text.ToString());
+			Methods.LogFile("Project Cartographer: Game base port set to " + psPortNumber.Text.ToString());
 		}
 
 		private void psFPS_Checked(object sender, RoutedEventArgs e)
@@ -1281,67 +1105,67 @@ namespace LauncherWPF
 			fpsEnable = true;
 			psFPSLimit.IsEnabled = true;
 			psFPSLimit.Foreground = MenuItemSelect;
-			LogFile("Project Cartographer: FPS limiter enabled.");
+			Methods.LogFile("Project Cartographer: FPS limiter enabled.");
 		}
 
 		private void psFPS_Unchecked(object sender, RoutedEventArgs e)
 		{
 			fpsEnable = false;
 			psFPSLimit.IsEnabled = false;
-			LogFile("Project Cartographer: FPS limiter disabled.");
+			Methods.LogFile("Project Cartographer: FPS limiter disabled.");
 		}
 
 		private void psRawMouseInput_Checked(object sender, RoutedEventArgs e)
 		{
 			RawMouseInput = true;
-			LogFile("Project Cartographer: Raw mouse input enabled.");
+			Methods.LogFile("Project Cartographer: Raw mouse input enabled.");
 		}
 
 		private void psRawMouseInput_Unchecked(object sender, RoutedEventArgs e)
 		{
 			RawMouseInput = false;
-			LogFile("Project Cartographer: Raw mouse input disabled.");
+			Methods.LogFile("Project Cartographer: Raw mouse input disabled.");
 		}
 
 		private void psDiscordRichPresence_Checked(object sender, RoutedEventArgs e)
 		{
 			DiscordRichPresence = true;
-			LogFile("Project Cartographer: Discord rich presence is enabled.");
+			Methods.LogFile("Project Cartographer: Discord rich presence is enabled.");
 		}
 
 		private void psDiscordRichPresence_Unchecked(object sender, RoutedEventArgs e)
 		{
 			DiscordRichPresence = false;
-			LogFile("Project Cartographer: Discord rich presence is disabled.");
+			Methods.LogFile("Project Cartographer: Discord rich presence is disabled.");
 		}
 
 		private void psFPSLimit_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Maximum frames set to " + psFPSLimit.Text.ToString());
+			Methods.LogFile("Project Cartographer: Maximum frames set to " + psFPSLimit.Text.ToString());
 		}
 
 		private void psVoice_Checked(object sender, RoutedEventArgs e)
 		{
 			VoiceChat = true;
-			LogFile("Project Cartographer: Voice chat enabled.");
+			Methods.LogFile("Project Cartographer: Voice chat enabled.");
 		}
 
 		private void psVoice_Unchecked(object sender, RoutedEventArgs e)
 		{
 			VoiceChat = false;
-			LogFile("Project Cartographer: Voice chat disabled.");
+			Methods.LogFile("Project Cartographer: Voice chat disabled.");
 		}
 
 		private void psMaps_Checked(object sender, RoutedEventArgs e)
 		{
 			MapDownloading = true;
-			LogFile("Project Cartographer: Custom map downloading enabled.");
+			Methods.LogFile("Project Cartographer: Custom map downloading enabled.");
 		}
 
 		private void psMaps_Unchecked(object sender, RoutedEventArgs e)
 		{
 			MapDownloading = false;
-			LogFile("Project Cartographer: Custom map downloading disabled");
+			Methods.LogFile("Project Cartographer: Custom map downloading disabled");
 		}
 
 		private void psFOV_Unchecked(object sender, RoutedEventArgs e)
@@ -1352,7 +1176,7 @@ namespace LauncherWPF
 		private void psFOVSetting_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			if (psFOVSetting.Text == "" || int.Parse(psFOVSetting.Text) <= 0 || int.Parse(psFOVSetting.Text) >= 115) psFOVSetting.Text = "";
-			LogFile("Project Cartographer: Game FOV changed to " + psFOVSetting.Text);
+			Methods.LogFile("Project Cartographer: Game FOV changed to " + psFOVSetting.Text);
 		}
 
 		private void psCrosshair_Unchecked(object sender, RoutedEventArgs e)
@@ -1362,7 +1186,7 @@ namespace LauncherWPF
 
 		private void psCrosshairSetting_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			LogFile("Project Cartographer: Game reticle position changed to " + psCrosshairSetting.Text);
+			Methods.LogFile("Project Cartographer: Game reticle position changed to " + psCrosshairSetting.Text);
 		}
 		#endregion
 
@@ -1370,13 +1194,23 @@ namespace LauncherWPF
 		private void psSkipIntro_Checked(object sender, RoutedEventArgs e)
 		{
 			SkipIntro = true;
-			LogFile("Project Cartographer: Startup credits enabled.");
+			Methods.LogFile("Project Cartographer: Startup credits enabled.");
 		}
 
 		private void psSkipIntro_Unchecked(object sender, RoutedEventArgs e)
 		{
 			SkipIntro = false;
-			LogFile("Project Cartographer: Startup credits disabled.");
+			Methods.LogFile("Project Cartographer: Startup credits disabled.");
+		}
+
+		private void psLanguage_Unchecked(object sender, RoutedEventArgs e)
+		{
+			psLanguage.IsChecked = true;
+		}
+
+		private void psLanguageSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			Methods.LogFile("Project Cartographer: Game language changed to " + psLanguageSelect.SelectedIndex.ToString());
 		}
 		#endregion
 
@@ -1385,7 +1219,7 @@ namespace LauncherWPF
 		{
 			LauncherSettings.LoadSettings();
 			ProjectSettings.LoadSettings();
-			H2StartupSettings.LoadSettings();
+			GSSettings.LoadSettings();
 
 			//Playertag
 			if (lsUser.Text != "") lsUsername.IsChecked = true;
@@ -1403,7 +1237,6 @@ namespace LauncherWPF
 				case Globals.SettingsDisplayMode.Windowed:
 					{
 						psWindow.IsChecked = true;
-
 						DisplayMode = "Windowed";
 						break;
 					}
@@ -1477,7 +1310,7 @@ namespace LauncherWPF
 			psCrosshairSetting.Text = ProjectSettings.Reticle;
 
 			//Startup Credit Videos
-			if (H2StartupSettings.SkipIntro == 1) psSkipIntro.IsChecked = true;
+			if (GSSettings.SkipIntro == 1) psSkipIntro.IsChecked = true;
 			else psSkipIntro.IsChecked = false;
 
 			//Raw Mouse Input
@@ -1487,6 +1320,57 @@ namespace LauncherWPF
 			//Discord Rich Presence
 			if (ProjectSettings.DiscordRichPresence == 1) psDiscordRichPresence.IsChecked = true;
 			else psDiscordRichPresence.IsChecked = false;
+
+			//Language
+			psLanguage.IsChecked = true;
+			switch (GSSettings.LanguageSelect)
+			{
+				case -1:
+					{
+						psLanguageSelect.SelectedIndex = 0;
+						break;
+					}
+				case 0:
+					{
+						psLanguageSelect.SelectedIndex = 1;
+						break;
+					}
+				case 1:
+					{
+						psLanguageSelect.SelectedIndex = 2;
+						break;
+					}
+				case 2:
+					{
+						psLanguageSelect.SelectedIndex = 3;
+						break;
+					}
+				case 3:
+					{
+						psLanguageSelect.SelectedIndex = 4;
+						break;
+					}
+				case 4:
+					{
+						psLanguageSelect.SelectedIndex = 5;
+						break;
+					}
+				case 5:
+					{
+						psLanguageSelect.SelectedIndex = 6;
+						break;
+					}
+				case 6:
+					{
+						psLanguageSelect.SelectedIndex = 7;
+						break;
+					}
+				case 7:
+					{
+						psLanguageSelect.SelectedIndex = 8;
+						break;
+					}
+			}
 		}
 
 		public async void SaveSettings()
@@ -1540,7 +1424,7 @@ namespace LauncherWPF
 			else ProjectSettings.Reticle = psCrosshairSetting.Text;
 
 			//Skip Startup Credit Videos
-			H2StartupSettings.SkipIntro = (SkipIntro) ? 1 : 0;
+			GSSettings.SkipIntro = (SkipIntro) ? 1 : 0;
 
 			//Raw Mouse Input
 			ProjectSettings.RawMouseInput = (RawMouseInput) ? 1 : 0;
@@ -1548,11 +1432,14 @@ namespace LauncherWPF
 			//Discord Rich Presence
 			ProjectSettings.DiscordRichPresence = (DiscordRichPresence) ? 1 : 0;
 
+			//Language
+			GSSettings.LanguageSelect = psLanguageSelect.SelectedIndex -1;
+
 			LauncherSettings.SaveSettings();
 			ProjectSettings.SaveSettings();
-			H2StartupSettings.SaveSettings();
+			GSSettings.SaveSettings();
 
-			LogFile("Settings saved");
+			Methods.LogFile("Settings saved");
 			SaveSettingsCheck = false;
 			StatusButton.Content = Globals.LAUNCHER_RELEASE_VERSION;
 			if (ApplicationShutdownCheck) Application.Current.Shutdown();
