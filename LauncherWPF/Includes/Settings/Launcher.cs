@@ -132,7 +132,7 @@ namespace Cartographer_Launcher.Includes.Settings
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("The launcher failed to save settings to the specified file: Settings.ini");
+				Methods.DebugAbort("The launcher failed to save settings to the specified file: Settings.ini");
 			}
 
 		}

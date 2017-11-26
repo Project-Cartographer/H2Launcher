@@ -84,7 +84,7 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to load components.");
+				Methods.DebugAbort("Failed to load components.");
 			}
 		}
 
@@ -205,14 +205,14 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to check launcher.");
+				Methods.DebugAbort("Failed to check launcher.");
 			}
 
 			try { Methods.CheckInstallPath(); }
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to open Windows Explorer.");
+				Methods.DebugAbort("Failed to open Windows Explorer.");
 			}
 
 			try { LoadSettings(); }
@@ -222,21 +222,21 @@ namespace LauncherWPF
 				if (File.Exists(Globals.GAME_DIRECTORY + "xlive.ini")) File.Delete(Globals.GAME_DIRECTORY + "xlive.ini");
 				if (File.Exists(Globals.GAME_DIRECTORY + "h2startup1.ini")) File.Delete(Globals.GAME_DIRECTORY + "h2startup1.ini");
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to load setting files.");
+				Methods.Error("Failed to load setting files.");
 			}
 
 			try { LoginVerification(); }
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to verify login token.");
+				Methods.DebugAbort("Failed to verify login token.");
 			}
 
 			try { CheckUpdates(); }
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to begin update process");
+				Methods.DebugAbort("Failed to begin update process");
 			}
 
 			usProgressLabel.Tag = "{0}/100";
@@ -369,7 +369,7 @@ namespace LauncherWPF
 						catch (Exception Ex)
 						{
 							Methods.ExLogFile(Ex.ToString());
-							Methods.Debug("Failed to verify login token.");
+							Methods.DebugAbort("Failed to verify login token.");
 						}
 					}
 				}
@@ -447,7 +447,7 @@ namespace LauncherWPF
 							catch (Exception Ex)
 							{
 								Methods.ExLogFile(Ex.ToString());
-								Methods.Debug("Failed to get login token.");
+								Methods.DebugAbort("Failed to get login token.");
 							}
 						}
 					}
@@ -524,7 +524,7 @@ namespace LauncherWPF
 							catch (Exception Ex)
 							{
 								Methods.ExLogFile(Ex.ToString());
-								Methods.Debug("Failed to begin update process.");
+								Methods.DebugAbort("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -552,7 +552,7 @@ namespace LauncherWPF
 							catch (Exception Ex)
 							{
 								Methods.ExLogFile(Ex.ToString());
-								Methods.Debug("Failed to begin update process.");
+								Methods.DebugAbort("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -575,7 +575,7 @@ namespace LauncherWPF
 							catch (Exception Ex)
 							{
 								Methods.ExLogFile(Ex.ToString());
-								Methods.Debug("Failed to begin update process.");
+								Methods.DebugAbort("Failed to begin update process.");
 							}
 							PanelAnimation("sbShowUpdateMenu", UpdatePanel);
 							UpdatePanelCheck = true;
@@ -601,7 +601,7 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Failed to get current version of Halo 2");
+				Methods.DebugAbort("Failed to get current version of Halo 2");
 			}
 
 			if (_Halo2Version != CurrentHalo2Version)
@@ -967,7 +967,7 @@ namespace LauncherWPF
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("Local update file not found.");
+				Methods.DebugAbort("Local update file not found.");
 			}
 			psForceUpdate.IsChecked = false;
 		}

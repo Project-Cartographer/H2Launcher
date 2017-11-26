@@ -190,12 +190,22 @@ namespace Cartographer_Launcher.Includes.Settings
 			{
 				SB.AppendLine(entry.Key + " = " + entry.Value);
 			}
-			try { File.WriteAllText(Globals.GAME_DIRECTORY + "xlive.ini", SB.ToString()); }
+			try {
+                Methods.AllowReadWrite(Globals.GAME_DIRECTORY + "xlive.ini");
+                File.WriteAllText(Globals.GAME_DIRECTORY + "xlive.ini", SB.ToString());
+                Methods.AllowReadWrite(Globals.GAME_DIRECTORY + "xlive.ini");
+            }
 			catch (Exception Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("The launcher failed to save settings to the specified file: xlive.ini");
-			}
+                if (!Methods.IsAdministrator())
+                {
+                    Methods.Error("The launcher failed to save settings to the specified file: xlive.ini, trying to relaunch as admin");
+                    Methods.RelaunchAsAdmin();
+                } else{
+                    Methods.DebugAbort("Can't access \"" + Globals.GAME_DIRECTORY + "xlive.ini" + "\" please fix the permissions for this file.");
+                }
+            }
 		}
 
 		public void LoadSettings()

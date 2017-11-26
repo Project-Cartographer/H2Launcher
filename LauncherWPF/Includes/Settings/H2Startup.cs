@@ -168,12 +168,25 @@ namespace Cartographer_Launcher.Includes.Settings
 				"# The codes in hexadecimal (base-16) form can be found here:" + Environment.NewLine +
 				"# https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx" + Environment.NewLine + Environment.NewLine);
 			foreach (KeyValuePair<string, string> entry in keyValues) SB.AppendLine(entry.Key + " = " + entry.Value);
-			try { File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString()); }
-			catch (Exception Ex)
+			try {
+                Methods.AllowReadWrite(Globals.GAME_DIRECTORY + "h2startup1.ini");
+                File.WriteAllText(Globals.GAME_DIRECTORY + "h2startup1.ini", SB.ToString());
+                Methods.AllowReadWrite(Globals.GAME_DIRECTORY + "h2startup1.ini");
+            }
+			catch (UnauthorizedAccessException Ex)
 			{
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Debug("The launcher failed to save settings to the specified file: h2startup1.ini");
-			}
+                Methods.RelaunchAsAdmin();
+                if (!Methods.IsAdministrator())
+                {
+                    Methods.Error("The launcher failed to save settings to the specified file: h2startup1.ini, trying to relaunch as admin");
+                    Methods.RelaunchAsAdmin();
+                }
+                else
+                {
+                    Methods.DebugAbort("Can't access \"" + Globals.GAME_DIRECTORY + "h2startup1.ini" + "\" please fix the permissions for this file.");
+                }
+            }
 		}
 
 		public void LoadSettings()

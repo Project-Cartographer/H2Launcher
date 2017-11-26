@@ -6,6 +6,8 @@ using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace Cartographer_Launcher.Includes
 {
@@ -41,7 +43,56 @@ namespace Cartographer_Launcher.Includes
 			exlog.Close();
 		}
 
-		public void Debug(string Error)
+        public void Error(string Error)
+        {
+            MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        public void AllowReadWrite(string filename)
+        {
+            try
+            {
+                FileSecurity sec = File.GetAccessControl(filename);
+
+                SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+                sec.AddAccessRule(new FileSystemAccessRule(
+                        everyone,
+                        FileSystemRights.Write | FileSystemRights.ReadAndExecute,
+                        AccessControlType.Allow));
+
+                File.SetAccessControl(filename, sec);
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Error("Failed to set premissions for \"" + filename + "\"");
+#endif
+            }
+        }
+
+        public static bool IsAdministrator()
+        {
+            var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        public void RelaunchAsAdmin()
+        {
+            ProcessStartInfo proc = new ProcessStartInfo(Process.GetCurrentProcess().MainModule.FileName)
+            {
+                Verb = "runas"
+            };
+
+            try
+            {
+                Process.Start(proc);
+            }
+            catch (Exception e) {};
+            Environment.Exit(0);
+        }
+
+        public void DebugAbort(string Error)
 		{
 			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
 			switch (mr)
