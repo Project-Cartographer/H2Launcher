@@ -43,56 +43,54 @@ namespace Cartographer_Launcher.Includes
 			exlog.Close();
 		}
 
-        public void Error(string Error)
-        {
-            MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+		public void ErrorMessage(string Error)
+		{
+			MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
+		}
 
-        public void AllowReadWrite(string filename)
-        {
-            try
-            {
-                FileSecurity sec = File.GetAccessControl(filename);
+		public void AllowReadWrite(string filename)
+		{
+			try
+			{
+				FileSecurity sec = File.GetAccessControl(filename);
 
-                SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-                sec.AddAccessRule(new FileSystemAccessRule(
-                        everyone,
-                        FileSystemRights.Write | FileSystemRights.ReadAndExecute,
-                        AccessControlType.Allow));
+				SecurityIdentifier everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+				sec.AddAccessRule(new FileSystemAccessRule(
+					everyone,
+					FileSystemRights.Write | FileSystemRights.ReadAndExecute,
+					AccessControlType.Allow));
 
-                File.SetAccessControl(filename, sec);
-            }
-            catch (Exception e)
-            {
+				File.SetAccessControl(filename, sec);
+			}
+			catch (Exception Ex)
+			{
 #if DEBUG
-                Error("Failed to set premissions for \"" + filename + "\"");
+				Error("Failed to set premissions for \"" + filename + "\"");
 #endif
-            }
-        }
+				ExLogFile(Ex.ToString());
+			}
+		}
 
-        public static bool IsAdministrator()
-        {
-            var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
+		public static bool IsAdministrator()
+		{
+			var identity = WindowsIdentity.GetCurrent();
+			var principal = new WindowsPrincipal(identity);
+			return principal.IsInRole(WindowsBuiltInRole.Administrator);
+		}
 
-        public void RelaunchAsAdmin()
-        {
-            ProcessStartInfo proc = new ProcessStartInfo(Process.GetCurrentProcess().MainModule.FileName)
-            {
-                Verb = "runas"
-            };
+		public void RelaunchAsAdmin()
+		{
+			ProcessStartInfo proc = new ProcessStartInfo(Process.GetCurrentProcess().MainModule.FileName) { Verb = "runas" };
+			try { Process.Start(proc); }
+			catch (Exception Ex)
+			{
+				DebugAbort("Process failed to launch.  Please manually re-launch the process");
+				ExLogFile(Ex.ToString());
+			}
+			Environment.Exit(0);
+		}
 
-            try
-            {
-                Process.Start(proc);
-            }
-            catch (Exception e) {};
-            Environment.Exit(0);
-        }
-
-        public void DebugAbort(string Error)
+		public void DebugAbort(string Error)
 		{
 			MessageBoxResult mr = MessageBox.Show(Error, Kantanomo.PauseIdiomGenerator, MessageBoxButton.OK, MessageBoxImage.Error);
 			switch (mr)
@@ -111,32 +109,73 @@ namespace Cartographer_Launcher.Includes
 		public void LauncherDelete(string Arguments)
 		{
 			Task.Delay(1000);
-			ProcessStartInfo Info = new ProcessStartInfo();
-			Info.Arguments = Arguments;
-			Info.WindowStyle = ProcessWindowStyle.Hidden;
-			Info.CreateNoWindow = true;
-			Info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-			Info.FileName = "cmd.exe";
-			Process.Start(Info);
+			ProcessStartInfo cmd = new ProcessStartInfo
+			{
+				Arguments = Arguments,
+				WindowStyle = ProcessWindowStyle.Hidden,
+				CreateNoWindow = true,
+				WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
+				FileName = "cmd.exe"
+			};
+			Process.Start(cmd);
 			Process.GetCurrentProcess().Kill();
+		}
+
+		private bool InternetConnection()
+		{
+			HttpWebRequest requestInternetConnection = WebRequest.Create("http://www.google.com/") as HttpWebRequest;
+			requestInternetConnection.Method = "HEAD";
+			HttpWebResponse responseInternetConnection;
+
+			try
+			{
+				responseInternetConnection = requestInternetConnection.GetResponse() as HttpWebResponse;
+				return true;
+			}
+			catch (WebException wex)
+			{
+				responseInternetConnection = wex.Response as HttpWebResponse;
+				MessageBoxResult mr = MessageBox.Show("Cannot connect to Project Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now close.", "CONNECTION ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+				switch (mr)
+				{
+					case MessageBoxResult.OK:
+						Application.Current.Shutdown();
+						break;
+					case MessageBoxResult.None:
+						Application.Current.Shutdown();
+						break;
+				}
+				return false;
+			}
 		}
 
 		public void WebServerCheck()
 		{
-			HttpWebRequest request = WebRequest.Create(Globals.LAUNCHER_CHECK) as HttpWebRequest;
-			request.Method = "HEAD";
-			HttpWebResponse response;
-			try { response = request.GetResponse() as HttpWebResponse; }
-			catch (WebException wex)
+			if (InternetConnection())
 			{
-				response = wex.Response as HttpWebResponse;
-				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
-				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
-			}
-			if (response.StatusCode == HttpStatusCode.NotFound)
-			{
-				MessageBox.Show("Cannot connect to Cartographer webserver." + Environment.NewLine + "Please check your internet connection and try again." + Environment.NewLine + Environment.NewLine + "The launcher will now be deleted.", "CONNECTION ERROR");
-				LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
+				HttpWebRequest requestLauncherCheck = WebRequest.Create(Globals.LAUNCHER_CHECK) as HttpWebRequest;
+				requestLauncherCheck.Method = "HEAD";
+				HttpWebResponse responseLauncherCheck;
+
+				try { responseLauncherCheck = requestLauncherCheck.GetResponse() as HttpWebResponse; }
+				catch (WebException wex)
+				{
+					responseLauncherCheck = wex.Response as HttpWebResponse;
+					if (responseLauncherCheck.StatusCode == HttpStatusCode.NotFound)
+					{
+						responseLauncherCheck.Close();
+						MessageBoxResult mr2 = MessageBox.Show("The Launcher to Project Cartographer is depreciated." + Environment.NewLine + "Please run the game from the executable." + Environment.NewLine + Environment.NewLine + "This launcher will now be deleted.", "LAUNCHER ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+						switch (mr2)
+						{
+							case MessageBoxResult.OK:
+								LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
+								break;
+							case MessageBoxResult.None:
+								LauncherDelete("/C ping 127.0.0.1 -n 1 -w 100 > Nul & Del \"" + Assembly.GetExecutingAssembly().Location + "\"");
+								break;
+						}
+					}
+				}
 			}
 		}
 

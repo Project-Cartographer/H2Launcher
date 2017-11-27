@@ -170,7 +170,7 @@ namespace Cartographer_Launcher.Includes
 
 		public static string LAUNCHER_RELEASE_VERSION
 		{
-			get { return "Version: 2.1.2"; }
+			get { return "Version: 2.1.6"; }
 		}
 	}
 }

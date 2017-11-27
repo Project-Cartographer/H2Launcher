@@ -201,12 +201,7 @@ namespace LauncherWPF
 			Methods.LogFile("Game install directory: " + Globals.GAME_DIRECTORY);
 			Methods.LogFile("Launcher file directory: " + Globals.H2V_HUB_DIRECTORY);
 
-			try { Methods.WebServerCheck(); }
-			catch (Exception Ex)
-			{
-				Methods.ExLogFile(Ex.ToString());
-				Methods.DebugAbort("Failed to check launcher.");
-			}
+			Methods.WebServerCheck();
 
 			try { Methods.CheckInstallPath(); }
 			catch (Exception Ex)
@@ -222,7 +217,7 @@ namespace LauncherWPF
 				if (File.Exists(Globals.GAME_DIRECTORY + "xlive.ini")) File.Delete(Globals.GAME_DIRECTORY + "xlive.ini");
 				if (File.Exists(Globals.GAME_DIRECTORY + "h2startup1.ini")) File.Delete(Globals.GAME_DIRECTORY + "h2startup1.ini");
 				Methods.ExLogFile(Ex.ToString());
-				Methods.Error("Failed to load setting files.");
+				Methods.ErrorMessage("Failed to load setting files.");
 			}
 
 			try { LoginVerification(); }
@@ -318,7 +313,12 @@ namespace LauncherWPF
 		{
 			PanelAnimation("sbShowMessageBox", MessageBoxPanel);
 			MessageBoxPanel.Visibility = Visibility.Visible;
-			MessageBoxPanelContent(Kantanomo.GoIdioms, "-Project Devs" + Environment.NewLine + Environment.NewLine + "Permanull" + Environment.NewLine + "Rude Yoshi" + Environment.NewLine + "Glitchy Scripts" + Environment.NewLine + "Himanshu" + Environment.NewLine + "supersniper" + Environment.NewLine + "Hootspa (left)" + Environment.NewLine + "Kantanomo (left)" + Environment.NewLine + "FishPHD (left)");
+			MessageBoxPanelContent(Kantanomo.GoIdioms,
+				"CHANGES" + Environment.NewLine + Environment.NewLine +
+				" --Added new settings in settings panel" + Environment.NewLine +
+				" --Fixed launcher auto delete on no internet connetion." + Environment.NewLine +
+				" --Many code optimization changes and bug fixes." + Environment.NewLine
+				);
 			if (StatusButton.IsChecked == true) StatusButton.IsChecked = false;
 		}
 

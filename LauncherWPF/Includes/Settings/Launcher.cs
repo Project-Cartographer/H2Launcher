@@ -55,11 +55,10 @@ namespace Cartographer_Launcher.Includes.Settings
 		{
 			get
 			{
-				Globals.SettingsDisplayMode DisplayValue;
 				if (!keyValues.ContainsKey(DISPLAY_MODE)) return Globals.SettingsDisplayMode.Fullscreen;
 				else
 				{
-					Enum.TryParse(keyValues[DISPLAY_MODE], out DisplayValue);
+					Enum.TryParse(keyValues[DISPLAY_MODE], out Globals.SettingsDisplayMode DisplayValue);
 					return DisplayValue;
 				}
 			}
