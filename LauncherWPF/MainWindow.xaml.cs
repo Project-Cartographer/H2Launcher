@@ -201,7 +201,7 @@ namespace LauncherWPF
 			Methods.LogFile("Game install directory: " + Globals.GAME_DIRECTORY);
 			Methods.LogFile("Launcher file directory: " + Globals.H2V_HUB_DIRECTORY);
 
-			Methods.WebServerCheck();
+			Methods.SelfDestructButton();
 
 			try { Methods.CheckInstallPath(); }
 			catch (Exception Ex)

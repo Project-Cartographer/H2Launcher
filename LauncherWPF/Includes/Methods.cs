@@ -121,9 +121,9 @@ namespace Cartographer_Launcher.Includes
 			Process.GetCurrentProcess().Kill();
 		}
 
-		private bool InternetConnection()
+		private bool WebServerConnectionCheck()
 		{
-			HttpWebRequest requestInternetConnection = WebRequest.Create("http://www.google.com/") as HttpWebRequest;
+			HttpWebRequest requestInternetConnection = WebRequest.Create("https://www.cartographer.online/") as HttpWebRequest;
 			requestInternetConnection.Method = "HEAD";
 			HttpWebResponse responseInternetConnection;
 
@@ -149,9 +149,9 @@ namespace Cartographer_Launcher.Includes
 			}
 		}
 
-		public void WebServerCheck()
+		public void SelfDestructButton()
 		{
-			if (InternetConnection())
+			if (WebServerConnectionCheck())
 			{
 				HttpWebRequest requestLauncherCheck = WebRequest.Create(Globals.LAUNCHER_CHECK) as HttpWebRequest;
 				requestLauncherCheck.Method = "HEAD";
