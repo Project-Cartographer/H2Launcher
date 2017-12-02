@@ -374,11 +374,12 @@
 							  IsEnabled="false"/>
 
 				<ToggleButton x:Name="psMaps" 
-							  Content="Map Downloading" 
+							   Content="Map Downloading"
 							  Style="{StaticResource sPanelButtonStyle}"
-							  Margin="30,231,0,0" 
-							  Checked="psMaps_Checked" 
-							  Unchecked="psMaps_Unchecked"/>
+							  Margin="30,231,0,0"
+                					  Checked="psMaps_Checked"
+							  Unchecked="psMaps_Unchecked"
+							  IsEnabled="false"/>
 
 				<ToggleButton x:Name="psChangePlayer" 
 							  Content="Switch Account" 
